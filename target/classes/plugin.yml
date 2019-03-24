@@ -1,6 +1,6 @@
 name: DodgeChallenger
 main: com.alchemi.dodgechallenger.main
-version: 1.6.0-beta
+version: 1.6.1-beta
 api-version: 1.13
 author: Alchemi
 description: A challenges plugin for FabledSkyBlock

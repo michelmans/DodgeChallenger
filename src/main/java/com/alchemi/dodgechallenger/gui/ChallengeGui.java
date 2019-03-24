@@ -74,7 +74,7 @@ public class ChallengeGui extends GuiBase {
 				}
 				
 				lore.add("You need to complete " + rr.getAmount() + " challenges in the previous rank.");
-				contents.replace(i, new ItemFactory(rank.getDisplayMaterial()).setName(Messenger.cc(rank.getDisplayName())).setLore(lore));
+				contents.put(i, new ItemFactory(rank.getDisplayMaterial()).setName(Messenger.cc(rank.getDisplayName())).setLore(lore));
 			}
 			i++;
 			
@@ -87,7 +87,7 @@ public class ChallengeGui extends GuiBase {
 					
 					if (Config.OPTIONS.SHOW_LOCKED_CHALLENGE_NAME.asBoolean()) lore.add(Messenger.cc("&o" + c.getDisplayName()));  
 					lore.add(Messenger.cc(lr.res2.replaceAll("\\$f\\$", Config.OPTIONS.BROADCAST_FORMAT.asString())));
-					contents.replace(i, new ItemFactory(Config.OPTIONS.LOCKED_DISPLAY_ITEM.asMaterial())
+					contents.put(i, new ItemFactory(Config.OPTIONS.LOCKED_DISPLAY_ITEM.asMaterial())
 							.setName(Messenger.cc(Config.MESSAGES.CHALLENGE_LOCKED_LOCKED.value()))
 							.setLore(lore));
 					
@@ -144,7 +144,7 @@ public class ChallengeGui extends GuiBase {
 							
 						}
 						
-						contents.replace(i, new ItemFactory(c.getDisplayItem())
+						contents.put(i, new ItemFactory(c.getDisplayItem())
 								.setName(Messenger.cc(c.getDisplayName()))
 								.setLore(lore)
 								.addEnch(Enchantment.BINDING_CURSE, false));
