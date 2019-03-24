@@ -1,0 +1,37 @@
+name: DodgeChallenger
+main: com.alchemi.dodgechallenger.main
+version: ${project.version}
+api-version: 1.13
+author: Alchemi
+description: A challenges plugin for FabledSkyBlock
+depend: [FabledSkyBlock]
+
+softdepend: [PlaceholderAPI]
+
+commands:
+  challenges:
+    usage: /challenges
+    aliases: [challs, c]
+    description: View challenges
+  challengecomplete:
+    usage: /challengecomplete <challenge>
+    aliases: [cc, challcomplete]
+    description: Complete a challenge
+  chadmin:
+    usage: /chadmin
+    aliases: [ca, cha, challengeadmin, dodgeadmin, da]
+    description: Admins base command
+  
+permissions:
+  dodgec.challenges.view:
+    description: Permission to view current challenges
+    default: true
+  dodgec.challenges.complete:
+    description: Permission to complete challenges
+    default: true
+  dodgec.admin:
+    description: Permission to use admin commands
+    default: false
+  dodgec.reload:
+    description: Permission to reload configs
+    default: false
