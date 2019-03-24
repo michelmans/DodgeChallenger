@@ -39,7 +39,6 @@ com\alchemi\dodgechallenger\managers\DatabaseManager$5.class
 com\alchemi\dodgechallenger\listeners\commands\admin\CommandAdmin.class
 com\alchemi\dodgechallenger\listeners\commands\CommandChallenge.class
 com\alchemi\dodgechallenger\managers\DatabaseManager$6.class
-com\alchemi\dodgechallenger\listeners\commands\CommandChallengeComplete.class
 com\alchemi\dodgechallenger\objects\Challenge$getBlockResult.class
 com\alchemi\dodgechallenger\managers\DataManager$1.class
 com\alchemi\dodgechallenger\gui\GuiBase$1.class

@@ -13,10 +13,6 @@ commands:
     usage: /challenges
     aliases: [challs, c]
     description: View challenges
-  challengecomplete:
-    usage: /challengecomplete <challenge>
-    aliases: [cc, challcomplete]
-    description: Complete a challenge
   chadmin:
     usage: /chadmin
     aliases: [ca, cha, challengeadmin, dodgeadmin, da]

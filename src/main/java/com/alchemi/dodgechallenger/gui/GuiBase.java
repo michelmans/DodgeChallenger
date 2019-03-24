@@ -44,7 +44,7 @@ public abstract class GuiBase {
 	public void openGUI(Player pl) {
 		
 		int page = 0;
-		if (!Library.hasMeta(pl, GUIPageMeta.class)) pl.setMetadata(GUIPageMeta.NAME, new GUIPageMeta(main.instance, page));
+		if (!Library.hasMeta(pl, GUIPageMeta.class)) pl.setMetadata(GUIPageMeta.class.getSimpleName(), new GUIPageMeta(main.instance, page));
 		else page = Library.getMeta(pl, GUIPageMeta.class).asInt();
 		
 		TreeMap<Integer, ItemStack> mapped = new TreeMap<>(contents);
@@ -78,7 +78,7 @@ public abstract class GuiBase {
 		if (!(sender instanceof Player)) return;
 		
 		int page = 0;
-		if (!Library.hasMeta((Player) sender, GUIPageMeta.class)) ((Player) sender).setMetadata(GUIPageMeta.NAME, new GUIPageMeta(main.instance, page));
+		if (!Library.hasMeta((Player) sender, GUIPageMeta.class)) ((Player) sender).setMetadata(GUIPageMeta.class.getSimpleName(), new GUIPageMeta(main.instance, page));
 		else page = Library.getMeta((Player) sender, GUIPageMeta.class).asInt();
 		
 		TreeMap<Integer, ItemStack> mapped = new TreeMap<>(contents);
@@ -189,7 +189,7 @@ public abstract class GuiBase {
 			gui.clear();
 			int page = Library.getMeta((Player) args[0], GUIPageMeta.class).asInt();
 			page ++;
-			((Player) args[0]).setMetadata(GUIPageMeta.NAME, new GUIPageMeta(main.instance, page));
+			((Player) args[0]).setMetadata(GUIPageMeta.class.getSimpleName(), new GUIPageMeta(main.instance, page));
 			openGUI((Player) args[0]);
 		}
 	};
@@ -202,7 +202,7 @@ public abstract class GuiBase {
 			gui.clear();
 			int page = Library.getMeta((Player) args[0], GUIPageMeta.class).asInt();
 			page --;
-			((Player) args[0]).setMetadata(GUIPageMeta.NAME, new GUIPageMeta(main.instance, page));
+			((Player) args[0]).setMetadata(GUIPageMeta.class.getSimpleName(), new GUIPageMeta(main.instance, page));
 			openGUI((Player) args[0]);
 		}
 	};

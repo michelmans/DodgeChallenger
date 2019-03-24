@@ -20,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.dodgechallenger.gui.GuiListener;
 import com.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
-import com.alchemi.dodgechallenger.listeners.commands.CommandChallengeComplete;
 import com.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import com.alchemi.dodgechallenger.listeners.events.IslandEvents;
 import com.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
@@ -109,7 +108,6 @@ public class main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(guiListener, this);
 		
 		getCommand("challenges").setExecutor(new CommandChallenge());
-		getCommand("challengecomplete").setExecutor(new CommandChallengeComplete());
 		getCommand("chadmin").setExecutor(new CommandAdmin());
 		getCommand("chadmin").setTabCompleter(new AdminTabComplete());
 		

@@ -17,7 +17,7 @@
   <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar" sourcepath="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/milkbowl/vault/VaultAPI/1.7/VaultAPI-1.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT.jar" sourcepath="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/alchemi/AlchemicLibrary/1.5.0/AlchemicLibrary-1.5.0.jar" sourcepath="M2_REPO/com/alchemi/AlchemicLibrary/1.5.0/AlchemicLibrary-1.5.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/alchemi/AlchemicLibrary/1.5.1/AlchemicLibrary-1.5.1.jar" sourcepath="M2_REPO/com/alchemi/AlchemicLibrary/1.5.1/AlchemicLibrary-1.5.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/songoda/FabledSkyBlock/Build-70/FabledSkyBlock-Build-70.jar"/>
   <classpathentry kind="var" path="M2_REPO/be/maximvdw/placeholderapi/2.5.1/placeholderapi-2.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/me/clip/placeholderapi/2.9.2/placeholderapi-2.9.2.jar"/>
