@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.alchemi</groupId>
   <artifactId>DodgeChallenger</artifactId>
-  <version>1.5.5-beta</version>
+  <version>1.6.0-beta</version>
   <name>DodgeChallenger</name>
   <build>
     <finalName>${project.name}</finalName>
