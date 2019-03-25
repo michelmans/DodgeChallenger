@@ -41,7 +41,7 @@ public class IslandEvents implements Listener{
 		
 		if (main.chatEnabled) {
 			String pref = main.chat.getPlayerPrefix(player);
-			
+			System.out.println(Library.getMeta(player, PrefixMeta.class).asString());
 			if (!pref.contains(main.rankTags.get(rank))) main.chat.setPlayerPrefix(player, main.rankTags.get(rank) + Library.getMeta(player, PrefixMeta.class).asString());
 		} else {
 			String pref = player.getDisplayName();
@@ -73,14 +73,7 @@ public class IslandEvents implements Listener{
 				new com.alchemi.dodgechallenger.managers.IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
 			}
 			
-			
-			
-			if (main.chatEnabled) {
-				
-				main.chat.setPlayerPrefix(e.getPlayer(), main.chat.getGroupPrefix(e.getPlayer().getLocation().getWorld(), main.chat.getPlayerGroups(e.getPlayer())[0]));
-				
-			}
-				
+			com.alchemi.dodgechallenger.managers.IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer())).checkRank();
 			
 			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
