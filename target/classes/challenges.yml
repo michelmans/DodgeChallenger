@@ -479,9 +479,9 @@ ranks:
         - NETHER_PORTAL:1
         displayItem: OBSIDIAN
         reward:
-          text: 1 iron pickaxe, 1 iron shovel & 2% chance on 2 witherskulls
+          text: 2 nether warts, 1 iron shovel & 2% chance on 2 witherskulls
           items:
-          - IRON_SHOVEL:1
+          - NETHER_WART:2
           - IRON_PICKAXE:1
           - '{p=0.02}WITHER_SKELETON_SKULL:2'
           currency: 40
@@ -1020,7 +1020,7 @@ ranks:
 
   #===============================================
   Tier5:
-    name: '&4Sky Lord'
+    name: '&9Doctor'
     displayItem: RED_TERRACOTTA
     
     requires:
@@ -1157,7 +1157,8 @@ ranks:
         type: onIsland
         radius: 30
         displayItem: SANDSTONE
-        
+        requiredChallenges:
+        - tajmahal
         requiredItems:
         - SANDSTONE:512
         - SANDSTONE:64
@@ -1167,7 +1168,7 @@ ranks:
         - SANDSTONE_SLAB:64
         - RED_SANDSTONE:16
         reward:
-          text: 3 end-portal frames, 3 dia, bow
+          text: 3 end-portal frames, 3 dia & a nice bow
           items:
           - END_PORTAL_FRAME:3
           - DIAMOND:3
@@ -1261,7 +1262,7 @@ ranks:
 
   #===============================================
   Tier6:
-    name: '&aWorld Foods'
+    name: '&6&lLord President'
     displayItem: LIGHT_GRAY_TERRACOTTA
     
     requires:
