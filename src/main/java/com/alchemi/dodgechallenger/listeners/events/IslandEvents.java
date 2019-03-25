@@ -77,6 +77,9 @@ public class IslandEvents implements Listener{
 			
 			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				if (main.chatEnabled) {
+					main.chat.setPlayerPrefix(e.getPlayer(), main.chat.getGroupPrefix(e.getPlayer().getLocation().getWorld(), main.chat.getPlayerGroups(e.getPlayer())[0]));
+				}
 				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.instance, main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
 				
 				setRankPrefix(e.getPlayer(), rank);
