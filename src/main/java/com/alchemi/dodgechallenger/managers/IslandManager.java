@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
+import com.alchemi.al.Library;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.DeRankEvent;
 import com.alchemi.dodgechallenger.events.RankupEvent;
+import com.alchemi.dodgechallenger.meta.IslandMeta;
 import com.alchemi.dodgechallenger.objects.Challenge;
 import com.google.common.collect.Lists;
 
@@ -83,7 +86,7 @@ public class IslandManager {
 				setRank(rm.rank() + 1);
 				
 				if (rank < rm.rank() + 1) Bukkit.getPluginManager().callEvent(new RankupEvent(island));
-				else Bukkit.getPluginManager().callEvent(new DeRankEvent(island, RankManager.getRank(oRank)));
+				else if ( rank != rm.rank() + 1 ) Bukkit.getPluginManager().callEvent(new DeRankEvent(island, RankManager.getRank(oRank)));
 				
 				return false;
 				
@@ -140,6 +143,10 @@ public class IslandManager {
 	public static IslandManager getByIsland(Island island) {
 		return islands.size() > 0 ? islands.containsKey(island) ? islands.get(island) : null : null;
 	}
+	
+	public static IslandManager getByPlayer(Player player) {
+		return Library.hasMeta(player, IslandMeta.class) ? (IslandManager) Library.getMeta(player, IslandMeta.class).value() : null;
+	}
 
 	/**
 	 * @return the challenges
@@ -186,6 +193,10 @@ public class IslandManager {
 	
 	public void save() {
 		main.dbm.saveIsland(this);
+	}
+	
+	public void remove() {
+		islands.remove(island);
 	}
 	
 }

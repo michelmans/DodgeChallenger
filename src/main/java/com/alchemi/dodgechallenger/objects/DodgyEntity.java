@@ -89,6 +89,29 @@ public class DodgyEntity {
 	public String getName() {
 		return type.name();
 	}
+	
+	
+
+	/**
+	 * @return the nbt
+	 */
+	public String getNbt() {
+		return nbt;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public EntityType getType() {
+		return type;
+	}
+
+	/**
+	 * @return the nbtMap
+	 */
+	public Map<String, MetadataValue> getNbtMap() {
+		return nbtMap;
+	}
 
 	public boolean hasColour() {
 		return colour != null;

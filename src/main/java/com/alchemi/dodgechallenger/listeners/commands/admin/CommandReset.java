@@ -11,8 +11,6 @@ import com.alchemi.dodgechallenger.managers.IslandManager;
 import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.objects.Challenge;
 
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-
 public class CommandReset {
 
 	public static boolean perform(CommandSender sender, Player player, String[] copyOfRange) {
@@ -37,7 +35,7 @@ public class CommandReset {
 			}
 			
 			Challenge c = Challenge.getChallengeFromID(copyOfRange[0]);
-			IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player));
+			IslandManager im = IslandManager.getByPlayer(player);
 			im.removeChallenge(c);
 			
 			if (im.getRank() == 0) return true;
@@ -46,7 +44,7 @@ public class CommandReset {
 			return true;
 			
 		} else {
-			IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player));
+			IslandManager im = IslandManager.getByPlayer(player);
 			while (im.getChallenges().size() > 0) {
 				im.removeChallenge(im.getChallenges().get(0));
 			}

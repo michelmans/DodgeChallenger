@@ -307,6 +307,7 @@ public class Config {
 		for (String path : section.getValues(false).keySet()) {
 			new RankManager(section.getConfigurationSection(path));
 		}
+		DATABASE.ENABLED.set(false);
 		
 	}
 	
@@ -334,6 +335,8 @@ public class Config {
 			new RankManager(section.getConfigurationSection(path));
 		}
 		
+		DATABASE.ENABLED.set(false);
+		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (IslandManager.hasIsland(player)) {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
@@ -342,7 +345,7 @@ public class Config {
 					IslandEvents.setRankPrefix(player, rank);
 				}
 				
-				if (com.alchemi.dodgechallenger.managers.IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player)) == null) {
+				if (com.alchemi.dodgechallenger.managers.IslandManager.getByPlayer(player) == null) {
 					new com.alchemi.dodgechallenger.managers.IslandManager(SkyBlockAPI.getIslandManager().getIsland(player));
 				}
 				

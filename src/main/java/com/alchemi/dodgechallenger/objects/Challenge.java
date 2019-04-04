@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -274,13 +275,50 @@ public class Challenge {
 		return new getBlockResult(true, blocks);
 	}
 	
+	public final class getEntityResult{
+		public final boolean res1;
+		public final HashMap<DodgyEntity, Integer> res2;
+		
+		public getEntityResult(boolean res1, HashMap<DodgyEntity, Integer> res2) {
+
+			this.res1 = res1;
+			this.res2 = res2;
+		}
+	}
+	
+	private getEntityResult getEntities(Player player, List<Challenge> cs) {  
+		HashMap<DodgyEntity, Integer> entities = new HashMap<DodgyEntity, Integer>(requiredEntities);
+		
+		for (Entry<DodgyEntity, Integer> item : entities.entrySet()) {
+			entities.put(item.getKey(), (int)Math.round(item.getValue() * Math.pow(1.5, amountCompleted(cs))));
+		}
+		
+		for (Entity ent : player.getNearbyEntities(radius, radius, radius)) {
+			for (DodgyEntity entry : entities.keySet()) {
+				
+				if (entry.getType().equals(ent.getType())) {
+					if (entities.containsKey(entry)) {
+						entities.put(entry, entities.get(entry) - 1);
+						if (entities.get(entry) == 0) entities.remove(entry);
+					}
+				}
+				
+			}
+		}
+		
+		if (!entities.isEmpty()) return new getEntityResult(false, entities);
+		return new getEntityResult(true, entities);
+	}
+	
 	public boolean canCompleteChallenge(Player player, IslandManager im) {
 		if (im.getChallenges().contains(this) && !this.isRepeatable()) return false;
 		
 		if (type == Type.onPlayer) {
 			return getAll(player.getInventory(), im.getChallenges()).res1;
 		} else if (type == Type.onIsland) {
-			return getBlocks(player.getLocation(), im.getChallenges()).res1;
+			
+			return requiredEntities.isEmpty() ? getBlocks(player.getLocation(), im.getChallenges()).res1 : getBlocks(player.getLocation(), im.getChallenges()).res1 && getEntities(player, im.getChallenges()).res1;
+			
 		} else {
 			return SkyBlockAPI.getIslandManager().getIsland(player).getLevel().getLevel() >= requiredLevel;
 		}
@@ -311,6 +349,17 @@ public class Challenge {
 						.replace("$amount$", String.valueOf(ent.getValue()))
 						.replace("$item$", ent.getKey().getKey().getKey().replaceAll("_", " "))
 						.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+			}
+			
+			if (!requiredEntities.isEmpty()) {
+				for (Entry<DodgyEntity, Integer> ent : getEntities(player, im.getChallenges()).res2.entrySet()) {
+					reason = reason.concat(Config.MESSAGES.CHALLENGE_MISSING_ITEM.value()
+							.replace("$player$", player.getDisplayName())
+							.replace("$challenge$", displayName)
+							.replace("$amount$", String.valueOf(ent.getValue()))
+							.replace("$item$", ent.getKey().getName())
+							.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+				}
 			}
 			
 			return reason;
@@ -406,7 +455,7 @@ public class Challenge {
 	
 	public void complete(Player player) {
 		
-		IslandManager im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player)) : null;
+		IslandManager im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? IslandManager.getByPlayer(player) : null;
 		
 		if (type == Type.onPlayer) {
 			getAllResult result = getAll(player.getInventory(), im.getChallenges());

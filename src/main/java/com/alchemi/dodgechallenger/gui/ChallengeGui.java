@@ -21,8 +21,6 @@ import com.alchemi.dodgechallenger.objects.Challenge.lockedResult;
 import com.alchemi.dodgechallenger.objects.DodgyEntity;
 import com.alchemi.dodgechallenger.objects.ItemFactory;
 
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-
 public class ChallengeGui extends GuiBase {
 
 	public ChallengeGui(main plugin, String name, int size) {
@@ -32,7 +30,7 @@ public class ChallengeGui extends GuiBase {
 	
 	void setContents(Player pl) {
 		
-		IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(pl));
+		IslandManager im = IslandManager.getByPlayer(pl);
 		im.checkRank();
 		
 		int i = 0;
@@ -199,7 +197,7 @@ public class ChallengeGui extends GuiBase {
 	}
 	
 	void setCommands(Player pl) {
-		IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(pl));
+		IslandManager im = IslandManager.getByPlayer(pl);
 		int i = 0;
 		for (RankManager rank : RankManager.getRanks()) {
 			i++;

@@ -68,7 +68,7 @@ public class DataManager extends DatabaseManager{
 	
 	@Override
 	public void completeChallenge(Island island, Challenge chall) {
-		System.out.println("Completing " + chall.getDisplayName());
+		main.messenger.print("Completing " + chall.getDisplayName());
 		
 		if (!loadedConfs.containsKey(island)) return;
 		

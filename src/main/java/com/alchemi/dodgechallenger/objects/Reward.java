@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.alchemi.al.Library;
 import com.alchemi.dodgechallenger.main;
+import com.alchemi.dodgechallenger.objects.ItemFactory;
 
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;

@@ -109,14 +109,12 @@ public class PapiExpansion extends PlaceholderExpansion{
 		return null;
 	}
 
-	public static IslandManager getIslandManagerFromPlayer(Player player) {
-		if (!me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) return null;
-		
-		return IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player));
+	private static IslandManager getIslandManagerFromPlayer(Player player) {
+		return IslandManager.getByPlayer(player);
 		
 	}
 	
-	public static IslandManager getIslandManagerFromOfflinePlayer(OfflinePlayer player) {
+	private static IslandManager getIslandManagerFromOfflinePlayer(OfflinePlayer player) {
 		if (!me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) return null;
 		return new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player), false);
 	}

@@ -22,7 +22,11 @@ import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
 import com.alchemi.dodgechallenger.events.DeRankEvent;
 import com.alchemi.dodgechallenger.events.RankupEvent;
+import com.alchemi.dodgechallenger.listeners.PrefixListener;
+import com.alchemi.dodgechallenger.managers.IslandManager;
+import com.alchemi.dodgechallenger.meta.IslandMeta;
 import com.alchemi.dodgechallenger.meta.PrefixMeta;
+import com.alchemi.dodgechallenger.meta.TaskIntMeta;
 
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.event.island.IslandCreateEvent;
@@ -31,7 +35,6 @@ import me.goodandevil.skyblock.api.event.player.PlayerIslandJoinEvent;
 import me.goodandevil.skyblock.api.event.player.PlayerIslandLeaveEvent;
 import me.goodandevil.skyblock.api.island.Island;
 import me.goodandevil.skyblock.api.island.IslandEnvironment;
-import me.goodandevil.skyblock.api.island.IslandManager;
 import me.goodandevil.skyblock.api.island.IslandRole;
 import me.goodandevil.skyblock.api.island.IslandWorld;
 
@@ -41,7 +44,6 @@ public class IslandEvents implements Listener{
 		
 		if (main.chatEnabled) {
 			String pref = main.chat.getPlayerPrefix(player);
-			System.out.println(Library.getMeta(player, PrefixMeta.class).asString());
 			if (!pref.contains(main.rankTags.get(rank))) main.chat.setPlayerPrefix(player, main.rankTags.get(rank) + Library.getMeta(player, PrefixMeta.class).asString());
 		} else {
 			String pref = player.getDisplayName();
@@ -52,9 +54,11 @@ public class IslandEvents implements Listener{
 	public static void removeRankPrefix(Player player) {
 		
 		if (main.chatEnabled) {
-			if (Library.getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
+			System.out.println(player);
+			if (Library. getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
 			
 		} else {
+			
 			if (Library.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(Library.getMeta(player, PrefixMeta.class).asString());
 		}
 	}
@@ -68,19 +72,25 @@ public class IslandEvents implements Listener{
 		}
 		
 		
-		if (IslandManager.hasIsland(e.getPlayer())) {
-			if (com.alchemi.dodgechallenger.managers.IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer())) == null) {
-				new com.alchemi.dodgechallenger.managers.IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
+			e.getPlayer().setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(e.getPlayer()), 0, 200)));
+			if (IslandManager.getByPlayer(e.getPlayer()) == null) {
+				e.getPlayer().setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()))));
+				
 			}
 			
-			com.alchemi.dodgechallenger.managers.IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer())).checkRank();
+			IslandManager.getByPlayer(e.getPlayer()).checkRank();
 			
 			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				
 				if (main.chatEnabled) {
+					
 					main.chat.setPlayerPrefix(e.getPlayer(), main.chat.getGroupPrefix(e.getPlayer().getLocation().getWorld(), main.chat.getPlayerGroups(e.getPlayer())[0]));
+					
 				}
-				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.instance, main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
+				
+				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
 				
 				setRankPrefix(e.getPlayer(), rank);
 			}
@@ -91,10 +101,12 @@ public class IslandEvents implements Listener{
 	@EventHandler
 	public static void playerLogout(PlayerQuitEvent e) {
 		
+		if (Library.hasMeta(e.getPlayer(), TaskIntMeta.class)) Bukkit.getScheduler().cancelTask(Library.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
+		
 		removeRankPrefix(e.getPlayer());
 		
-		if (IslandManager.hasIsland(e.getPlayer())) {
-			com.alchemi.dodgechallenger.managers.IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer())).save();
+		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
+			IslandManager.getByPlayer(e.getPlayer()).save();
 		}
 		
 		if (Bukkit.getOnlinePlayers().size() <= 1) {
@@ -189,7 +201,7 @@ public class IslandEvents implements Listener{
 	public static void onChallengeComplete(ChallengeCompleteEvent e) {
 		e.getReward().give(e.getPlayer());
 		
-		com.alchemi.dodgechallenger.managers.IslandManager im = e.getIslandManager();
+		IslandManager im = e.getIslandManager();
 		im.addChallenge(e.getChallenge());
 		
 		main.dbm.completeChallenge(e.getIsland(), e.getChallenge());

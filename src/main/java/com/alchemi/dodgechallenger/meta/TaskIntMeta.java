@@ -3,10 +3,10 @@ package com.alchemi.dodgechallenger.meta;
 import com.alchemi.al.objects.meta.BaseMeta;
 import com.alchemi.dodgechallenger.main;
 
-public class PrefixMeta extends BaseMeta {
-	
-	public PrefixMeta(String prefix) {
-		super(main.instance, prefix);
-		
+public class TaskIntMeta extends BaseMeta {
+
+	public TaskIntMeta(int taskid) {
+		super(main.instance, taskid);
 	}
+
 }

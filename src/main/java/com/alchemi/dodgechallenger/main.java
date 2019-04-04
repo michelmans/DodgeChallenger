@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -28,8 +27,6 @@ import com.alchemi.dodgechallenger.managers.DatabaseManager;
 import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.IslandManager;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 
@@ -110,16 +107,6 @@ public class main extends JavaPlugin {
 		getCommand("challenges").setExecutor(new CommandChallenge());
 		getCommand("chadmin").setExecutor(new CommandAdmin());
 		getCommand("chadmin").setTabCompleter(new AdminTabComplete());
-		
-		for (Player player : getServer().getOnlinePlayers()) {
-			if (IslandManager.hasIsland(player)) {
-				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
-				IslandEvents.setRankPrefix(player, rank);
-			
-				new com.alchemi.dodgechallenger.managers.IslandManager(SkyBlockAPI.getIslandManager().getIsland(player));
-				
-			}
-		}
 		
 		for (RankManager rank : RankManager.getRanks()) {
 			rankTags.put(rank.rank(), Config.MESSAGES.RANK_TAG.value()
