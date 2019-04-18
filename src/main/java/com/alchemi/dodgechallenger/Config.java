@@ -342,7 +342,7 @@ public class Config {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
 				
 				if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-					IslandEvents.setRankPrefix(player, rank);
+					IslandEvents.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
 				}
 				
 				if (com.alchemi.dodgechallenger.managers.IslandManager.getByPlayer(player) == null) {

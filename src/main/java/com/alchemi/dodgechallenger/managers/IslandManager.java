@@ -45,23 +45,23 @@ public class IslandManager {
 		rank = main.dbm.getRank(island);
 		islands.put(island, this);
 		this.island = island;
-		
+		checkRank();
 	}
 	
-	public IslandManager(Island island, boolean register) {
+	public IslandManager(me.goodandevil.skyblock.island.Island island) {
+		
 		if (!Config.DATABASE.ENABLED.asBoolean()) {
-			((DataManager) main.dbm).loadIsland(island);
+			((DataManager) main.dbm).loadIsland(island.getAPIWrapper());
 		}
 		
-		List<String> cc = main.dbm.getCCompleted(island);
+		List<String> cc = main.dbm.getCCompleted(island.getAPIWrapper());
 		if (cc != null && !cc.isEmpty()) {
 			for (String s : cc) {
 				challenges.add(Challenge.getChallengeFromID(s));
 			}
 		}
-		rank = main.dbm.getRank(island);
-		if (register) islands.put(island, this);
-		this.island = island;
+		rank = main.dbm.getRank(island.getAPIWrapper());
+		this.island = island.getAPIWrapper();
 		
 	}
 	
@@ -80,7 +80,7 @@ public class IslandManager {
 		
 			if (num >= 8 - Config.OPTIONS.RANKLEEWAY.asInt() && challenges.containsAll(req)) {
 				
-				main.messenger.print("Correct rank is: " + RankManager.getRank(rm.rank() + 1).getDisplayName());
+				//if (rm != null && RankManager.getRank(rm.rank() + 1) != null) main.messenger.print("Correct rank is: " + RankManager.getRank(rm.rank() + 1).getDisplayName());
 				
 				int oRank = rank;
 				setRank(rm.rank() + 1);
@@ -141,7 +141,8 @@ public class IslandManager {
 	}
 	
 	public static IslandManager getByIsland(Island island) {
-		return islands.size() > 0 ? islands.containsKey(island) ? islands.get(island) : null : null;
+		
+		return islands.containsKey(island) ? islands.get(island) : new IslandManager(island.getIsland());
 	}
 	
 	public static IslandManager getByPlayer(Player player) {
@@ -178,6 +179,11 @@ public class IslandManager {
 	 */
 	public int getRank() {
 		return rank;
+	}
+	
+	public RankManager getRankManager() {
+		if (RankManager.getRanks().size() <= rank) return RankManager.getRank(RankManager.getRanks().size() - 1);
+		return RankManager.getRank(rank);
 	}
 
 	/**

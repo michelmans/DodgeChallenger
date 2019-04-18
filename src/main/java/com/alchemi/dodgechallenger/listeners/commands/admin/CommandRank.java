@@ -1,7 +1,7 @@
 package com.alchemi.dodgechallenger.listeners.commands.admin;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.dodgechallenger.Config;
@@ -10,7 +10,7 @@ import com.alchemi.dodgechallenger.objects.Challenge;
 
 public class CommandRank {
 
-	public static boolean perform(CommandSender sender, Player player, String[] copyOfRange) {
+	public static boolean perform(CommandSender sender, OfflinePlayer player, String[] copyOfRange) {
 		
 		if (player == null || copyOfRange.length < 1) {
 			sender.sendMessage(Messenger.cc(Config.MESSAGES.COMMANDS_WRONG_FORMAT.value() + CommandAdmin.rankUsage));

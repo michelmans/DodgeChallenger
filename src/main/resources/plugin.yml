@@ -6,7 +6,7 @@ author: Alchemi
 description: A challenges plugin for FabledSkyBlock
 depend: [FabledSkyBlock]
 
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, LuckPerms]
 
 commands:
   challenges:

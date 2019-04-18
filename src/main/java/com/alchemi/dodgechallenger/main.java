@@ -3,30 +3,39 @@ package com.alchemi.dodgechallenger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alchemi.al.configurations.Messenger;
-import com.alchemi.dodgechallenger.gui.GuiListener;
+import com.alchemi.al.configurations.SexyConfiguration;
+import com.alchemi.al.objects.GUI.GUIListener;
+import com.alchemi.dodgechallenger.listeners.LuckPermsListener;
+import com.alchemi.dodgechallenger.listeners.PrefixListener;
 import com.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
 import com.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import com.alchemi.dodgechallenger.listeners.events.IslandEvents;
 import com.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
 import com.alchemi.dodgechallenger.managers.DataManager;
 import com.alchemi.dodgechallenger.managers.DatabaseManager;
+import com.alchemi.dodgechallenger.managers.IslandManager;
 import com.alchemi.dodgechallenger.managers.RankManager;
+import com.alchemi.dodgechallenger.meta.IslandMeta;
+import com.alchemi.dodgechallenger.meta.PrefixMeta;
+import com.alchemi.dodgechallenger.meta.TaskIntMeta;
 import com.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 
+import me.goodandevil.skyblock.api.SkyBlockAPI;
+import me.lucko.luckperms.api.LuckPermsApi;
+import me.lucko.luckperms.api.User;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 
@@ -44,17 +53,21 @@ public class main extends JavaPlugin {
 	public static Chat chat;
 	public static boolean chatEnabled;
 	
+	public static LuckPermsApi lucky;
+	public static boolean luckPermsEnabled;
+	public LuckPermsListener lpListener;
+	
 	public static DatabaseManager dbm;
 	
 	public static final int CONFIG_FILE_VERSION = 4;
 	public static final int MESSAGES_FILE_VERSION = 8;
 	public static final int CHALLENGES_FILE_VERSION = 6;
 	
-	public static Map<Integer, String> rankTags = new HashMap<Integer, String>();
-	
 	public List<ShapelessRecipe> recipes = new ArrayList<ShapelessRecipe>();
 	
-	public GuiListener guiListener;
+	public GUIListener guiListener;
+	
+	public SexyConfiguration GIVE_QUEUE;
 	
 	@Override
 	public void onEnable() {
@@ -65,12 +78,15 @@ public class main extends JavaPlugin {
 		MESSAGES_FILE = new File(getDataFolder(), "messages.yml");
 		CHALLENGES_FILE = new File(getDataFolder(), "challenges.yml");
 		
+		GIVE_QUEUE = new SexyConfiguration(new File(getDataFolder(), "give_queue.yml"));
+		
 		messenger = new Messenger(this);
 		messenger.print("Enabling DodgeChallenger");
 		
 		try {
 			Config.enable();
 			messenger.print("Configs enabled.");
+			if (!GIVE_QUEUE.getFile().exists()) GIVE_QUEUE.getFile().createNewFile();
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
 			getServer().getPluginManager().disablePlugin(this);
@@ -99,7 +115,7 @@ public class main extends JavaPlugin {
             messenger.print("Placeholder registered.");
         }
 		
-		guiListener = new GuiListener(this);
+		guiListener = new GUIListener(this);
 		
 		getServer().getPluginManager().registerEvents(new IslandEvents(), this);
 		getServer().getPluginManager().registerEvents(guiListener, this);
@@ -108,16 +124,14 @@ public class main extends JavaPlugin {
 		getCommand("chadmin").setExecutor(new CommandAdmin());
 		getCommand("chadmin").setTabCompleter(new AdminTabComplete());
 		
-		for (RankManager rank : RankManager.getRanks()) {
-			rankTags.put(rank.rank(), Config.MESSAGES.RANK_TAG.value()
-					.replace("$rank$", rank.getDisplayName())
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
-		}
 		messenger.print("Ranks and challenges created and registered.");
 		
+		if (luckPermsEnabled = setupLuckPerms()) {
+			messenger.print("LuckPerms detected!");
+			lpListener = new LuckPermsListener();
+		}
 		
 		//recipes
-		
 		Bukkit.resetRecipes();
 		
 		ItemStack item = new ItemStack(Material.NAME_TAG);
@@ -160,6 +174,29 @@ public class main extends JavaPlugin {
 		messenger.print("Initialization complete.");
 		
 		
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			
+			if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) {
+
+				if (!luckPermsEnabled) player.setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(player), 0, 200)));
+				if (IslandManager.getByPlayer(player) == null) {
+					player.setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player))));
+				}
+				
+				IslandManager.getByPlayer(player).checkRank();
+				
+				if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+					int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
+					
+					player.setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(player) : player.getDisplayName()));
+					
+					IslandEvents.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
+				}
+				
+			}
+		}
+		
+		
 	}
 	
 	@Override
@@ -168,12 +205,22 @@ public class main extends JavaPlugin {
 			im.save();
 		}
 		
+		lpListener.unregister();
+		
 		main.messenger.print("Running data queries: " + main.dbm.querySize());
 		dbm.runQuery();
 	}
 	
-	private boolean setupEconomy()
-    {
+	private boolean setupLuckPerms() {
+		RegisteredServiceProvider<LuckPermsApi> luckyProvider = getServer().getServicesManager().getRegistration(LuckPermsApi.class);
+		if (luckyProvider != null) {
+			lucky = luckyProvider.getProvider();
+		}
+		
+		return lucky != null;
+	}
+	
+	private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
             eco = economyProvider.getProvider();
@@ -188,6 +235,13 @@ public class main extends JavaPlugin {
 			chat = chatProvider.getProvider();
 		}
 		return (chat != null);
+	}
+	
+	public User loadLuckyUser(Player player) {
+		if (player.isOnline()) {
+			return lucky.getUserManager().getUser(player.getUniqueId());
+		}
+		throw new IllegalStateException("Player is offline.");
 	}
 	
 }

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.alchemi</groupId>
   <artifactId>DodgeChallenger</artifactId>
-  <version>1.6.7-beta</version>
+  <version>1.7.1</version>
   <name>DodgeChallenger</name>
   <build>
     <finalName>${project.name}</finalName>
@@ -79,6 +79,14 @@
       <version>5.1.41</version>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+        <groupId>me.lucko.luckperms</groupId>
+        <artifactId>luckperms-api</artifactId>
+        <version>LATEST</version>
+        <scope>provided</scope>
+    </dependency>
+    
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>

@@ -1,7 +1,11 @@
 package com.alchemi.dodgechallenger.listeners.events;
 
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Animals;
@@ -24,6 +28,7 @@ import com.alchemi.dodgechallenger.events.DeRankEvent;
 import com.alchemi.dodgechallenger.events.RankupEvent;
 import com.alchemi.dodgechallenger.listeners.PrefixListener;
 import com.alchemi.dodgechallenger.managers.IslandManager;
+import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.meta.IslandMeta;
 import com.alchemi.dodgechallenger.meta.PrefixMeta;
 import com.alchemi.dodgechallenger.meta.TaskIntMeta;
@@ -37,29 +42,81 @@ import me.goodandevil.skyblock.api.island.Island;
 import me.goodandevil.skyblock.api.island.IslandEnvironment;
 import me.goodandevil.skyblock.api.island.IslandRole;
 import me.goodandevil.skyblock.api.island.IslandWorld;
+import me.lucko.luckperms.api.Node;
+import me.lucko.luckperms.api.User;
 
 public class IslandEvents implements Listener{
 
-	public static void setRankPrefix(Player player, int rank) {
+	public static void setRankPrefix(Player player, String rank) {
 		
-		if (main.chatEnabled) {
-			String pref = main.chat.getPlayerPrefix(player);
-			if (!pref.contains(main.rankTags.get(rank))) main.chat.setPlayerPrefix(player, main.rankTags.get(rank) + Library.getMeta(player, PrefixMeta.class).asString());
+		if (player == null) return;
+		
+		if (main.luckPermsEnabled) {
+			
+			User u = main.instance.loadLuckyUser(player);
+			
+			int maxi = 0;
+			String pref = "";
+			
+			for (@Nonnull Entry<Integer, String> node : u.getAllNodes().stream()
+					.filter(Node -> Node.isPrefix() && Node.appliesGlobally())
+					.map(Node::getPrefix)
+					.collect(Collectors.toSet())) {
+				
+				if (node.getKey() >= maxi) {
+					pref = node.getValue();
+					maxi = node.getKey();
+				}
+				
+			}
+			
+			maxi = 0;
+			String pref2 = "";
+			for (@Nonnull Entry<Integer, String> node : u.getOwnNodes().stream()
+					.filter(Node -> Node.isPrefix() && Node.isServerSpecific() && Node.getServer().toString().equals("skyblock"))
+					.map(Node::getPrefix)
+					.collect(Collectors.toSet())) {
+
+				if (node.getKey() >= maxi) {
+					pref2 = node.getValue();
+					maxi = node.getKey();
+				}
+			}
+			
+			if (pref2.equals(rank + pref) || pref.contains(rank)) return;
+			
+			Node node = main.lucky.getNodeFactory().makePrefixNode(846, rank + pref).setServer("skyblock").build();
+			u.clearMatching(Node -> Node.isPrefix() && Node.getPrefix().getKey() == 846);
+			u.setPermission(node);
+			main.lucky.getUserManager().saveUser(u);
+			
 		} else {
-			String pref = player.getDisplayName();
-			if (!pref.contains(Messenger.cc(main.rankTags.get(rank)))) player.setDisplayName(Messenger.cc(main.rankTags.get(rank) + Library.getMeta(player, PrefixMeta.class).asString()));
+			if (main.chatEnabled) {
+				String pref = main.chat.getPlayerPrefix(player);
+				if (!pref.contains(rank)) main.chat.setPlayerPrefix(player, rank + Library.getMeta(player, PrefixMeta.class).asString());
+			} else {
+				String pref = player.getDisplayName();
+				if (!pref.contains(Messenger.cc(rank))) player.setDisplayName(Messenger.cc(rank + Library.getMeta(player, PrefixMeta.class).asString()));
+			}
 		}
 	}
 	
 	public static void removeRankPrefix(Player player) {
 		
-		if (main.chatEnabled) {
-			System.out.println(player);
-			if (Library. getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
+		if (player == null) return; 
+		
+		if (main.luckPermsEnabled) {
+			
+			return;
 			
 		} else {
-			
-			if (Library.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(Library.getMeta(player, PrefixMeta.class).asString());
+			if (main.chatEnabled) {
+				if (Library. getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
+				
+			} else {
+				
+				if (Library.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(Library.getMeta(player, PrefixMeta.class).asString());
+			}
 		}
 	}
 	
@@ -73,10 +130,10 @@ public class IslandEvents implements Listener{
 		
 		
 		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
-			e.getPlayer().setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(e.getPlayer()), 0, 200)));
+
+			if (!main.luckPermsEnabled) e.getPlayer().setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(e.getPlayer()), 0, 200)));
 			if (IslandManager.getByPlayer(e.getPlayer()) == null) {
 				e.getPlayer().setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()))));
-				
 			}
 			
 			IslandManager.getByPlayer(e.getPlayer()).checkRank();
@@ -84,15 +141,9 @@ public class IslandEvents implements Listener{
 			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
 				
-				if (main.chatEnabled) {
-					
-					main.chat.setPlayerPrefix(e.getPlayer(), main.chat.getGroupPrefix(e.getPlayer().getLocation().getWorld(), main.chat.getPlayerGroups(e.getPlayer())[0]));
-					
-				}
-				
 				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
 				
-				setRankPrefix(e.getPlayer(), rank);
+				setRankPrefix(e.getPlayer(), RankManager.getRank(rank).getPrefix());
 			}
 			
 		}
@@ -118,7 +169,7 @@ public class IslandEvents implements Listener{
 	@EventHandler
 	public static void islandCreate(IslandCreateEvent e) {
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-			setRankPrefix(e.getPlayer(), 0);
+			setRankPrefix(e.getPlayer(), RankManager.getFirst().getPrefix());
 		}
 		
 		main.dbm.newIsland(e.getIsland());
@@ -177,10 +228,6 @@ public class IslandEvents implements Listener{
 		
 		if (!(e.getEntity() instanceof Mob) || (e.getEntity() instanceof Animals)) return;
 		
-		if (e.getLocation().getBlock().getLightLevel() > 7) {
-			e.setCancelled(true);
-		}
-		
 		Island island = SkyBlockAPI.getIslandManager().getIslandAtLocation(e.getLocation());
 		if (island != null && e.getLocation().getWorld().equals(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND).getWorld()) 
 				&& e.getLocation().distance(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND)) <= 24) {
@@ -193,8 +240,9 @@ public class IslandEvents implements Listener{
 	public static void islandJoin(PlayerIslandJoinEvent e) {
 		
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-			setRankPrefix(e.getPlayer(), main.dbm.getRank(e.getIsland()));
+			setRankPrefix(e.getPlayer(), RankManager.getRank(main.dbm.getRank(e.getIsland())).getPrefix());
 		}
+		
 	}
 
 	@EventHandler
@@ -206,10 +254,10 @@ public class IslandEvents implements Listener{
 		
 		main.dbm.completeChallenge(e.getIsland(), e.getChallenge());
 		
-		if (!e.getRepeat()) {
+		if (!e.getRepeat() && e.getPlayer().isOnline()) {
 			if (Config.OPTIONS.BROADCAST_COMPLETION.asBoolean()) 
 				main.messenger.broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_BROADCAST_COMPLETED.value())
-					.replace("$player$", e.getPlayer().getDisplayName())
+					.replace("$player$", e.getPlayer().getPlayer().getDisplayName())
 					.replace("$challenge$", e.getChallenge().getDisplayName())
 					.replace("$rank$", e.getRankManager().getDisplayName())
 					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
@@ -234,19 +282,19 @@ public class IslandEvents implements Listener{
 			
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			
 			removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
-			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().rank());
+			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
 		}
 	}
 	
@@ -258,19 +306,19 @@ public class IslandEvents implements Listener{
 			
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
 				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().rank());
+				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			
 			removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
-			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().rank());
+			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
 		}
 	}
 	

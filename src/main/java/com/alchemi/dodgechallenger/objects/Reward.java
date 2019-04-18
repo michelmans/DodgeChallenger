@@ -1,5 +1,6 @@
 package com.alchemi.dodgechallenger.objects;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,13 +10,13 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.alchemi.al.Library;
 import com.alchemi.dodgechallenger.main;
-import com.alchemi.dodgechallenger.objects.ItemFactory;
 
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
@@ -106,18 +107,65 @@ public class Reward {
 		}
 	}
 	
-	public void give(Player player) {
-		if (items.size() > 0) {
-			for (ItemStack item : items) {
-				Library.giveItemStack(item, player);
+	@SuppressWarnings("unchecked")
+	public void give(OfflinePlayer player) {
+		
+		if (player.isOnline()) {
+		
+			if (items.size() > 0) {
+				for (ItemStack item : items) {
+					Library.giveItemStack(item, player.getPlayer());
+				}
 			}
+			if (money > 0 && main.eco != null) {
+				main.eco.depositPlayer(player, money);
+			}
+			if (xp > 0) {
+				player.getPlayer().giveExp(xp);
+			}
+		} else {
+			
+			if (money > 0 && main.eco != null) {
+				main.eco.depositPlayer(player, money);
+			}
+			
+			if (main.instance.GIVE_QUEUE.contains(player.getName())) {
+				
+				ConfigurationSection sec = main.instance.GIVE_QUEUE.getConfigurationSection(player.getName());
+				
+				if (xp > 0) {
+					int xp2 = sec.getInt("xp", 0);
+					sec.set("xp", xp2 + xp);
+				}
+				
+				if (items.size() > 0) {
+					List<ItemStack> items2 = (List<ItemStack>) sec.getList("items", new ArrayList<ItemStack>());
+					items2.addAll(items);
+					sec.set("items", items2);
+				}
+				main.instance.GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+			} else {
+				
+				ConfigurationSection sec = main.instance.GIVE_QUEUE.createSection(player.getName());
+				
+				if (xp > 0) {
+					sec.set("xp", xp);
+				}
+				
+				if (items.size() > 0) {
+					sec.set("items", items);
+				}
+				
+				main.instance.GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+				
+			}
+			
+			try {
+				main.instance.GIVE_QUEUE.save();
+			} catch (IOException e) {}
+			
 		}
-		if (money > 0 && main.eco != null) {
-			main.eco.depositPlayer(player, money);
-		}
-		if (xp > 0) {
-			player.giveExp(xp);
-		}
+		
 		if (commands.size() > 0) {
 			for (String cmd : commands) {
 				if (cmd.contains("\\{player\\}")) cmd = cmd.replaceAll("\\{player\\}", player.getName());
@@ -125,16 +173,19 @@ public class Reward {
 					Island is = SkyBlockAPI.getIslandManager().getIsland(player);
 					for (UUID uuid : is.getPlayersWithRole(IslandRole.MEMBER)) {
 						Player p = Bukkit.getPlayer(uuid);
+						if (!p.isOnline()) continue;
 						String command = cmd.replaceAll("\\{island\\}", p.getName());
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 					}
 					for (UUID uuid : is.getPlayersWithRole(IslandRole.OPERATOR)) {
 						Player p = Bukkit.getPlayer(uuid);
+						if (!p.isOnline()) continue;
 						String command = cmd.replaceAll("\\{island\\}", p.getName());
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 					}
 					for (UUID uuid : is.getPlayersWithRole(IslandRole.OWNER)) {
 						Player p = Bukkit.getPlayer(uuid);
+						if (!p.isOnline()) continue;
 						String command = cmd.replaceAll("\\{island\\}", p.getName());
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 					}

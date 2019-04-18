@@ -43,15 +43,18 @@ public class PapiExpansion extends PlaceholderExpansion{
 		if (id.equals("rank")) {
 			IslandManager im = getIslandManagerFromPlayer(p);
 			if (im == null) return "0";
+			im.checkRank();
 			return String.valueOf(im.getRank());
 		} else if (id.equals("stringed_rank")) {
 			IslandManager im = getIslandManagerFromPlayer(p);
 			if (im == null) return Messenger.cc(RankManager.getFirst().getDisplayName());
-			return Messenger.cc(RankManager.getRank(im.getRank()).getDisplayName());
+			im.checkRank();
+			return Messenger.cc(im.getRankManager().getDisplayName());
 		} else if (id.equals("stringed_rank_no_format")) {
 			IslandManager im = getIslandManagerFromPlayer(p);
 			if (im == null) return RankManager.getFirst().getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
-			return RankManager.getRank(im.getRank()).getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
+			im.checkRank();
+			return im.getRankManager().getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
 		} else if (id.equals("amount_challenges_completed")) {
 			IslandManager im = getIslandManagerFromPlayer(p);
 			if (im == null) return "0";
@@ -79,15 +82,18 @@ public class PapiExpansion extends PlaceholderExpansion{
 		if (id.equals("rank")) {
 			IslandManager im = getIslandManagerFromOfflinePlayer(p);
 			if (im == null) return "0";
+			im.checkRank();
 			return String.valueOf(im.getRank());
 		} else if (id.equals("stringed_rank")) {
 			IslandManager im = getIslandManagerFromOfflinePlayer(p);
 			if (im == null) return Messenger.cc(RankManager.getFirst().getDisplayName());
-			return Messenger.cc(RankManager.getRank(im.getRank()).getDisplayName());
+			im.checkRank();
+			return Messenger.cc(im.getRankManager().getDisplayName());
 		} else if (id.equals("stringed_rank_no_format")) {
 			IslandManager im = getIslandManagerFromOfflinePlayer(p);
 			if (im == null) return RankManager.getFirst().getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
-			return RankManager.getRank(im.getRank()).getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
+			im.checkRank();
+			return im.getRankManager().getDisplayName().replaceAll("&[0123456789abcdefklmnor]", "");
 		} else if (id.equals("amount_challenges_completed")) {
 			IslandManager im = getIslandManagerFromOfflinePlayer(p);
 			if (im == null) return "0";
@@ -116,7 +122,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 	
 	private static IslandManager getIslandManagerFromOfflinePlayer(OfflinePlayer player) {
 		if (!me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) return null;
-		return new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player), false);
+		return new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player));
 	}
 	
 }

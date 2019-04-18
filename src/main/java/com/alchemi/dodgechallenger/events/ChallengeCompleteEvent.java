@@ -1,5 +1,6 @@
 package com.alchemi.dodgechallenger.events;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -17,13 +18,13 @@ public class ChallengeCompleteEvent extends Event{
 	
 	private final boolean repeat;
 	private final Challenge challenge;
-	private final Player player;
+	private final OfflinePlayer player;
 	private final Island island;
 	private final Reward reward;
 	private final IslandManager islandManager;
 	private final RankManager rankManager;
 	
-	public ChallengeCompleteEvent(Challenge challenge, Player player, Island island) {
+	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, Island island) {
 		this.challenge = challenge;
 		this.player = player;
 		this.island = island;
@@ -54,8 +55,16 @@ public class ChallengeCompleteEvent extends Event{
 		return islandManager;
 	}
 	
-	public Player getPlayer() {
+	public OfflinePlayer getPlayer() {
 		return player;
+	}
+	
+	public boolean isPlayerOnline() {
+		return player.isOnline();
+	}
+	
+	public Player getOnlinePlayer() {
+		return isPlayerOnline() ? player.getPlayer() : null;
 	}
 	
 	public Reward getReward() {

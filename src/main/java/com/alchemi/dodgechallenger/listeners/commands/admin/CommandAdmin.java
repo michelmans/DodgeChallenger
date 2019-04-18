@@ -3,6 +3,7 @@ package com.alchemi.dodgechallenger.listeners.commands.admin;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,6 +37,7 @@ public class CommandAdmin implements CommandExecutor{
 					+ reloadUsage + "\n    " + reloadDesc + "\n"
 									+ "&6=================================";
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
@@ -52,7 +54,7 @@ public class CommandAdmin implements CommandExecutor{
 				Player player = Bukkit.getPlayer(args[0]);
 				return CommandShow.perform(sender, player);
 			} else if (args.length >= 2) {
-				Player player = Bukkit.getPlayer(args[0]);
+				OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
 				
 				if (args[1].equals("complete")) {
 					return CommandComplete.perform(sender, player, Arrays.copyOfRange(args, 2, args.length));

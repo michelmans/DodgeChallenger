@@ -24,10 +24,12 @@ public class PrefixListener implements Runnable{
 		String prefixDef = Library.getMeta(player, PrefixMeta.class).asString();
 		String prefixCur = main.chatEnabled ? main.chat.getPlayerPrefix(player) : player.getDisplayName();
 		
-		if (!(main.rankTags.get(IslandManager.getByPlayer(player).getRank()) + prefixDef).equals(prefixCur)) {
+		System.out.println("GRRR");
+		
+		if (!(IslandManager.getByPlayer(player).getRankManager().getPrefix() + prefixDef).equals(prefixCur)) {
 			
 			player.setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(prefixCur));
-			IslandEvents.setRankPrefix(player, IslandManager.getByPlayer(player).getRank());
+			IslandEvents.setRankPrefix(player, IslandManager.getByPlayer(player).getRankManager().getPrefix());
 			
 		}
 		

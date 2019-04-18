@@ -21,6 +21,8 @@ public class RankManager implements Listener{
 	
 	private final String displayName;
 	private final Material displayMaterial;
+	private final String prefix;
+	
 	private List<Challenge> challenges = new ArrayList<Challenge>();
 	private List<Challenge> requires = new ArrayList<Challenge>();
 	private int size = 0;
@@ -28,6 +30,10 @@ public class RankManager implements Listener{
 	public RankManager(ConfigurationSection sec) {
 		this.section = sec;
 		this.displayName = sec.getString("name");
+		this.prefix = Config.MESSAGES.RANK_TAG.value()
+				.replace("$rank$", displayName)
+				.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
+		
 		this.displayMaterial = Material.getMaterial(sec.getString("displayItem"));
 		
 		for (String chall : sec.getConfigurationSection("challenges").getValues(false).keySet()) {
@@ -69,11 +75,15 @@ public class RankManager implements Listener{
 	}
 	
 	public static RankManager getRank(int tier) {
-		return ranks.size() > tier ? ranks.get(tier) : null;
+		return ranks.size() > tier ? ranks.get(tier) : ranks.get(ranks.size() - 1);
 	}
 	
 	public static int getRankTier(String rank) {
 		return rankIDs.size() > 0 ? rankIDs.containsKey(rank) ? rankIDs.get(rank) : 0 : 0; 
+	}
+	
+	public String getPrefix() {
+		return prefix;
 	}
 	
 	public int getChalls() {

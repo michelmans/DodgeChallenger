@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -396,12 +397,12 @@ public class Challenge {
 		}
 	}
 	
-	public lockedResult getLocked(IslandManager island, Player player) {
+	public lockedResult getLocked(IslandManager island, OfflinePlayer oPlayer) {
 		
 		//RANK
 		if (island.getRank() < this.rank.rank()) {
 			String reason = (Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_LOCKED_RANK.value())
-					.replace("$player$", player.getDisplayName())
+					.replace("$player$", oPlayer.getName())
 					.replace("$rank$", rank.getDisplayName())
 					.replace("$c_challenge$", displayName)
 					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
@@ -420,7 +421,7 @@ public class Challenge {
 		
 		if (rC.size() == 1) { //SINGLE CHALLENGE
 			String reason = Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGE.value()
-					.replace("$player$", player.getDisplayName())
+					.replace("$player$", oPlayer.getName())
 					.replace("$challenge$", rC.get(0).getDisplayName())
 					.replace("$c_challenge$", displayName)
 					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
@@ -443,7 +444,7 @@ public class Challenge {
 			String challenges = cs;
 			
 			String reason = Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGES.value()
-					.replace("$player$", player.getDisplayName())
+					.replace("$player$", oPlayer.getName())
 					.replace("$challenges$", challenges)
 					.replace("$c_challenge$", displayName)
 					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
@@ -492,8 +493,8 @@ public class Challenge {
 		}
 	}
 	
-	public void forceComplete(Player player) { 
-		if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+	public void forceComplete(OfflinePlayer player) { 
+		if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null") && player.isOnline()) player.getPlayer().playSound(player.getPlayer().getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 		Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this, player, SkyBlockAPI.getIslandManager().getIsland(player)));
 	}
 	

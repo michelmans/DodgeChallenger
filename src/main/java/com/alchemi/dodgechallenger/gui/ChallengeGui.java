@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.al.objects.SexyRunnable;
+import com.alchemi.al.objects.GUI.GUIBase;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
+import com.alchemi.dodgechallenger.managers.DataManager;
 import com.alchemi.dodgechallenger.managers.IslandManager;
 import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.objects.Challenge;
@@ -21,16 +25,46 @@ import com.alchemi.dodgechallenger.objects.Challenge.lockedResult;
 import com.alchemi.dodgechallenger.objects.DodgyEntity;
 import com.alchemi.dodgechallenger.objects.ItemFactory;
 
-public class ChallengeGui extends GuiBase {
+import me.goodandevil.skyblock.api.SkyBlockAPI;
 
-	public ChallengeGui(main plugin, String name, int size) {
-		super(plugin, Messenger.cc(name), size);
-		plugin.guiListener.registerGui(this);
+public class ChallengeGui extends GUIBase {
+	
+	private IslandManager im = null;
+	
+	public ChallengeGui(OfflinePlayer player) {
+		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, null);
+		main.instance.guiListener.registerGui(this);
+		
+		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
+		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
+		
+		setContents();
+		setCommands();
+		
+		openGUI();
+		
 	}
 	
-	void setContents(Player pl) {
+	public ChallengeGui(OfflinePlayer player, CommandSender sender) {
+		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, sender);
+		main.instance.guiListener.registerGui(this);
 		
-		IslandManager im = IslandManager.getByPlayer(pl);
+		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
+		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
+		
+		System.out.println(DataManager.islandToId(im.getIsland()));
+		
+		setContents();
+		
+		openGUI();
+		
+	}
+	
+	@Override
+	public void setContents() {
+		
+		if (im == null) return;
+		
 		im.checkRank();
 		
 		int i = 0;
@@ -44,10 +78,18 @@ public class ChallengeGui extends GuiBase {
 				//CHALLENGE
 				if (rr.getChallenges().size() == 1) { //SINGLE CHALLENGE
 					
-					lore.add(Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGE.value().replace("$player$", pl.getDisplayName())
-							.replace("$challenge$", rr.getChallenges().get(0).getDisplayName())
-							.replace("$c_challenge$", rank.getDisplayName())
-							.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+					if (!player.isOnline()) {
+						lore.add(Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGE.value().replace("$player$", player.getName())
+								.replace("$challenge$", rr.getChallenges().get(0).getDisplayName())
+								.replace("$c_challenge$", rank.getDisplayName())
+								.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+					} else {
+						lore.add(Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGE.value().replace("$player$", player.getPlayer().getDisplayName())
+								.replace("$challenge$", rr.getChallenges().get(0).getDisplayName())
+								.replace("$c_challenge$", rank.getDisplayName())
+								.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+					}
+					
 
 									
 				} else if (rr.getChallenges().size() > 1) { //MULTIPLE CHALLENGES
@@ -65,7 +107,7 @@ public class ChallengeGui extends GuiBase {
 					
 					String challenges = cs;
 					
-					lore.add(Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGES.value().replace("$player$", pl.getDisplayName())
+					lore.add(Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGES.value().replace("$player$", player.getName())
 							.replace("$challenges$", challenges)
 							.replace("$c_challenge$", rank.getDisplayName())
 							.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
@@ -78,7 +120,7 @@ public class ChallengeGui extends GuiBase {
 			
 			for (Challenge c : rank.getChallenges()) {
 				List<String> lore = new ArrayList<String>();
-				lockedResult lr = c.getLocked(im, pl);
+				lockedResult lr = c.getLocked(im, player);
 								
 				if (lr.res1) {
 					if (c.hasOffset()) continue;
@@ -130,8 +172,8 @@ public class ChallengeGui extends GuiBase {
 								lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_LORE_REWARD_TEXT.value()).replace("$text$", s.replaceAll("\\$currency\\$", main.eco.currencyNameSingular())));
 							}
 							
-							if (c.canCompleteChallenge(pl, im)) lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANCOMPLETE.value()));
-							else lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANNOTCOMPLETE.value()));
+							if (player.isOnline() && (sender instanceof Player && (Player)sender != player.getPlayer()) && c.canCompleteChallenge(player.getPlayer(), im)) lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANCOMPLETE.value()));
+							else if (player.isOnline() && (sender instanceof Player && (Player)sender != player.getPlayer())) lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANNOTCOMPLETE.value()));
 							
 							lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_COMPLETED.value().replaceAll("\\$amount\\$", String.valueOf(c.amountCompleted(im.getChallenges())))));
 							
@@ -177,7 +219,7 @@ public class ChallengeGui extends GuiBase {
 						for (String s : c.getRewardText().split("\\|")) {
 							lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_LORE_REWARD_TEXT.value()).replace("$text$", s.replaceAll("\\$currency\\$", main.eco.currencyNameSingular())));
 						}
-						if (c.canCompleteChallenge(pl, im)) {
+						if (player.isOnline() && (sender instanceof Player && (Player)sender != player.getPlayer()) && c.canCompleteChallenge(player.getPlayer(), im)) {
 							lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANCOMPLETE.value()));
 						} else {
 							lore.add(Messenger.cc(Config.MESSAGES.CHALLENGE_CANNOTCOMPLETE.value()));
@@ -196,19 +238,21 @@ public class ChallengeGui extends GuiBase {
 		
 	}
 	
-	void setCommands(Player pl) {
-		IslandManager im = IslandManager.getByPlayer(pl);
+	@Override
+	public void setCommands() {
+		if (im == null) return;
+		
 		int i = 0;
 		for (RankManager rank : RankManager.getRanks()) {
 			i++;
 			for (Challenge c : rank.getChallenges()) {
 				
-				lockedResult lr = c.getLocked(im, pl);
+				lockedResult lr = c.getLocked(im, player);
 				if (lr.res1) {
 					
 					if (c.hasOffset()) continue;
 					
-					commands.put(contents.get(i), new SexyRunnable() {
+					commands.put(i, new SexyRunnable() {
 						
 						@Override
 						public void run(Object... args) {
@@ -218,13 +262,13 @@ public class ChallengeGui extends GuiBase {
 							
 						}
 					});
-					arguments.put(contents.get(i), new Object[] {pl});
+					arguments.put(i, new Object[] {player.getPlayer()});
 					
 				} else {
 					if (c.hasOffset()) i--;
 						
-					commands.put(contents.get(i), complete);
-					arguments.put(contents.get(i), new Object[] {c, pl});
+					commands.put(i, complete);
+					arguments.put(i, new Object[] {c, player.getPlayer()});
 					
 				}
 				
@@ -233,25 +277,19 @@ public class ChallengeGui extends GuiBase {
 		}
 	}
 	
+	public void openGUI() {
+		if (sender instanceof Player) super.openGUI((Player) sender);
+		else if (player.isOnline()) super.openGUI(player.getPlayer());
+	}
+
 	@Override
-	public void openGUI(Player pl) {
-		setContents(pl);
-		setCommands(pl);
-		super.openGUI(pl);
+	public void onClose() {
+		
+		main.instance.guiListener.unregisterGui(this);
+		SkyBlockAPI.getImplementation().getIslandManager().unloadIsland(this.im.getIsland().getIsland(), Bukkit.getOfflinePlayer(this.im.getIsland().getOwnerUUID()));
+		
 	}
 	
-	@Override
-	public void openGUI(CommandSender sender, Player player) {
-		setContents(player);
-		super.openGUI(sender, player);
-	}
-
-	@Override
-	void setContents() {}
-
-	@Override
-	void setCommands() {}
-
 	SexyRunnable complete = new SexyRunnable() {
 		
 		@Override
@@ -259,8 +297,8 @@ public class ChallengeGui extends GuiBase {
 			//Challenge, Player
 			
 			((Challenge)args[0]).complete((Player) args[1]);
-			setContents((Player) args[1]);
-			setCommands((Player) args[1]);
+			setContents();
+			setCommands();
 			for (int slot = 0; slot < guiSize; slot++) {
 				if (contents.containsKey(slot)) getGui().setItem(slot, contents.get(slot));
 				
@@ -269,4 +307,5 @@ public class ChallengeGui extends GuiBase {
 		}
 	};
 
+	
 }
