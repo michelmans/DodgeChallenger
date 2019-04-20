@@ -321,7 +321,7 @@ public class Challenge {
 			return requiredEntities.isEmpty() ? getBlocks(player.getLocation(), im.getChallenges()).res1 : getBlocks(player.getLocation(), im.getChallenges()).res1 && getEntities(player, im.getChallenges()).res1;
 			
 		} else {
-			return SkyBlockAPI.getIslandManager().getIsland(player).getLevel().getLevel() >= requiredLevel;
+			return im.getIsland().getLevel().getLevel() >= requiredLevel;
 		}
 	}
 	

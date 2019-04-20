@@ -32,6 +32,7 @@ import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.meta.IslandMeta;
 import com.alchemi.dodgechallenger.meta.PrefixMeta;
 import com.alchemi.dodgechallenger.meta.TaskIntMeta;
+import com.drtshock.playervaults.vaultmanagement.VaultManager;
 
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.event.island.IslandCreateEvent;
@@ -73,7 +74,7 @@ public class IslandEvents implements Listener{
 			maxi = 0;
 			String pref2 = "";
 			for (@Nonnull Entry<Integer, String> node : u.getOwnNodes().stream()
-					.filter(Node -> Node.isPrefix() && Node.isServerSpecific() && Node.getServer().toString().equals("skyblock"))
+					.filter(Node -> Node.isPrefix() && Node.isServerSpecific() && Node.getServer().toString().equals(Bukkit.getServer().getName()))
 					.map(Node::getPrefix)
 					.collect(Collectors.toSet())) {
 
@@ -85,7 +86,7 @@ public class IslandEvents implements Listener{
 			
 			if (pref2.equals(rank + pref) || pref.contains(rank)) return;
 			
-			Node node = main.lucky.getNodeFactory().makePrefixNode(846, rank + pref).setServer("skyblock").build();
+			Node node = main.lucky.getNodeFactory().makePrefixNode(846, rank + pref).setServer(Bukkit.getServer().getName()).build();
 			u.clearMatching(Node -> Node.isPrefix() && Node.getPrefix().getKey() == 846);
 			u.setPermission(node);
 			main.lucky.getUserManager().saveUser(u);
@@ -139,11 +140,10 @@ public class IslandEvents implements Listener{
 			IslandManager.getByPlayer(e.getPlayer()).checkRank();
 			
 			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
 				
 				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
 				
-				setRankPrefix(e.getPlayer(), RankManager.getRank(rank).getPrefix());
+				setRankPrefix(e.getPlayer(), IslandManager.getByPlayer(e.getPlayer()).getRankManager().getPrefix());
 			}
 			
 		}
@@ -185,6 +185,7 @@ public class IslandEvents implements Listener{
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
 				}
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
@@ -192,6 +193,7 @@ public class IslandEvents implements Listener{
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
 				}
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
@@ -199,6 +201,7 @@ public class IslandEvents implements Listener{
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
 				}
 			}
 		}

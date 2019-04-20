@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.alchemi</groupId>
   <artifactId>DodgeChallenger</artifactId>
-  <version>1.7.1</version>
+  <version>1.7.2</version>
   <name>DodgeChallenger</name>
   <build>
     <finalName>${project.name}</finalName>
@@ -42,6 +42,10 @@
       <id>placeholderapi</id>
       <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
+    <repository>
+      <id>songoda</id>
+      <url>http://repo.songoda.com/artifactory/private/</url>
+    </repository>
   </repositories>
   
   <dependencies>
@@ -69,7 +73,7 @@
     <dependency>
       <groupId>com.songoda</groupId>
       <artifactId>FabledSkyBlock</artifactId>
-      <version>LATEST</version>
+      <version>Build-73</version>
       <scope>provided</scope>
     </dependency>
     
@@ -90,6 +94,13 @@
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
+      <version>LATEST</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.drtshock</groupId>
+      <artifactId>PlayerVaultsX</artifactId>
       <version>LATEST</version>
       <scope>provided</scope>
     </dependency>

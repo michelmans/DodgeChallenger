@@ -53,6 +53,8 @@ public class main extends JavaPlugin {
 	public static Chat chat;
 	public static boolean chatEnabled;
 	
+	public static boolean playerVaults;
+	
 	public static LuckPermsApi lucky;
 	public static boolean luckPermsEnabled;
 	public LuckPermsListener lpListener;
@@ -130,6 +132,11 @@ public class main extends JavaPlugin {
 			messenger.print("LuckPerms detected!");
 			lpListener = new LuckPermsListener();
 		}
+		
+		playerVaults = getServer().getPluginManager().isPluginEnabled("PlayerVaultsX") 
+				|| getServer().getPluginManager().isPluginEnabled("PlayerVaults") 
+				|| getServer().getPluginManager().getPlugin("PlayerVaultsX") != null 
+				|| getServer().getPluginManager().getPlugin("PlayerVaults") != null;  
 		
 		//recipes
 		Bukkit.resetRecipes();

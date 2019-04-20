@@ -16,16 +16,17 @@
 	<classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar" sourcepath="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/milkbowl/vault/VaultAPI/1.7/VaultAPI-1.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT.jar" sourcepath="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/songoda/FabledSkyBlock/Build-70/FabledSkyBlock-Build-70.jar" sourcepath="/M2_REPO/fabledskyblock-master.zip"/>
+	<classpathentry kind="src" path="/Alchemic-Library"/>
+	<classpathentry kind="var" path="M2_REPO/com/songoda/FabledSkyBlock/Build-73/FabledSkyBlock-Build-73.jar"/>
 	<classpathentry kind="var" path="M2_REPO/be/maximvdw/placeholderapi/2.5.1/placeholderapi-2.5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/me/clip/placeholderapi/2.9.2/placeholderapi-2.9.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/milkbowl/vault/1.7.1/vault-1.7.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/net/nifheim/beelzebu/coins/2.3.2/coins-2.3.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/me/robin/leaderheads/1.0/leaderheads-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/songoda/epicspawners/5.7.1/epicspawners-5.7.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/bgsoftware/wildstacker-api/b14/wildstacker-api-b14.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/spigotmc/spigot/1.13.2/spigot-1.13.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar"/>
-	<classpathentry kind="var" path="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Alchemic-Library"/>
+	<classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar" sourcepath="M2_REPO/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4.jar" sourcepath="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/drtshock/PlayerVaultsX/4.1.1/PlayerVaultsX-4.1.1.jar" sourcepath="/M2_REPO/PlayerVaults-master"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
