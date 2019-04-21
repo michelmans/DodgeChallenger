@@ -68,7 +68,6 @@ public class DataManager extends DatabaseManager{
 	
 	@Override
 	public void completeChallenge(Island island, Challenge chall) {
-		main.messenger.print("Completing " + chall.getDisplayName());
 		
 		if (!loadedConfs.containsKey(island)) return;
 		
@@ -81,17 +80,11 @@ public class DataManager extends DatabaseManager{
 		c.set("completed", cc);
 		loadedConfs.put(island, c);
 		
-		query.add(new SexyRunnable() {
-			
-			@Override
-			public void run(Object... args) {
-				try {
-					c.save();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			c.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

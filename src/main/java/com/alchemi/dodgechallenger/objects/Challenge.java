@@ -312,6 +312,7 @@ public class Challenge {
 	}
 	
 	public boolean canCompleteChallenge(Player player, IslandManager im) {
+		
 		if (im.getChallenges().contains(this) && !this.isRepeatable()) return false;
 		
 		if (type == Type.onPlayer) {

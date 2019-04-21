@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.alchemi.dodgechallenger.main;
-import com.alchemi.dodgechallenger.listeners.events.IslandEvents;
+import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.managers.IslandManager;
 
 import me.lucko.luckperms.api.Node;
@@ -38,7 +38,7 @@ public class LuckPermsListener {
 			
 			IslandManager im = IslandManager.getByPlayer(player);
 			if (im != null) {
-				IslandEvents.setRankPrefix(player, im.getRankManager().getPrefix());
+				PrefixStuff.setRankPrefix(player, im.getRankManager().getPrefix());
 			}
 			
 		} catch (IllegalArgumentException ex) { ex.printStackTrace(); }

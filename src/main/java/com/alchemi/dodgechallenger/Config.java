@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.alchemi.al.configurations.SexyConfiguration;
-import com.alchemi.dodgechallenger.listeners.events.IslandEvents;
+import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.managers.RankManager;
 
 import me.goodandevil.skyblock.api.SkyBlockAPI;
@@ -309,6 +309,7 @@ public class Config {
 		}
 		DATABASE.ENABLED.set(false);
 		
+		
 	}
 	
 	public static void reload() {
@@ -342,7 +343,7 @@ public class Config {
 				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
 				
 				if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-					IslandEvents.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
+					PrefixStuff.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
 				}
 				
 				if (com.alchemi.dodgechallenger.managers.IslandManager.getByPlayer(player) == null) {

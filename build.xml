@@ -23,7 +23,11 @@
     <antcall><target name="package"></target></antcall>
     <antcall><target name="copy-to-test-server"></target></antcall>
   </target>
-  <target name="copy-to-test-server">
+  <target name="test">
+	<available file="${basedir}//..//Test-Server//plugins//${maven.build.finalName}.jar" property="test.test"></available>
+  </target>
+
+  <target name="copy-to-test-server" depends="test" if="test.test">
   	<echo message="Copying '${maven.build.dir}/${maven.build.finalName}.jar' to plugins folder"/>
   	<copy file="${maven.build.dir}/${maven.build.finalName}.jar" todir="${basedir}//..//Test-Server//plugins"/>
   </target>

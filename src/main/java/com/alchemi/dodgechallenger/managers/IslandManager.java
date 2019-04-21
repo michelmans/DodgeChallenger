@@ -14,7 +14,6 @@ import com.alchemi.dodgechallenger.events.DeRankEvent;
 import com.alchemi.dodgechallenger.events.RankupEvent;
 import com.alchemi.dodgechallenger.meta.IslandMeta;
 import com.alchemi.dodgechallenger.objects.Challenge;
-import com.google.common.collect.Lists;
 
 import me.goodandevil.skyblock.api.island.Island;
 
@@ -65,35 +64,34 @@ public class IslandManager {
 		
 	}
 	
-	public boolean checkRank() {
+	public int checkRank() {
 		
-		for (RankManager rm : Lists.reverse(RankManager.getRanks())) {
-			
+		for (int i = RankManager.getRanks().size() - 1; i >= 0; i--) {
+			RankManager rm = RankManager.getRank(i);
 			int num = 0;
+			
 			for (Challenge c : rm.getChallenges()) {
 				
 				if (challenges.contains(c)) num++;
 				
 			}
 			
-			List<Challenge> req = rm.rank() < RankManager.getRanks().size() - 1 ? RankManager.getRank(rm.rank() + 1).getRequires() : new ArrayList<Challenge>();
+			List<Challenge> req = rm.rank() < RankManager.getRanks().size() - 1 
+					? RankManager.getRank(rm.rank() + 1).getRequires() : new ArrayList<Challenge>();
 		
-			if (num >= 8 - Config.OPTIONS.RANKLEEWAY.asInt() && challenges.containsAll(req)) {
-				
-				//if (rm != null && RankManager.getRank(rm.rank() + 1) != null) main.messenger.print("Correct rank is: " + RankManager.getRank(rm.rank() + 1).getDisplayName());
+			if (num >= 8 - Config.OPTIONS.RANKLEEWAY.asInt() && challenges.containsAll(req)
+					&& rm.rank() < RankManager.getRanks().size() - 1) {
 				
 				int oRank = rank;
 				setRank(rm.rank() + 1);
 				
-				if (rank < rm.rank() + 1) Bukkit.getPluginManager().callEvent(new RankupEvent(island));
-				else if ( rank != rm.rank() + 1 ) Bukkit.getPluginManager().callEvent(new DeRankEvent(island, RankManager.getRank(oRank)));
-				
-				return false;
+				if (oRank < rank) Bukkit.getPluginManager().callEvent(new RankupEvent(island));
+				else if ( oRank > rank) Bukkit.getPluginManager().callEvent(new DeRankEvent(island, RankManager.getRank(oRank)));
 				
 			}
 			
 		}
-		return true;
+		return rank;
 		
 	}
 	
@@ -142,7 +140,7 @@ public class IslandManager {
 	
 	public static IslandManager getByIsland(Island island) {
 		
-		return islands.containsKey(island) ? islands.get(island) : new IslandManager(island.getIsland());
+		return islands.containsKey(island) ? islands.get(island) : null;
 	}
 	
 	public static IslandManager getByPlayer(Player player) {

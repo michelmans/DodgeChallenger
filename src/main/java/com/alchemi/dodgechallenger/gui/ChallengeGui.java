@@ -52,8 +52,6 @@ public class ChallengeGui extends GUIBase {
 		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
 		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
 		
-		System.out.println(DataManager.islandToId(im.getIsland()));
-		
 		setContents();
 		
 		openGUI();
@@ -271,7 +269,6 @@ public class ChallengeGui extends GUIBase {
 					arguments.put(i, new Object[] {c, player.getPlayer()});
 					
 				}
-				
 				i++;
 			}
 		}
@@ -286,7 +283,7 @@ public class ChallengeGui extends GUIBase {
 	public void onClose() {
 		
 		main.instance.guiListener.unregisterGui(this);
-		SkyBlockAPI.getImplementation().getIslandManager().unloadIsland(this.im.getIsland().getIsland(), Bukkit.getOfflinePlayer(this.im.getIsland().getOwnerUUID()));
+		if (!player.isOnline()) SkyBlockAPI.getImplementation().getIslandManager().unloadIsland(this.im.getIsland().getIsland(), Bukkit.getOfflinePlayer(this.im.getIsland().getOwnerUUID()));
 		
 	}
 	

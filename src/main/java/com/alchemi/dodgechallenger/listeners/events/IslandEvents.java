@@ -1,17 +1,12 @@
 package com.alchemi.dodgechallenger.listeners.events;
 
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -20,11 +15,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import com.alchemi.al.Library;
-import com.alchemi.al.configurations.Messenger;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
 import com.alchemi.dodgechallenger.events.DeRankEvent;
+import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.events.RankupEvent;
 import com.alchemi.dodgechallenger.listeners.PrefixListener;
 import com.alchemi.dodgechallenger.managers.IslandManager;
@@ -43,84 +38,9 @@ import me.goodandevil.skyblock.api.island.Island;
 import me.goodandevil.skyblock.api.island.IslandEnvironment;
 import me.goodandevil.skyblock.api.island.IslandRole;
 import me.goodandevil.skyblock.api.island.IslandWorld;
-import me.lucko.luckperms.api.Node;
-import me.lucko.luckperms.api.User;
 
 public class IslandEvents implements Listener{
 
-	public static void setRankPrefix(Player player, String rank) {
-		
-		if (player == null) return;
-		
-		if (main.luckPermsEnabled) {
-			
-			User u = main.instance.loadLuckyUser(player);
-			
-			int maxi = 0;
-			String pref = "";
-			
-			for (@Nonnull Entry<Integer, String> node : u.getAllNodes().stream()
-					.filter(Node -> Node.isPrefix() && Node.appliesGlobally())
-					.map(Node::getPrefix)
-					.collect(Collectors.toSet())) {
-				
-				if (node.getKey() >= maxi) {
-					pref = node.getValue();
-					maxi = node.getKey();
-				}
-				
-			}
-			
-			maxi = 0;
-			String pref2 = "";
-			for (@Nonnull Entry<Integer, String> node : u.getOwnNodes().stream()
-					.filter(Node -> Node.isPrefix() && Node.isServerSpecific() && Node.getServer().toString().equals(Bukkit.getServer().getName()))
-					.map(Node::getPrefix)
-					.collect(Collectors.toSet())) {
-
-				if (node.getKey() >= maxi) {
-					pref2 = node.getValue();
-					maxi = node.getKey();
-				}
-			}
-			
-			if (pref2.equals(rank + pref) || pref.contains(rank)) return;
-			
-			Node node = main.lucky.getNodeFactory().makePrefixNode(846, rank + pref).setServer(Bukkit.getServer().getName()).build();
-			u.clearMatching(Node -> Node.isPrefix() && Node.getPrefix().getKey() == 846);
-			u.setPermission(node);
-			main.lucky.getUserManager().saveUser(u);
-			
-		} else {
-			if (main.chatEnabled) {
-				String pref = main.chat.getPlayerPrefix(player);
-				if (!pref.contains(rank)) main.chat.setPlayerPrefix(player, rank + Library.getMeta(player, PrefixMeta.class).asString());
-			} else {
-				String pref = player.getDisplayName();
-				if (!pref.contains(Messenger.cc(rank))) player.setDisplayName(Messenger.cc(rank + Library.getMeta(player, PrefixMeta.class).asString()));
-			}
-		}
-	}
-	
-	public static void removeRankPrefix(Player player) {
-		
-		if (player == null) return; 
-		
-		if (main.luckPermsEnabled) {
-			
-			return;
-			
-		} else {
-			if (main.chatEnabled) {
-				if (Library. getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
-				
-			} else {
-				
-				if (Library.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(Library.getMeta(player, PrefixMeta.class).asString());
-			}
-		}
-	}
-	
 	@EventHandler
 	public static void playerLogin(PlayerJoinEvent e) {
 		for (ShapelessRecipe r : main.instance.recipes) {
@@ -134,7 +54,12 @@ public class IslandEvents implements Listener{
 
 			if (!main.luckPermsEnabled) e.getPlayer().setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(e.getPlayer()), 0, 200)));
 			if (IslandManager.getByPlayer(e.getPlayer()) == null) {
-				e.getPlayer().setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()))));
+				IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				if (im == null) im = new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				
+				e.getPlayer().setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(im));
+				
+				
 			}
 			
 			IslandManager.getByPlayer(e.getPlayer()).checkRank();
@@ -143,7 +68,7 @@ public class IslandEvents implements Listener{
 				
 				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
 				
-				setRankPrefix(e.getPlayer(), IslandManager.getByPlayer(e.getPlayer()).getRankManager().getPrefix());
+				PrefixStuff.setRankPrefix(e.getPlayer(), IslandManager.getByPlayer(e.getPlayer()).getRankManager().getPrefix());
 			}
 			
 		}
@@ -154,7 +79,7 @@ public class IslandEvents implements Listener{
 		
 		if (Library.hasMeta(e.getPlayer(), TaskIntMeta.class)) Bukkit.getScheduler().cancelTask(Library.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
 		
-		removeRankPrefix(e.getPlayer());
+		PrefixStuff.removeRankPrefix(e.getPlayer());
 		
 		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
 			IslandManager.getByPlayer(e.getPlayer()).save();
@@ -169,7 +94,7 @@ public class IslandEvents implements Listener{
 	@EventHandler
 	public static void islandCreate(IslandCreateEvent e) {
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-			setRankPrefix(e.getPlayer(), RankManager.getFirst().getPrefix());
+			PrefixStuff.setRankPrefix(e.getPlayer(), RankManager.getFirst().getPrefix());
 		}
 		
 		main.dbm.newIsland(e.getIsland());
@@ -181,7 +106,7 @@ public class IslandEvents implements Listener{
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 			
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
@@ -189,7 +114,7 @@ public class IslandEvents implements Listener{
 				}
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
@@ -197,7 +122,7 @@ public class IslandEvents implements Listener{
 				}
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
 				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
 					Bukkit.getPlayer(uuid).getInventory().clear();
 					Bukkit.getPlayer(uuid).getEnderChest().clear();
@@ -243,7 +168,7 @@ public class IslandEvents implements Listener{
 	public static void islandJoin(PlayerIslandJoinEvent e) {
 		
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-			setRankPrefix(e.getPlayer(), RankManager.getRank(main.dbm.getRank(e.getIsland())).getPrefix());
+			PrefixStuff.setRankPrefix(e.getPlayer(), RankManager.getRank(main.dbm.getRank(e.getIsland())).getPrefix());
 		}
 		
 	}
@@ -284,20 +209,20 @@ public class IslandEvents implements Listener{
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 			
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			
-			removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
-			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
+			PrefixStuff.removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
+			PrefixStuff.setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
 		}
 	}
 	
@@ -308,26 +233,26 @@ public class IslandEvents implements Listener{
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
 			
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
-				removeRankPrefix(Bukkit.getPlayer(uuid));
-				setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
 			}
 			
-			removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
-			setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
+			PrefixStuff.removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
+			PrefixStuff.setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
 		}
 	}
 	
 	public static void islandLeave(PlayerIslandLeaveEvent e) {
 		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-			removeRankPrefix(e.getPlayer());
+			PrefixStuff.removeRankPrefix(e.getPlayer());
 		}
 		
 	}

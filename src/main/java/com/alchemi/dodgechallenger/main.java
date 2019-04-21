@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.al.configurations.SexyConfiguration;
 import com.alchemi.al.objects.GUI.GUIListener;
+import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.listeners.LuckPermsListener;
 import com.alchemi.dodgechallenger.listeners.PrefixListener;
 import com.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
@@ -128,10 +129,12 @@ public class main extends JavaPlugin {
 		
 		messenger.print("Ranks and challenges created and registered.");
 		
-		if (luckPermsEnabled = setupLuckPerms()) {
-			messenger.print("LuckPerms detected!");
-			lpListener = new LuckPermsListener();
-		}
+		try {
+			if (luckPermsEnabled = setupLuckPerms()) {
+				messenger.print("LuckPerms detected!");
+				lpListener = new LuckPermsListener();
+			}
+		} catch(NoClassDefFoundError e) {}
 		
 		playerVaults = getServer().getPluginManager().isPluginEnabled("PlayerVaultsX") 
 				|| getServer().getPluginManager().isPluginEnabled("PlayerVaults") 
@@ -186,8 +189,14 @@ public class main extends JavaPlugin {
 			if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) {
 
 				if (!luckPermsEnabled) player.setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(player), 0, 200)));
+				
 				if (IslandManager.getByPlayer(player) == null) {
-					player.setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player))));
+					IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player));
+					if (im == null) im = new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player));
+					
+					player.setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(im));
+					
+					
 				}
 				
 				IslandManager.getByPlayer(player).checkRank();
@@ -197,7 +206,7 @@ public class main extends JavaPlugin {
 					
 					player.setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(player) : player.getDisplayName()));
 					
-					IslandEvents.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
+					PrefixStuff.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
 				}
 				
 			}
