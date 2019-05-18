@@ -54,7 +54,7 @@ public class DatabaseManager {
 					
 				}
 			};
-			r.runTaskAsynchronously(main.instance);
+			r.runTaskAsynchronously(main.getInstance());
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class DatabaseManager {
 				
 			}
 		};
-		r.runTaskAsynchronously(main.instance);
+		r.runTaskAsynchronously(main.getInstance());
 	}
 	
 	public void runQuery() {

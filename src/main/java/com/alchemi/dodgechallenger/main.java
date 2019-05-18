@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -18,23 +19,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.al.configurations.SexyConfiguration;
-import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.listeners.LuckPermsListener;
-import com.alchemi.dodgechallenger.listeners.PrefixListener;
 import com.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
 import com.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import com.alchemi.dodgechallenger.listeners.events.IslandEvents;
 import com.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
 import com.alchemi.dodgechallenger.managers.DataManager;
 import com.alchemi.dodgechallenger.managers.DatabaseManager;
-import com.alchemi.dodgechallenger.managers.IslandManager;
-import com.alchemi.dodgechallenger.managers.RankManager;
-import com.alchemi.dodgechallenger.meta.IslandMeta;
-import com.alchemi.dodgechallenger.meta.PrefixMeta;
-import com.alchemi.dodgechallenger.meta.TaskIntMeta;
 import com.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 
-import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.User;
 import net.milkbowl.vault.chat.Chat;
@@ -62,7 +55,7 @@ public class main extends JavaPlugin {
 	
 	public static DatabaseManager dbm;
 	
-	public static final int CONFIG_FILE_VERSION = 4;
+	public static final int CONFIG_FILE_VERSION = 5;
 	public static final int MESSAGES_FILE_VERSION = 8;
 	public static final int CHALLENGES_FILE_VERSION = 6;
 	
@@ -195,30 +188,8 @@ public class main extends JavaPlugin {
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			
-			if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player)) {
-
-				if (!luckPermsEnabled) player.setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(player), 0, 200)));
-				
-				if (IslandManager.getByPlayer(player) == null) {
-					IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(player));
-					if (im == null) im = new IslandManager(SkyBlockAPI.getIslandManager().getIsland(player));
-					
-					player.setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(im));
-					
-					
-				}
-				
-				IslandManager.getByPlayer(player).checkRank();
-				
-				if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-					int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
-					
-					player.setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(player) : player.getDisplayName()));
-					
-					PrefixStuff.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
-				}
-				
-			}
+			Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(player, ""));
+			
 		}
 		
 		

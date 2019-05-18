@@ -25,7 +25,7 @@ public class PrefixStuff implements Listener {
 		
 		if (main.luckPermsEnabled) {
 			
-			User u = main.instance.loadLuckyUser(player);
+			User u = main.getInstance().loadLuckyUser(player);
 			
 			int maxi = 0;
 			String pref = "";

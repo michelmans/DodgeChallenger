@@ -29,7 +29,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 
 	@Override
 	public String getIdentifier() {
-		return main.instance.getName();
+		return main.getInstance().getName();
 	}
 
 	@Override

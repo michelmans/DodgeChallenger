@@ -78,7 +78,7 @@ public class Config {
 		CHALLENGE_MISSING_BASE("DodgeChallenger.Challenge.Missing.Base"),
 		CHALLENGE_MISSING_ITEM("DodgeChallenger.Challenge.Missing.Item"),
 		RANK_BROADCAST_RANKUP("DodgeChallenger.Rank.BroadcastRankup"),
-		RANK_TAG("DodgeChallenger.Rank.Tag"),
+		RANK_TAG("DodgeChallenger.Rank.Tag"),		
 		GUI_GUINAME("DodgeChallenger.GUI.GUIName"),
 		GUI_NEXTPAGE("DodgeChallenger.GUI.NextPage"),
 		GUI_PREVPAGE("DodgeChallenger.GUI.PrevPage");
@@ -116,6 +116,9 @@ public class Config {
 		COMPLETE_SOUND("completeSound"),
 		CLEAR_PLAYER_INVENTORY("clearPlayerInventory"),
 		SHOW_RANK("showRank"),
+		SPAWN_WITHERSKELETON("Spawn.WitherSkeleton"),
+		SPAWN_BLAZE("Spawn.Blaze"),		
+		SPAWN_GUARDIAN("Spawn.Guardian"),
 		NEXT_PAGE_MATERIAL("nextPageMaterial"),
 		PREV_PAGE_MATERIAL("prevPageMaterial");
 		
@@ -275,15 +278,15 @@ public class Config {
 			} else version = 0;
 			
 			if(!file.getFile().exists()) {
-				main.instance.saveResource(file.getFile().getName(), false);
+				main.getInstance().saveResource(file.getFile().getName(), false);
 			}
 			config.setComment("broadcastFormat", "# The formatting of the broadcast text.");
 			
 			if(!file.isSet("File-Version-Do-Not-Edit") 
 					|| !file.get("File-Version-Do-Not-Edit").equals(version)) {
 				main.getInstance().getMessenger().print("Your $file$ is outdated! Updating...".replace("$file$", file.getFile().getName()));
-				file.load(new InputStreamReader(main.instance.getResource(file.getFile().getName())));
-				file.update(SexyConfiguration.loadConfiguration(new InputStreamReader(main.instance.getResource(file.getFile().getName()))));
+				file.load(new InputStreamReader(main.getInstance().getResource(file.getFile().getName())));
+				file.update(SexyConfiguration.loadConfiguration(new InputStreamReader(main.getInstance().getResource(file.getFile().getName()))));
 				file.set("File-Version-Do-Not-Edit", version);
 				file.save();
 				main.getInstance().getMessenger().print("File successfully updated!");

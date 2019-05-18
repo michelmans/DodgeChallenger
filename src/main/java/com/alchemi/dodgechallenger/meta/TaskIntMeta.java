@@ -6,7 +6,7 @@ import com.alchemi.dodgechallenger.main;
 public class TaskIntMeta extends BaseMeta {
 
 	public TaskIntMeta(int taskid) {
-		super(main.instance, taskid);
+		super(main.getInstance(), taskid);
 	}
 
 }

@@ -6,7 +6,7 @@ import com.alchemi.dodgechallenger.main;
 public class PrefixMeta extends BaseMeta {
 	
 	public PrefixMeta(String prefix) {
-		super(main.instance, prefix);
+		super(main.getInstance(), prefix);
 		
 	}
 }

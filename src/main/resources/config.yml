@@ -44,6 +44,11 @@ clearPlayerInventory: true
 # Whether or not to show a players rank.
 showRank: true
 
+Spawn:
+  WitherSkeleton: 5
+  Blaze: 10
+  Guardian: 30
+
 # Material to display in the GUI for the next page and the previous page.
 nextPageMaterial: REDSTONE_TORCH
 prevPageMaterial: LEVER

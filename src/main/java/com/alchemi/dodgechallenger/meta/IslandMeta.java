@@ -7,7 +7,7 @@ import com.alchemi.dodgechallenger.managers.IslandManager;
 public class IslandMeta extends BaseMeta{
 
 	public IslandMeta(IslandManager im) {
-		super(main.instance, im);
+		super(main.getInstance(), im);
 	}
 
 }

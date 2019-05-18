@@ -44,7 +44,7 @@ public class IslandEvents implements Listener{
 
 	@EventHandler
 	public static void playerLogin(PlayerJoinEvent e) {
-		for (ShapelessRecipe r : main.instance.recipes) {
+		for (ShapelessRecipe r : main.getInstance().recipes) {
 			
 			e.getPlayer().discoverRecipe(r.getKey());
 			
@@ -53,12 +53,16 @@ public class IslandEvents implements Listener{
 		
 		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
 
-			if (!main.luckPermsEnabled) e.getPlayer().setMetadata(TaskIntMeta.class.getSimpleName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.instance, new PrefixListener(e.getPlayer()), 0, 200)));
-			if (IslandManager.getByPlayer(e.getPlayer()) == null) {
-				IslandManager im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+			if (!main.luckPermsEnabled) e.getPlayer().setMetadata(TaskIntMeta.class.getName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.getInstance(), new PrefixListener(e.getPlayer()), 0, 200)));
+			
+			IslandManager im = IslandManager.getByPlayer(e.getPlayer());
+			
+			if (im == null) {
+				im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				
 				if (im == null) im = new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
 				
-				e.getPlayer().setMetadata(IslandMeta.class.getSimpleName(), new IslandMeta(im));
+				e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(im));
 				
 				
 			}
@@ -140,17 +144,17 @@ public class IslandEvents implements Listener{
 		
 		if (e.getEntityType().equals(EntityType.PIG_ZOMBIE)) {
 			Random rand = new Random();
-			if (rand.nextInt(100) <= 5) {
+			if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_WITHERSKELETON.asInt()) {
 				e.setCancelled(true);
 				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.WITHER_SKELETON);
-			} else if (rand.nextInt(100) <= 10) {
+			} else if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_BLAZE.asInt()) {
 				e.setCancelled(true);
 				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.BLAZE);
 			}
 			
 		} else if (e.getEntityType().equals(EntityType.SQUID)) {
 			Random rand = new Random();
-			if (rand.nextInt(100) <= 5) {
+			if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_GUARDIAN.asInt()) {
 				e.setCancelled(true);
 				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.GUARDIAN);
 			}

@@ -22,7 +22,7 @@ public class DataManager extends DatabaseManager{
 	private final File database;
 	
 	public DataManager() {
-		this.database = new File(main.instance.getDataFolder(), "islands");
+		this.database = new File(main.getInstance().getDataFolder(), "islands");
 	}
 	
 	public void loadIsland(Island island) {

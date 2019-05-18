@@ -129,9 +129,9 @@ public class Reward {
 				main.eco.depositPlayer(player, money);
 			}
 			
-			if (main.instance.GIVE_QUEUE.contains(player.getName())) {
+			if (main.getInstance().GIVE_QUEUE.contains(player.getName())) {
 				
-				ConfigurationSection sec = main.instance.GIVE_QUEUE.getConfigurationSection(player.getName());
+				ConfigurationSection sec = main.getInstance().GIVE_QUEUE.getConfigurationSection(player.getName());
 				
 				if (xp > 0) {
 					int xp2 = sec.getInt("xp", 0);
@@ -143,10 +143,10 @@ public class Reward {
 					items2.addAll(items);
 					sec.set("items", items2);
 				}
-				main.instance.GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+				main.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
 			} else {
 				
-				ConfigurationSection sec = main.instance.GIVE_QUEUE.createSection(player.getName());
+				ConfigurationSection sec = main.getInstance().GIVE_QUEUE.createSection(player.getName());
 				
 				if (xp > 0) {
 					sec.set("xp", xp);
@@ -156,12 +156,12 @@ public class Reward {
 					sec.set("items", items);
 				}
 				
-				main.instance.GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+				main.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
 				
 			}
 			
 			try {
-				main.instance.GIVE_QUEUE.save();
+				main.getInstance().GIVE_QUEUE.save();
 			} catch (IOException e) {}
 			
 		}

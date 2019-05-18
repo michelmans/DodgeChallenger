@@ -56,7 +56,7 @@ public class DodgyEntity {
 				}
 				
 				if (n.find()) {
-					nbtMap.put(w.group(), new MetadataValueAdapter(main.instance) {
+					nbtMap.put(w.group(), new MetadataValueAdapter(main.getInstance()) {
 						
 						@Override
 						public Object value() {
@@ -68,7 +68,7 @@ public class DodgyEntity {
 					});
 					continue;
 				} else if (w.find()) {
-					nbtMap.put(w.group(0), new MetadataValueAdapter(main.instance) {
+					nbtMap.put(w.group(0), new MetadataValueAdapter(main.getInstance()) {
 						
 						@Override
 						public Object value() {

@@ -32,8 +32,8 @@ public class ChallengeGui extends GUIBase {
 	private IslandManager im = null;
 	
 	public ChallengeGui(OfflinePlayer player) {
-		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, null);
-		new GUIListener(main.instance, this);
+		super(main.getInstance(), Messenger.cc("&2&oChallenges"), 54, player, null);
+		new GUIListener(main.getInstance(), this);
 		
 		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
 		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
@@ -46,8 +46,8 @@ public class ChallengeGui extends GUIBase {
 	}
 	
 	public ChallengeGui(OfflinePlayer player, CommandSender sender) {
-		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, sender);
-		new GUIListener(main.instance, this);
+		super(main.getInstance(), Messenger.cc("&2&oChallenges"), 54, player, sender);
+		new GUIListener(main.getInstance(), this);
 		
 		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
 		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
@@ -60,6 +60,8 @@ public class ChallengeGui extends GUIBase {
 	
 	@Override
 	public void setContents() {
+		
+		System.out.println(im);
 		
 		if (im == null) return;
 		
