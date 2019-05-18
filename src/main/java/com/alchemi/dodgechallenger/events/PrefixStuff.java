@@ -9,8 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import com.alchemi.al.Library;
 import com.alchemi.al.configurations.Messenger;
+import com.alchemi.al.objects.meta.PersistentMeta;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.meta.PrefixMeta;
 
@@ -65,10 +65,10 @@ public class PrefixStuff implements Listener {
 		} else {
 			if (main.chatEnabled) {
 				String pref = main.chat.getPlayerPrefix(player);
-				if (!pref.contains(rank)) main.chat.setPlayerPrefix(player, rank + Library.getMeta(player, PrefixMeta.class).asString());
+				if (!pref.contains(rank)) main.chat.setPlayerPrefix(player, rank + PersistentMeta.getMeta(player, PrefixMeta.class).asString());
 			} else {
 				String pref = player.getDisplayName();
-				if (!pref.contains(Messenger.cc(rank))) player.setDisplayName(Messenger.cc(rank + Library.getMeta(player, PrefixMeta.class).asString()));
+				if (!pref.contains(Messenger.cc(rank))) player.setDisplayName(Messenger.cc(rank + PersistentMeta.getMeta(player, PrefixMeta.class).asString()));
 			}
 		}
 	}
@@ -83,11 +83,11 @@ public class PrefixStuff implements Listener {
 			
 		} else {
 			if (main.chatEnabled) {
-				if (Library. getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, Library.getMeta(player, PrefixMeta.class).asString());
+				if (PersistentMeta.getMeta(player, PrefixMeta.class) != null) main.chat.setPlayerPrefix(player, PersistentMeta.getMeta(player, PrefixMeta.class).asString());
 				
 			} else {
 				
-				if (Library.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(Library.getMeta(player, PrefixMeta.class).asString());
+				if (PersistentMeta.getMeta(player, PrefixMeta.class) != null) player.setDisplayName(PersistentMeta.getMeta(player, PrefixMeta.class).asString());
 			}
 		}
 	}

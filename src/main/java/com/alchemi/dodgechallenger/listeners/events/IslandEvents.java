@@ -9,12 +9,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ShapelessRecipe;
 
-import com.alchemi.al.Library;
+import com.alchemi.al.objects.meta.PersistentMeta;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
@@ -77,7 +78,7 @@ public class IslandEvents implements Listener{
 	@EventHandler
 	public static void playerLogout(PlayerQuitEvent e) {
 		
-		if (Library.hasMeta(e.getPlayer(), TaskIntMeta.class)) Bukkit.getScheduler().cancelTask(Library.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
+		if (PersistentMeta.hasMeta(e.getPlayer(), TaskIntMeta.class)) Bukkit.getScheduler().cancelTask(PersistentMeta.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
 		
 		PrefixStuff.removeRankPrefix(e.getPlayer());
 		
@@ -86,7 +87,7 @@ public class IslandEvents implements Listener{
 		}
 		
 		if (Bukkit.getOnlinePlayers().size() <= 1) {
-			main.messenger.print("Running data queries: " + main.dbm.querySize());
+			main.getInstance().getMessenger().print("Running data queries: " + main.dbm.querySize());
 			main.dbm.runQuery();
 		}
 	}
@@ -135,7 +136,8 @@ public class IslandEvents implements Listener{
 	}
 	
 	@EventHandler
-	public static void onEntitySpawn(EntitySpawnEvent e) {
+	public static void onEntitySpawn(CreatureSpawnEvent e) {
+		
 		if (e.getEntityType().equals(EntityType.PIG_ZOMBIE)) {
 			Random rand = new Random();
 			if (rand.nextInt(100) <= 5) {
@@ -157,8 +159,10 @@ public class IslandEvents implements Listener{
 		if (!(e.getEntity() instanceof Mob) || (e.getEntity() instanceof Animals)) return;
 		
 		Island island = SkyBlockAPI.getIslandManager().getIslandAtLocation(e.getLocation());
-		if (island != null && e.getLocation().getWorld().equals(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND).getWorld()) 
-				&& e.getLocation().distance(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND)) <= 24) {
+		if (island != null 
+				&& e.getLocation().getWorld().equals(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND).getWorld()) 
+				&& e.getLocation().distance(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND)) <= 24
+				&& e.getSpawnReason() == SpawnReason.NATURAL) {
 			e.setCancelled(true);
 		}
 		
@@ -184,7 +188,7 @@ public class IslandEvents implements Listener{
 		
 		if (!e.getRepeat() && e.getPlayer().isOnline()) {
 			if (Config.OPTIONS.BROADCAST_COMPLETION.asBoolean()) 
-				main.messenger.broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_BROADCAST_COMPLETED.value())
+				main.getInstance().getMessenger().broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_BROADCAST_COMPLETED.value())
 					.replace("$player$", e.getPlayer().getPlayer().getDisplayName())
 					.replace("$challenge$", e.getChallenge().getDisplayName())
 					.replace("$rank$", e.getRankManager().getDisplayName())
@@ -197,7 +201,7 @@ public class IslandEvents implements Listener{
 	@EventHandler
 	public static void onRankup(RankupEvent e) {
 		if (Config.OPTIONS.BROADCAST_RANKUP.asBoolean()) 
-			main.messenger.broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.RANK_BROADCAST_RANKUP.value())
+			main.getInstance().getMessenger().broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.RANK_BROADCAST_RANKUP.value())
 				.replace("$player$", Bukkit.getPlayer(e.getIsland().getOwnerUUID()).getDisplayName())
 				.replace("$rank$", e.getRankManager().getDisplayName())
 				.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));

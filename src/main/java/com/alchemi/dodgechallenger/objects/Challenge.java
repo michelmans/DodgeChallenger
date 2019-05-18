@@ -322,7 +322,7 @@ public class Challenge {
 			return requiredEntities.isEmpty() ? getBlocks(player.getLocation(), im.getChallenges()).res1 : getBlocks(player.getLocation(), im.getChallenges()).res1 && getEntities(player, im.getChallenges()).res1;
 			
 		} else {
-			return im.getIsland().getLevel().getLevel() >= requiredLevel;
+			return im.getIsland().getLevel().getLevel() >= requiredLevel || im.getIsland().getIsland().getLevel().getLevel() >= requiredLevel;
 		}
 	}
 	
@@ -471,7 +471,8 @@ public class Challenge {
 				if (!Config.OPTIONS.NO_COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				player.sendMessage(Messenger.cc(whyNotComplete(player, im)));
 			}
-		} else if (type == Type.onIsland && SkyBlockAPI.getIslandManager().getIslandPlayerAt(player).equals(SkyBlockAPI.getIslandManager().getIsland(player))) {
+		} else if (type == Type.onIsland 
+				&& SkyBlockAPI.getIslandManager().getIslandPlayerAt(player).getOwnerUUID().equals(SkyBlockAPI.getIslandManager().getIsland(player).getOwnerUUID())) {
 			if (getBlocks(player.getLocation(), im.getChallenges()).res1) {
 				im.checkRank();
 				
@@ -481,7 +482,7 @@ public class Challenge {
 				if (!Config.OPTIONS.NO_COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				player.sendMessage(Messenger.cc(whyNotComplete(player, im)));
 			}
-		} else {
+		} else if (type == Type.islandLevel) {
 			if (canCompleteChallenge(player, im)) {
 				im.checkRank();
 				

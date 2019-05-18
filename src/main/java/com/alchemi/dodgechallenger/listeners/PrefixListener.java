@@ -2,7 +2,7 @@ package com.alchemi.dodgechallenger.listeners;
 
 import org.bukkit.entity.Player;
 
-import com.alchemi.al.Library;
+import com.alchemi.al.objects.meta.PersistentMeta;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.managers.IslandManager;
@@ -21,7 +21,7 @@ public class PrefixListener implements Runnable{
 	@Override
 	public void run() {
 		
-		String prefixDef = Library.getMeta(player, PrefixMeta.class).asString();
+		String prefixDef = PersistentMeta.getMeta(player, PrefixMeta.class).asString();
 		String prefixCur = main.chatEnabled ? main.chat.getPlayerPrefix(player) : player.getDisplayName();
 		
 		if (!(IslandManager.getByPlayer(player).getRankManager().getPrefix() + prefixDef).equals(prefixCur)) {

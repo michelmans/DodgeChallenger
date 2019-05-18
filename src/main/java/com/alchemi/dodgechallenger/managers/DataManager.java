@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alchemi.al.configurations.SexyConfiguration;
-import com.alchemi.al.objects.SexyRunnable;
+import com.alchemi.al.objects.handling.SexyRunnable;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.objects.Challenge;
 

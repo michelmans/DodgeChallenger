@@ -11,13 +11,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alchemi.al.configurations.Messenger;
 import com.alchemi.al.configurations.SexyConfiguration;
-import com.alchemi.al.objects.GUI.GUIListener;
 import com.alchemi.dodgechallenger.events.PrefixStuff;
 import com.alchemi.dodgechallenger.listeners.LuckPermsListener;
 import com.alchemi.dodgechallenger.listeners.PrefixListener;
@@ -68,8 +68,6 @@ public class main extends JavaPlugin {
 	
 	public List<ShapelessRecipe> recipes = new ArrayList<ShapelessRecipe>();
 	
-	public GUIListener guiListener;
-	
 	public SexyConfiguration GIVE_QUEUE;
 	
 	@Override
@@ -118,10 +116,7 @@ public class main extends JavaPlugin {
             messenger.print("Placeholder registered.");
         }
 		
-		guiListener = new GUIListener(this);
-		
 		getServer().getPluginManager().registerEvents(new IslandEvents(), this);
-		getServer().getPluginManager().registerEvents(guiListener, this);
 		
 		getCommand("challenges").setExecutor(new CommandChallenge());
 		getCommand("chadmin").setExecutor(new CommandAdmin());
@@ -156,6 +151,20 @@ public class main extends JavaPlugin {
 		recipes.add(recipe);
 		Bukkit.addRecipe(recipe);
 		messenger.print("Nametag recipe added.");
+		
+		recipe = new ShapelessRecipe(new NamespacedKey(instance, "sandstone_to_sand"), new ItemStack(Material.SAND, 4));
+		recipe.addIngredient(new MaterialChoice(Material.SANDSTONE, Material.CHISELED_SANDSTONE, Material.CUT_SANDSTONE, Material.SMOOTH_SANDSTONE));
+		
+		recipes.add(recipe);
+		Bukkit.addRecipe(recipe);
+		
+		recipe = new ShapelessRecipe(new NamespacedKey(instance, "redsandstone_to_redsand"), new ItemStack(Material.RED_SAND, 4));
+		recipe.addIngredient(new MaterialChoice(Material.RED_SANDSTONE, Material.CHISELED_RED_SANDSTONE, Material.CUT_RED_SANDSTONE, Material.SMOOTH_RED_SANDSTONE));
+		
+		recipes.add(recipe);
+		Bukkit.addRecipe(recipe);
+		
+		messenger.print("Sandstone to sand recipes added.");
 		
 		Material[] slabs = new Material[] {Material.ACACIA_SLAB, Material.BIRCH_SLAB,
 				Material.BRICK_SLAB, Material.COBBLESTONE_SLAB, Material.DARK_OAK_SLAB,
@@ -223,7 +232,7 @@ public class main extends JavaPlugin {
 		
 		lpListener.unregister();
 		
-		main.messenger.print("Running data queries: " + main.dbm.querySize());
+		main.getInstance().getMessenger().print("Running data queries: " + main.dbm.querySize());
 		dbm.runQuery();
 	}
 	
@@ -258,6 +267,14 @@ public class main extends JavaPlugin {
 			return lucky.getUserManager().getUser(player.getUniqueId());
 		}
 		throw new IllegalStateException("Player is offline.");
+	}
+
+	public static main getInstance() {
+		return instance;
+	}
+	
+	public Messenger getMessenger() {
+		return messenger;
 	}
 	
 }

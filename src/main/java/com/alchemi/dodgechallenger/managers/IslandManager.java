@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.alchemi.al.Library;
+import com.alchemi.al.objects.meta.PersistentMeta;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
 import com.alchemi.dodgechallenger.events.DeRankEvent;
@@ -88,6 +88,7 @@ public class IslandManager {
 				if (oRank < rank) Bukkit.getPluginManager().callEvent(new RankupEvent(island));
 				else if ( oRank > rank) Bukkit.getPluginManager().callEvent(new DeRankEvent(island, RankManager.getRank(oRank)));
 				
+				return rank;
 			}
 			
 		}
@@ -144,7 +145,7 @@ public class IslandManager {
 	}
 	
 	public static IslandManager getByPlayer(Player player) {
-		return Library.hasMeta(player, IslandMeta.class) ? (IslandManager) Library.getMeta(player, IslandMeta.class).value() : null;
+		return PersistentMeta.hasMeta(player, IslandMeta.class) ? (IslandManager) PersistentMeta.getMeta(player, IslandMeta.class).value() : null;
 	}
 
 	/**

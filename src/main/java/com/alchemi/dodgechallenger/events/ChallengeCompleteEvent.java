@@ -28,8 +28,8 @@ public class ChallengeCompleteEvent extends Event{
 		this.challenge = challenge;
 		this.player = player;
 		this.island = island;
-		this.islandManager = IslandManager.getByIsland(island);
-		this.rankManager = RankManager.getRank(islandManager.getRank());
+		this.islandManager = player.isOnline() ? IslandManager.getByPlayer(player.getPlayer()) : IslandManager.getByIsland(island);
+		this.rankManager = islandManager.getRankManager();
 		this.repeat = islandManager.getChallenges().contains(challenge);
 		this.reward = new Reward(challenge, repeat);
 	}

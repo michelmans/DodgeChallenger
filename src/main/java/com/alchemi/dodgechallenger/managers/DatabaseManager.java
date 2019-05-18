@@ -75,14 +75,14 @@ public class DatabaseManager {
 	}
 	
 	private void createDB() throws SQLException {
-		main.messenger.print("Database " + database + " doesn't exist, creating...");
+		main.getInstance().getMessenger().print("Database " + database + " doesn't exist, creating...");
 		String sqlCreate = "CREATE DATABASE " + database + ";";
 		Statement stmt = conn.createStatement();
 		stmt.execute(sqlCreate);
 	}
 	
 	private void createTable() throws SQLException {
-		main.messenger.print("Table doesn't exist, creating...");
+		main.getInstance().getMessenger().print("Table doesn't exist, creating...");
 	    String sqlCreate = "CREATE TABLE " + database + ".data (island TEXT NOT NULL,\r\n"
 	    		+ "grade TINYINT(255) UNSIGNED NOT NULL,\r\n"
 	    		+ "challenges LONGTEXT);";
@@ -164,7 +164,7 @@ public class DatabaseManager {
 					String sqlDrop = "DELETE FROM database.data WHERE island='isname';";
 					sqlDrop = sqlDrop.replaceAll("database", database);
 					sqlDrop = sqlDrop.replaceAll("isname", islandToId(island));
-					main.messenger.print(sqlDrop);
+					main.getInstance().getMessenger().print(sqlDrop);
 					conn.createStatement().executeUpdate(sqlDrop);
 				} catch (SQLException e) {}
 				

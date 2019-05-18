@@ -281,12 +281,12 @@ public class Config {
 			
 			if(!file.isSet("File-Version-Do-Not-Edit") 
 					|| !file.get("File-Version-Do-Not-Edit").equals(version)) {
-				main.messenger.print("Your $file$ is outdated! Updating...".replace("$file$", file.getFile().getName()));
+				main.getInstance().getMessenger().print("Your $file$ is outdated! Updating...".replace("$file$", file.getFile().getName()));
 				file.load(new InputStreamReader(main.instance.getResource(file.getFile().getName())));
 				file.update(SexyConfiguration.loadConfiguration(new InputStreamReader(main.instance.getResource(file.getFile().getName()))));
 				file.set("File-Version-Do-Not-Edit", version);
 				file.save();
-				main.messenger.print("File successfully updated!");
+				main.getInstance().getMessenger().print("File successfully updated!");
 			}
 		}
 		

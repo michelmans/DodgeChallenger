@@ -12,11 +12,11 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import com.alchemi.al.configurations.Messenger;
-import com.alchemi.al.objects.SexyRunnable;
 import com.alchemi.al.objects.GUI.GUIBase;
+import com.alchemi.al.objects.GUI.GUIListener;
+import com.alchemi.al.objects.handling.SexyRunnable;
 import com.alchemi.dodgechallenger.Config;
 import com.alchemi.dodgechallenger.main;
-import com.alchemi.dodgechallenger.managers.DataManager;
 import com.alchemi.dodgechallenger.managers.IslandManager;
 import com.alchemi.dodgechallenger.managers.RankManager;
 import com.alchemi.dodgechallenger.objects.Challenge;
@@ -33,7 +33,7 @@ public class ChallengeGui extends GUIBase {
 	
 	public ChallengeGui(OfflinePlayer player) {
 		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, null);
-		main.instance.guiListener.registerGui(this);
+		new GUIListener(main.instance, this);
 		
 		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
 		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
@@ -47,7 +47,7 @@ public class ChallengeGui extends GUIBase {
 	
 	public ChallengeGui(OfflinePlayer player, CommandSender sender) {
 		super(main.instance, Messenger.cc("&2&oChallenges"), 54, player, sender);
-		main.instance.guiListener.registerGui(this);
+		new GUIListener(main.instance, this);
 		
 		if (player.isOnline()) im = IslandManager.getByPlayer(player.getPlayer());
 		else im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? new IslandManager(SkyBlockAPI.getImplementation().getIslandManager().loadIsland(player)) : null;
@@ -282,7 +282,6 @@ public class ChallengeGui extends GUIBase {
 	@Override
 	public void onClose() {
 		
-		main.instance.guiListener.unregisterGui(this);
 		if (!player.isOnline()) SkyBlockAPI.getImplementation().getIslandManager().unloadIsland(this.im.getIsland().getIsland(), Bukkit.getOfflinePlayer(this.im.getIsland().getOwnerUUID()));
 		
 	}
