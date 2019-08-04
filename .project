@@ -3,7 +3,8 @@
   <name>DodgeChallenger</name>
   <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>Alchemic-Library</project>
+    <project>AlchemicLibrary</project>
+    <project>AlchemicLibrary-api</project>
   </projects>
   <buildSpec>
     <buildCommand>

@@ -1,0 +1,268 @@
+package me.alchemi.dodgechallenger.listeners.events;
+
+import java.util.Random;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ShapelessRecipe;
+
+import com.drtshock.playervaults.vaultmanagement.VaultManager;
+
+import me.alchemi.al.objects.meta.PersistentMeta;
+import me.alchemi.dodgechallenger.Config;
+import me.alchemi.dodgechallenger.main;
+import me.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
+import me.alchemi.dodgechallenger.events.DeRankEvent;
+import me.alchemi.dodgechallenger.events.PrefixStuff;
+import me.alchemi.dodgechallenger.events.RankupEvent;
+import me.alchemi.dodgechallenger.listeners.PrefixListener;
+import me.alchemi.dodgechallenger.managers.IslandManager;
+import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.meta.IslandMeta;
+import me.alchemi.dodgechallenger.meta.PrefixMeta;
+import me.alchemi.dodgechallenger.meta.TaskIntMeta;
+import me.goodandevil.skyblock.api.SkyBlockAPI;
+import me.goodandevil.skyblock.api.event.island.IslandCreateEvent;
+import me.goodandevil.skyblock.api.event.island.IslandDeleteEvent;
+import me.goodandevil.skyblock.api.event.player.PlayerIslandJoinEvent;
+import me.goodandevil.skyblock.api.event.player.PlayerIslandLeaveEvent;
+import me.goodandevil.skyblock.api.island.Island;
+import me.goodandevil.skyblock.api.island.IslandEnvironment;
+import me.goodandevil.skyblock.api.island.IslandRole;
+import me.goodandevil.skyblock.api.island.IslandWorld;
+
+public class IslandEvents implements Listener{
+
+	@EventHandler
+	public static void playerLogin(PlayerJoinEvent e) {
+		for (ShapelessRecipe r : main.getInstance().recipes) {
+			
+			e.getPlayer().discoverRecipe(r.getKey());
+			
+		}
+		
+		
+		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
+
+			if (!main.luckPermsEnabled) e.getPlayer().setMetadata(TaskIntMeta.class.getName(), new TaskIntMeta(Bukkit.getScheduler().scheduleSyncRepeatingTask(main.getInstance(), new PrefixListener(e.getPlayer()), 0, 200)));
+			
+			IslandManager im = IslandManager.getByPlayer(e.getPlayer());
+			
+			if (im == null) {
+				im = IslandManager.getByIsland(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				
+				if (im == null) im = new IslandManager(SkyBlockAPI.getIslandManager().getIsland(e.getPlayer()));
+				
+				e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(im));
+				
+				
+			}
+			
+			IslandManager.getByPlayer(e.getPlayer()).checkRank();
+			
+			if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+				
+				e.getPlayer().setMetadata(PrefixMeta.class.getSimpleName(), new PrefixMeta(main.chatEnabled ? main.chat.getPlayerPrefix(e.getPlayer()) : e.getPlayer().getDisplayName()));
+				
+				PrefixStuff.setRankPrefix(e.getPlayer(), IslandManager.getByPlayer(e.getPlayer()).getRankManager().getPrefix());
+			}
+			
+		}
+	}
+	
+	@EventHandler
+	public static void playerLogout(PlayerQuitEvent e) {
+		
+		if (PersistentMeta.hasMeta(e.getPlayer(), TaskIntMeta.class)) Bukkit.getScheduler().cancelTask(PersistentMeta.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
+		
+		PrefixStuff.removeRankPrefix(e.getPlayer());
+		
+		if (me.goodandevil.skyblock.api.island.IslandManager.hasIsland(e.getPlayer())) {
+			IslandManager.getByPlayer(e.getPlayer()).save();
+		}
+		
+		if (Bukkit.getOnlinePlayers().size() <= 1) {
+			main.getInstance().getMessenger().print("Running data queries: " + main.dbm.querySize());
+			main.dbm.runQuery();
+		}
+	}
+	
+	@EventHandler
+	public static void islandCreate(IslandCreateEvent e) {
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			PrefixStuff.setRankPrefix(e.getPlayer(), RankManager.getFirst().getPrefix());
+		}
+		
+		main.dbm.newIsland(e.getIsland());
+	}
+	
+	@EventHandler
+	public static void islandDelete(IslandDeleteEvent e) {
+		
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
+					Bukkit.getPlayer(uuid).getInventory().clear();
+					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
+				}
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
+					Bukkit.getPlayer(uuid).getInventory().clear();
+					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
+				}
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				if (Config.OPTIONS.CLEAR_PLAYER_INVENTORY.asBoolean()) {
+					Bukkit.getPlayer(uuid).getInventory().clear();
+					Bukkit.getPlayer(uuid).getEnderChest().clear();
+					if (main.playerVaults) VaultManager.getInstance().deleteAllVaults(uuid.toString());
+				}
+			}
+		}
+		
+		main.dbm.removeIsland(e.getIsland());
+	}
+	
+	@EventHandler
+	public static void onEntitySpawn(CreatureSpawnEvent e) {
+		
+		if (e.getEntityType().equals(EntityType.PIG_ZOMBIE)) {
+			Random rand = new Random();
+			if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_WITHERSKELETON.asInt()) {
+				e.setCancelled(true);
+				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.WITHER_SKELETON);
+			} else if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_BLAZE.asInt()) {
+				e.setCancelled(true);
+				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.BLAZE);
+			}
+			
+		} else if (e.getEntityType().equals(EntityType.SQUID)) {
+			Random rand = new Random();
+			if (rand.nextInt(100) <= Config.OPTIONS.SPAWN_GUARDIAN.asInt()) {
+				e.setCancelled(true);
+				e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.GUARDIAN);
+			}
+		}
+		
+		if (!(e.getEntity() instanceof Mob) || (e.getEntity() instanceof Animals)) return;
+		
+		Island island = SkyBlockAPI.getIslandManager().getIslandAtLocation(e.getLocation());
+		if (island != null 
+				&& e.getLocation().getWorld().equals(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND).getWorld()) 
+				&& e.getLocation().distance(island.getLocation(IslandWorld.OVERWORLD, IslandEnvironment.ISLAND)) <= 24
+				&& e.getSpawnReason() == SpawnReason.NATURAL) {
+			e.setCancelled(true);
+		}
+		
+	}
+	
+	@EventHandler
+	public static void islandJoin(PlayerIslandJoinEvent e) {
+		
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			PrefixStuff.setRankPrefix(e.getPlayer(), RankManager.getRank(main.dbm.getRank(e.getIsland())).getPrefix());
+		}
+		
+	}
+
+	@EventHandler
+	public static void onChallengeComplete(ChallengeCompleteEvent e) {
+		e.getReward().give(e.getPlayer());
+		
+		IslandManager im = e.getIslandManager();
+		im.addChallenge(e.getChallenge());
+		
+		main.dbm.completeChallenge(e.getIsland(), e.getChallenge());
+		
+		if (!e.getRepeat() && e.getPlayer().isOnline()) {
+			if (Config.OPTIONS.BROADCAST_COMPLETION.asBoolean()) 
+				main.getInstance().getMessenger().broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_BROADCAST_COMPLETED.value())
+					.replace("$player$", e.getPlayer().getPlayer().getDisplayName())
+					.replace("$challenge$", e.getChallenge().getDisplayName())
+					.replace("$rank$", e.getRankManager().getDisplayName())
+					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+		}
+		
+		im.checkRank();
+	}
+	
+	@EventHandler
+	public static void onRankup(RankupEvent e) {
+		if (Config.OPTIONS.BROADCAST_RANKUP.asBoolean()) 
+			main.getInstance().getMessenger().broadcast((Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.RANK_BROADCAST_RANKUP.value())
+				.replace("$player$", Bukkit.getPlayer(e.getIsland().getOwnerUUID()).getDisplayName())
+				.replace("$rank$", e.getRankManager().getDisplayName())
+				.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+		
+		main.dbm.setRank(e.getIsland(), e.getRankManager().rank());
+		e.getIslandManager().setRank(e.getRankManager().rank());
+		SkyBlockAPI.getImplementation().getLeaderboardManager().resetLeaderboard();
+		
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			
+			PrefixStuff.removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
+			PrefixStuff.setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
+		}
+	}
+	
+	@EventHandler
+	public static void onDeRank(DeRankEvent e) {
+		main.dbm.setRank(e.getIsland(), e.getRankManager().rank());
+		
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.MEMBER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OPERATOR)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			for (UUID uuid : e.getIsland().getPlayersWithRole(IslandRole.OWNER)) {
+				PrefixStuff.removeRankPrefix(Bukkit.getPlayer(uuid));
+				PrefixStuff.setRankPrefix(Bukkit.getPlayer(uuid), e.getRankManager().getPrefix());
+			}
+			
+			PrefixStuff.removeRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()));
+			PrefixStuff.setRankPrefix(Bukkit.getPlayer(e.getIsland().getOwnerUUID()), e.getRankManager().getPrefix());
+		}
+	}
+	
+	public static void islandLeave(PlayerIslandLeaveEvent e) {
+		if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
+			PrefixStuff.removeRankPrefix(e.getPlayer());
+		}
+		
+	}
+		
+}

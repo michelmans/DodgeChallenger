@@ -1,5 +1,5 @@
 name: DodgeChallenger
-main: com.alchemi.dodgechallenger.main
+main: me.alchemi.dodgechallenger.main
 version: ${project.version}
 api-version: 1.13
 author: Alchemi
