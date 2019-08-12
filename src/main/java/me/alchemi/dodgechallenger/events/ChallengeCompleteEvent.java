@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
@@ -26,8 +27,9 @@ public class ChallengeCompleteEvent extends Event{
 	private final Reward reward;
 	private final DodgeIsland island;
 	private final Rank rank;
+	private final ItemStack[] toTake;
 	
-	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, UUID island) {
+	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, UUID island, ItemStack[] toTake) {
 		this.challenge = challenge;
 		this.player = player;
 		this.fabledIsland = island;
@@ -35,6 +37,7 @@ public class ChallengeCompleteEvent extends Event{
 		this.rank = this.island.getRank();
 		this.repeat = this.island.getChallenges().contains(challenge);
 		this.reward = new Reward(challenge, repeat);
+		this.toTake = toTake;
 	}
 	
 	@Override
@@ -84,5 +87,9 @@ public class ChallengeCompleteEvent extends Event{
 
 	public boolean getRepeat() {
 		return repeat;
+	}
+
+	public ItemStack[] getToTake() {
+		return toTake;
 	}
 }

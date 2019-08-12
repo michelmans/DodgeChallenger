@@ -21,6 +21,13 @@ public class ChallengeComplete implements Listener {
 		
 		Dodge.dataManager.completeChallenge(e.getFabledIslandUUID(), e.getChallenge());
 		
+		if (e.getPlayer().isOnline()) {
+			if (e.getToTake() != null) e.getOnlinePlayer().getInventory().removeItem(e.getToTake());
+			Dodge.getInstance().getMessenger().sendMessage(new Stringer(Messages.CHALLENGE_MESSAGE)
+					.player(e.getOnlinePlayer())
+					.challenge(e.getChallenge()), e.getOnlinePlayer());
+		}
+		
 		if (!e.getRepeat() && e.getPlayer().isOnline()) {
 			if (Config.Options.BROADCAST_COMPLETION.asBoolean()) 
 				
@@ -28,9 +35,9 @@ public class ChallengeComplete implements Listener {
 						.player(e.getPlayer().getPlayer())
 						.challenge(e.getChallenge())
 						.rank(e.getRank())
-						.parse(e.getPlayer().getPlayer()));
-				
+						.parse(e.getPlayer().getPlayer()));		
 		}
+		
 		
 		island.checkRank();
 	}

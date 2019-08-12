@@ -497,9 +497,9 @@ public class Challenge {
 				
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				player.getInventory().removeItem(result);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
+						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), result));
+				
 			} else {
 				
 				if (!Options.NO_COMPLETE_SOUND.asString().equals("null"))
@@ -515,7 +515,7 @@ public class Challenge {
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
+						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), null));
 				
 			} else {
 				
@@ -531,7 +531,7 @@ public class Challenge {
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this,player, DodgeIslandManager.getIslandUUID(player)));
+						new ChallengeCompleteEvent(this,player, DodgeIslandManager.getIslandUUID(player), null));
 
 			} else {
 				
@@ -549,12 +549,12 @@ public class Challenge {
 			player.getPlayer().playSound(player.getPlayer().getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 		
 		Bukkit.getPluginManager().callEvent(
-				new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
+				new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), null));
 	}
 	
 	public void complete(Island island) {
 		Bukkit.getPluginManager().callEvent(
-				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island.getIslandUUID()));
+				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island.getIslandUUID(), null));
 	}
 	
 	public int amountCompleted(List<Challenge> challenges) {

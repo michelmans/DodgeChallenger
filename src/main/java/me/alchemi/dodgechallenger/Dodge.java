@@ -27,6 +27,7 @@ import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.listeners.events.CreatureSpawn;
 import me.alchemi.dodgechallenger.listeners.events.PlayerLoginLogout;
 import me.alchemi.dodgechallenger.listeners.events.island.IslandCreateDelete;
+import me.alchemi.dodgechallenger.listeners.events.island.IslandRename;
 import me.alchemi.dodgechallenger.listeners.events.rank.ChallengeComplete;
 import me.alchemi.dodgechallenger.listeners.events.rank.Ranks;
 import me.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
@@ -134,7 +135,7 @@ public class Dodge extends PluginBase {
 	
 	private void registerEvents() {
 		for (Listener listen : Arrays.asList(new IslandCreateDelete(), new Ranks(),
-				new CreatureSpawn(), new PlayerLoginLogout(), new ChallengeComplete())) {
+				new CreatureSpawn(), new PlayerLoginLogout(), new ChallengeComplete(), new IslandRename())) {
 			Bukkit.getPluginManager().registerEvents(listen, this);
 		}
 	}

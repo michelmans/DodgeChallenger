@@ -382,11 +382,14 @@ public class Config extends ConfigBase {
 			}
 		})) {
 			
-			Dodge.getInstance().getMessenger().print("Attempting to rename " + islandFile.getName());
-			
-			OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(YamlConfiguration.loadConfiguration(islandFile).getString("owner")));
-			UUID id = DodgeIslandManager.getIslandUUID(player);
-			islandFile.renameTo(new File(islandFile.getParentFile(), id.toString() + ".yml"));
+			try {
+				Dodge.getInstance().getMessenger().print("Attempting to rename " + islandFile.getName());
+				OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(YamlConfiguration.loadConfiguration(islandFile).getString("owner")));
+				UUID id = DodgeIslandManager.getIslandUUID(player);
+				islandFile.renameTo(new File(islandFile.getParentFile(), id.toString() + ".yml"));
+			} catch(IllegalAccessError e) {
+				e.printStackTrace();
+			}
 			
 		}
 		

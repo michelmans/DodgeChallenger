@@ -88,12 +88,12 @@ public class DodgeIslandManager {
 				File skyblockFiles = skyblock.getDataFolder();
 				
 				FileConfiguration playerFile = YamlConfiguration.loadConfiguration(
-						new File(skyblockFiles, "player-data" + File.pathSeparator + player.getUniqueId() + ".yml"));
+						new File(new File(skyblockFiles, "player-data"), player.getUniqueId() + ".yml"));
 				
 				String ownerUUID = playerFile.getString("Island.Owner");
 				
 				FileConfiguration islandFile = YamlConfiguration.loadConfiguration(
-						new File(skyblockFiles, "island-data" + File.pathSeparator + ownerUUID + ".yml"));
+						new File(new File(skyblockFiles, "island-data"), ownerUUID + ".yml"));
 				
 				return UUID.fromString(islandFile.getString("UUID"));
 				
