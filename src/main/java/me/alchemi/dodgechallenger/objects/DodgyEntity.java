@@ -11,14 +11,14 @@ import org.bukkit.material.Colorable;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.MetadataValueAdapter;
 
-import me.alchemi.dodgechallenger.main;
+import me.alchemi.dodgechallenger.Dodge;
 
 public class DodgyEntity {
 
-	String nbt;
-	EntityType type;
-	Map<String, MetadataValue> nbtMap = new HashMap<String, MetadataValue>();
-	DyeColor colour = null;
+	private	String nbt;
+	private EntityType type;
+	private Map<String, MetadataValue> nbtMap = new HashMap<String, MetadataValue>();
+	private DyeColor colour = null;
 	
 	public DodgyEntity(String type, String nbt) {
 		this.type = getEntityByName(type);
@@ -56,7 +56,7 @@ public class DodgyEntity {
 				}
 				
 				if (n.find()) {
-					nbtMap.put(w.group(), new MetadataValueAdapter(main.getInstance()) {
+					nbtMap.put(w.group(), new MetadataValueAdapter(Dodge.getInstance()) {
 						
 						@Override
 						public Object value() {
@@ -68,7 +68,7 @@ public class DodgyEntity {
 					});
 					continue;
 				} else if (w.find()) {
-					nbtMap.put(w.group(0), new MetadataValueAdapter(main.getInstance()) {
+					nbtMap.put(w.group(0), new MetadataValueAdapter(Dodge.getInstance()) {
 						
 						@Override
 						public Object value() {
@@ -87,7 +87,7 @@ public class DodgyEntity {
 	}
 
 	public String getName() {
-		return type.name();
+		return type.name().replaceAll("_", " ").toLowerCase();
 	}
 	
 	

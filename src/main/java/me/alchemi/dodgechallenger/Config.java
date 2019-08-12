@@ -1,63 +1,82 @@
 package me.alchemi.dodgechallenger;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.alchemi.al.configurations.SexyConfiguration;
-import me.alchemi.dodgechallenger.events.PrefixStuff;
+import me.alchemi.al.objects.base.ConfigBase;
+import me.alchemi.al.objects.base.PluginBase;
+import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
+import me.alchemi.dodgechallenger.objects.DodgeIsland;
+import me.alchemi.dodgechallenger.objects.Rank;
 import me.goodandevil.skyblock.api.island.IslandManager;
 
-public class Config {
-
-	public static SexyConfiguration config;
-	public static SexyConfiguration messages;
-	public static SexyConfiguration challenges;
-
-	private interface ConfigInterface {
-		
-		Object value();
-		
-		void get();
-		
-		boolean asBoolean();
-		
-		String asString();
-		
-		Sound asSound();
-		
-		List<String> asStringList();
-		
-		int asInt();
-		
-		ItemStack asItemStack();
-		
-		Material asMaterial();
+public class Config extends ConfigBase {
+	
+	public Config(PluginBase plugin) throws FileNotFoundException, IOException, InvalidConfigurationException {
+		super(plugin);
 	}
 	
-	public static enum MESSAGES{
+	public static enum ConfigEnum implements IConfigEnum{
 		
-		COMMANDS_NO_PERMISSION("DodgeChallenger.Commands.NoPermission"),
-		COMMANDS_WRONG_FORMAT("DodgeChallenger.Commands.WrongFormat"),
+		CONFIG(new File(Dodge.getInstance().getDataFolder(), "config.yml"), 6),
+		MESSAGES(new File(Dodge.getInstance().getDataFolder(), "messages.yml"), 10),
+		CHALLENGES(new File(Dodge.getInstance().getDataFolder(), "challenges.yml"), 7);
+		
+		final File file;
+		final int version;
+		SexyConfiguration config;
+		
+		private ConfigEnum(File file, int version) {
+			this.file = file;
+			this.version = version;
+			this.config = SexyConfiguration.loadConfiguration(file);
+		}
+		
+		@Override
+		public SexyConfiguration getConfig() {
+			return config;
+		}
+
+		@Override
+		public File getFile() {
+			return file;
+		}
+
+		@Override
+		public int getVersion() {
+			return version;
+		}
+		
+	}
+
+	public static enum Messages implements IMessage{
+		COMMANDS_NOPERMISSION("DodgeChallenger.Commands.NoPermission"),
+		COMMANDS_WRONGFORMAT("DodgeChallenger.Commands.WrongFormat"),
 		COMMANDS_UNKNOWN("DodgeChallenger.Commands.Unknown"),
-		COMMANDS_NO_CHALLENGE("DodgeChallenger.Commands.NoChallenge"),
-		COMMANDS_NO_ISLAND("DodgeChallenger.Commands.NoIsland"),
-		COMMANDS_COMPLETE("DodgeChallenger.Commands.Complete"),
-		COMMANDS_RANK("DodgeChallenger.Commands.Rank"),
-		COMMANDS_RESET("DodgeChallenger.Commands.Reset"),
-		COMMANDS_RESETALL("DodgeChallenger.Commands.ResetAll"),
-		CHALLENGE_BROADCAST_COMPLETED("DodgeChallenger.Challenge.BroadcastCompleted"),
+		COMMANDS_NOCHALLENGE("DodgeChallenger.Commands.NoChallenge"),
+		COMMANDS_NOISLAND("DodgeChallenger.Commands.NoIsland"),
+		CHALLENGE_BROADCASTCOMPLETED("DodgeChallenger.Challenge.BroadcastCompleted"),
 		CHALLENGE_MESSAGE("DodgeChallenger.Challenge.Message"),
 		CHALLENGE_LORE_REQUIRES("DodgeChallenger.Challenge.Lore.Requires"),
 		CHALLENGE_LORE_ITEM("DodgeChallenger.Challenge.Lore.Item"),
@@ -70,36 +89,53 @@ public class Config {
 		CHALLENGE_COMPLETED("DodgeChallenger.Challenge.Completed"),
 		CHALLENGE_NOTREPEATABLE("DodgeChallenger.Challenge.NotRepeatable"),
 		CHALLENGE_LOCKED_RANK("DodgeChallenger.Challenge.Locked.Rank"),
-		CHALLENGE_LOCKED_CHALLENGE("DodgeChallenger.Challenge.Locked.Challenge"),
-		CHALLENGE_LOCKED_CHALLENGES("DodgeChallenger.Challenge.Locked.Challenges"),
-		CHALLENGE_LOCKED_LOCKED("DodgeChallenger.Challenge.Locked.Locked"),
+		CHALLENGE_LOCKED_SINGLE("DodgeChallenger.Challenge.Locked.Single"),
+		CHALLENGE_LOCKED_MULTIPLE("DodgeChallenger.Challenge.Locked.Multiple"),
+		CHALLENGE_LOCKED_AMOUNT("DodgeChallenger.Challenge.Locked.Amount"),
+		CHALLENGE_LOCKED_NAME("DodgeChallenger.Challenge.Locked.Name"),
+		CHALLENGE_LOCKED_LORE("DodgeChallenger.Challenge.Locked.Lore"),
 		CHALLENGE_MISSING_LEVEL("DodgeChallenger.Challenge.Missing.Level"),
 		CHALLENGE_MISSING_BASE("DodgeChallenger.Challenge.Missing.Base"),
 		CHALLENGE_MISSING_ITEM("DodgeChallenger.Challenge.Missing.Item"),
-		RANK_BROADCAST_RANKUP("DodgeChallenger.Rank.BroadcastRankup"),
-		RANK_TAG("DodgeChallenger.Rank.Tag"),		
-		GUI_GUINAME("DodgeChallenger.GUI.GUIName"),
+		RANK_BROADCASTRANKUP("DodgeChallenger.Rank.BroadcastRankup"),
+		RANK_MESSAGE("DodgeChallenger.Rank.Message"),
+		RANK_TAG("DodgeChallenger.Rank.Tag"),
+		GUINAME("DodgeChallenger.GUIName"),
 		GUI_NEXTPAGE("DodgeChallenger.GUI.NextPage"),
-		GUI_PREVPAGE("DodgeChallenger.GUI.PrevPage");
+		GUI_PREVPAGE("DodgeChallenger.GUI.PrevPage"),
+		ADMIN_COMPLETE_CHALLENGE("DodgeChallenger.Admin.Complete.Challenge"),
+		ADMIN_COMPLETE_RANK("DodgeChallenger.Admin.Complete.Rank"),
+		ADMIN_RESET("DodgeChallenger.Admin.Reset"),
+		ADMIN_RESETALL("DodgeChallenger.Admin.ResetAll");
 		
 		String value;
 		String key;
 		
-		private MESSAGES(String key) {
+		private Messages(String key) {
 			this.key = key;
 		}
 		
 		public void get() { 
-			value = messages.getString(key);
+			value = getConfig().getString(key);
 			
 		}
 		
 		public String value() {
 			return value;
 		}
+
+		@Override
+		public String key() {
+			return key;
+		}
+
+		@Override
+		public SexyConfiguration getConfig() {
+			return ConfigEnum.MESSAGES.getConfig();
+		}
 	}
 	
-	public static enum OPTIONS implements ConfigInterface {
+	public static enum Options implements IConfig {
 		
 		BROADCAST_COMPLETION("broadcastCompletion"),
 		BROADCAST_RANKUP("broadcastRankup"),
@@ -114,7 +150,6 @@ public class Config {
 		NO_COMPLETE_SOUND("noCompleteSound"),
 		COMPLETE_SOUND("completeSound"),
 		CLEAR_PLAYER_INVENTORY("clearPlayerInventory"),
-		SHOW_RANK("showRank"),
 		SPAWN_WITHERSKELETON("Spawn.WitherSkeleton"),
 		SPAWN_BLAZE("Spawn.Blaze"),		
 		SPAWN_GUARDIAN("Spawn.Guardian"),
@@ -125,7 +160,7 @@ public class Config {
 		private Object value;
 		public final String key;
 		
-		OPTIONS(String key){
+		Options(String key){
 			this.key = key;
 			get();
 		}
@@ -134,7 +169,7 @@ public class Config {
 		
 		@Override
 		public void get() {
-			value = config.get(key);
+			value = getConfig().get(key);
 		}
 
 		@Override
@@ -182,9 +217,47 @@ public class Config {
 		public Material asMaterial() {
 			return Material.valueOf(asString());
 		}
+
+
+
+		@Override
+		public String key() {
+			return key;
+		}
+
+
+
+		@Override
+		public SexyConfiguration getConfig() {
+			return ConfigEnum.CONFIG.getConfig();
+		}
+
+
+
+		@Override
+		public double asDouble() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+
+
+		@Override
+		public List<Float> asFloatList() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+		@Override
+		public List<Integer> asIntList() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
-	public static enum DATABASE implements ConfigInterface {
+	public static enum DataBase implements IConfig {
 		
 		ENABLED("MySQL.enabled"),
 		HOST("MySQL.host"),
@@ -196,7 +269,7 @@ public class Config {
 		String key;
 		Object value;
 		
-		private DATABASE(String key) {
+		private DataBase(String key) {
 			this.key = key;
 			get();
 		}
@@ -209,7 +282,7 @@ public class Config {
 		@Override
 		public void get() {
 			
-			this.value = config.get(key);
+			this.value = getConfig().get(key);
 			
 		}
 		
@@ -256,123 +329,94 @@ public class Config {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public String key() {
+			return key;
+		}
+
+		@Override
+		public SexyConfiguration getConfig() {
+			return ConfigEnum.CONFIG.getConfig();
+		}
+
+		@Override
+		public double asDouble() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public List<Float> asFloatList() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Integer> asIntList() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	
-	public static void enable() throws FileNotFoundException, IOException, InvalidConfigurationException {
-		config = SexyConfiguration.loadConfiguration(main.CONFIG_FILE);
-		messages = SexyConfiguration.loadConfiguration(main.MESSAGES_FILE);
-		challenges = SexyConfiguration.loadConfiguration(main.CHALLENGES_FILE);
+	@Override
+	public void reload() {
+		super.reload();
 		
+		RankManager.getManager().purge();
+		DodgeIslandManager.getManager().purge();
 		
-		for (SexyConfiguration file : new SexyConfiguration[] {messages, config, challenges}) {
-			
-			int version;
-			if (file.equals(config)) {
-				version = main.CONFIG_FILE_VERSION;
-			} else if (file.equals(messages)) {
-				version = main.MESSAGES_FILE_VERSION;
-			} else if (file.equals(challenges)) {
-				version = main.CHALLENGES_FILE_VERSION;
-			} else version = 0;
-			
-			if(!file.getFile().exists()) {
-				main.getInstance().saveResource(file.getFile().getName(), false);
-			}
-			config.setComment("broadcastFormat", "# The formatting of the broadcast text.");
-			
-			if(!file.isSet("File-Version-Do-Not-Edit") 
-					|| !file.get("File-Version-Do-Not-Edit").equals(version)) {
-				main.getInstance().getMessenger().print("Your $file$ is outdated! Updating...".replace("$file$", file.getFile().getName()));
-				file.load(new InputStreamReader(main.getInstance().getResource(file.getFile().getName())));
-				file.update(SexyConfiguration.loadConfiguration(new InputStreamReader(main.getInstance().getResource(file.getFile().getName()))));
-				file.set("File-Version-Do-Not-Edit", version);
-				file.save();
-				main.getInstance().getMessenger().print("File successfully updated!");
-			}
-		}
-		
-		
-		for (OPTIONS value : OPTIONS.values()) {
-			value.get();
-		}
-		
-		for (MESSAGES value : MESSAGES.values()) {
-			value.get();
-		}
-		
-		for (DATABASE value : DATABASE.values()) {
-			value.get();
-		}
-		
-		ConfigurationSection section = challenges.getConfigurationSection("ranks");
+		ConfigurationSection section = ConfigEnum.CHALLENGES.getConfig().getConfigurationSection("ranks");
 		for (String path : section.getValues(false).keySet()) {
-			new RankManager(section.getConfigurationSection(path));
-		}
-		DATABASE.ENABLED.set(false);
-		
-		
-	}
-	
-	public static void reload() {
-		config = SexyConfiguration.loadConfiguration(config.getFile());
-		messages = SexyConfiguration.loadConfiguration(messages.getFile());
-		challenges = SexyConfiguration.loadConfiguration(challenges.getFile());
-		
-		for (OPTIONS value : OPTIONS.values()) {
-			value.get();
+			new Rank(section.getConfigurationSection(path));
 		}
 		
-		for (MESSAGES value : MESSAGES.values()) {
-			value.get();
+		DataBase.ENABLED.set(false);
+		
+		for (File islandFile : new File(Dodge.getInstance().getDataFolder(), "islands").listFiles(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.matches("(\\d+-\\d+-\\d+\\.yml)");
+			}
+		})) {
+			
+			Dodge.getInstance().getMessenger().print("Attempting to rename " + islandFile.getName());
+			
+			OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(YamlConfiguration.loadConfiguration(islandFile).getString("owner")));
+			UUID id = DodgeIslandManager.getIslandUUID(player);
+			islandFile.renameTo(new File(islandFile.getParentFile(), id.toString() + ".yml"));
+			
 		}
-		
-		for (DATABASE value : DATABASE.values()) {
-			value.get();
-		}
-		
-		RankManager.purge();
-		
-		ConfigurationSection section = challenges.getConfigurationSection("ranks");
-		for (String path : section.getValues(false).keySet()) {
-			new RankManager(section.getConfigurationSection(path));
-		}
-		
-		DATABASE.ENABLED.set(false);
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (IslandManager.hasIsland(player)) {
-				int rank = main.dbm.getRank(SkyBlockAPI.getIslandManager().getIsland(player));
+			if (IslandManager.hasIsland(player) && DodgeIslandManager.getManager().getByPlayer(player) == null) {
 				
-				if (Config.OPTIONS.SHOW_RANK.asBoolean()) {
-					PrefixStuff.setRankPrefix(player, RankManager.getRank(rank).getPrefix());
-				}
-				
-				if (me.alchemi.dodgechallenger.managers.IslandManager.getByPlayer(player) == null) {
-					new me.alchemi.dodgechallenger.managers.IslandManager(SkyBlockAPI.getIslandManager().getIsland(player));
-				}
+				new DodgeIsland(DodgeIslandManager.getIslandUUID(player));
 				
 			}
 		}
 	}
 	
-	public static void save() {
-		for (OPTIONS value : OPTIONS.values()) {
-			config.set(value.key, value.value);
-		}
-		
-		for (MESSAGES value : MESSAGES.values()) {
-			messages.set(value.key, value.value);
-		}
-		
-		for (DATABASE value : DATABASE.values()) {
-			config.set(value.key, value.value);
-		}
-		
-		try {
-			config.save();
-			messages.save();
-		} catch (IOException e) {e.printStackTrace();}
+	@Override
+	protected IConfigEnum[] getConfigs() {
+		return ConfigEnum.values();
+	}
+
+	@Override
+	protected Set<IConfig> getEnums() {
+		return new HashSet<ConfigBase.IConfig>() {
+			{
+				addAll(Arrays.asList(DataBase.values()));
+				addAll(Arrays.asList(Options.values()));
+			}
+		};
+	}
+
+	@Override
+	protected Set<IMessage> getMessages() {
+		return Stream.of(Messages.values()).collect(Collectors.toSet());
 	}
 	
 }

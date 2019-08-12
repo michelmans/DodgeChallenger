@@ -1,34 +1,32 @@
 package me.alchemi.dodgechallenger.listeners.tabcomplete;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import me.alchemi.al.objects.base.TabCompleteBase;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
 
-public class AdminTabComplete implements TabCompleter {
+public class AdminTabComplete extends TabCompleteBase {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		List<String> tabSuggest = new ArrayList<>();
-		List<String> list = new ArrayList<>();
-		
-		if (!(sender instanceof Player))
-			return tabSuggest;
 
-		if (!sender.hasPermission("dodgec.admin") && !sender.isOp())
-			return tabSuggest;
+		List<Object> list = new ArrayList<Object>();
+
+		if (!(sender instanceof Player && sender.hasPermission(command.getPermission())))
+			return Arrays.asList("");
 		
 		if (args.length == 1) {
 			
-			if (sender.hasPermission("dodgec.reload") || sender.isOp()) list.add("reload");
+			if (sender.hasPermission("dodgec.reload")) list.add("reload");
+			if (sender.hasPermission("dodgec.default")) list.add("defaults");
 			
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				list.add(p.getName());
@@ -47,7 +45,7 @@ public class AdminTabComplete implements TabCompleter {
 				list.addAll(Challenge.getChallenges());
 				
 			} else if (args[1].equals("rank")) {
-				for (int i = 0; i < RankManager.getRanks().size(); i++) list.add(String.valueOf(i));
+				for (int i = 0; i < RankManager.getManager().ranks(); i++) list.add(String.valueOf(i));
 				
 			} else if (args[1].equals("reset")) {
 				list.addAll(Challenge.getChallenges());
@@ -55,12 +53,7 @@ public class AdminTabComplete implements TabCompleter {
 			}
 		}
 
-		for (int i = list.size() - 1; i >= 0; i--)
-			if(list.get(i).startsWith(args[args.length - 1]))
-				tabSuggest.add(list.get(i));
-
-		Collections.sort(tabSuggest);
-		return tabSuggest;
+		return returnSortSuggest(list, args);
 	}
 
 }

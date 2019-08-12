@@ -1,5 +1,6 @@
 package me.alchemi.dodgechallenger.objects;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,20 +20,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import me.alchemi.al.api.MaterialWrapper;
 import me.alchemi.al.configurations.Messenger;
-import me.alchemi.dodgechallenger.Config;
+import me.alchemi.dodgechallenger.Config.Messages;
+import me.alchemi.dodgechallenger.Config.Options;
 import me.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
-import me.alchemi.dodgechallenger.managers.IslandManager;
+import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
+import me.goodandevil.skyblock.api.island.IslandManager;
 
 public class Challenge {
 
 	private static HashMap<String, Challenge> challenges = new HashMap<String, Challenge>();
 	private static List<Challenge> levelUpChallenges = new ArrayList<Challenge>();
 	
-	private final RankManager rank;
+	private final Rank rank;
 	
 	private final String name;
 	private final String displayName;
@@ -52,7 +57,7 @@ public class Challenge {
 	
 	private final ConfigurationSection section;
 	
-	public Challenge(String name, ConfigurationSection sec, RankManager rank) {
+	public Challenge(String name, ConfigurationSection sec, Rank rank) {
 		
 		this.rank = rank;
 		
@@ -107,9 +112,9 @@ public class Challenge {
 			this.requiredLevel = sec.getInt("requiredLevel");
 		}
 		
-		//displayitem
-		if (Material.getMaterial(sec.getString("displayItem", "BLUE_STAINED_GLASS_PANE")) == null) this.displayItem = Material.BLUE_STAINED_GLASS_PANE;
-		else this.displayItem = Material.getMaterial(sec.getString("displayItem", "BLUE_STAINED_GLASS_PANE"));
+		//display item
+		if (MaterialWrapper.getWrapper(sec.getString("displayItem", "BLUE_STAINED_GLASS_PANE")) == null) this.displayItem = Material.BLUE_STAINED_GLASS_PANE;
+		else this.displayItem = MaterialWrapper.getWrapper(sec.getString("displayItem", "BLUE_STAINED_GLASS_PANE"));
 		
 		this.requiredChallenges = sec.getStringList("requiredChallenges");
 		this.rewardText = sec.getString("reward.text");
@@ -195,19 +200,19 @@ public class Challenge {
 		
 	}
 	
-	public final class getAllResult{
-		public final boolean res1;
-		public final List<ItemStack> res2;
-		public final HashMap<Material, Integer> res3;
+	public final class ItemsResult{
+		public final boolean allItemsPresent;
+		public final ItemStack[] itemsToRemove;
+		public final HashMap<Material, Integer> missingItemsAmount;
 		
-		public getAllResult(boolean res1, List<ItemStack> res2, HashMap<Material, Integer> res3) {
-			this.res1 = res1;
-			this.res2 = res2;
-			this.res3 = res3;
+		public ItemsResult(boolean res1, List<ItemStack> res2, HashMap<Material, Integer> res3) {
+			this.allItemsPresent = res1;
+			this.itemsToRemove = res2.toArray(new ItemStack[res2.size()]);
+			this.missingItemsAmount = res3;
 		}
 	}
 	
-	private getAllResult getAll(PlayerInventory inv, List<Challenge> cs) {
+	private ItemsResult getItemsInventory(PlayerInventory inv, List<Challenge> cs) {
 		HashMap<Material, Integer> items = new HashMap<Material, Integer>(requiredItems);
 		List<ItemStack> toTake = new ArrayList<ItemStack>();
 		 
@@ -225,28 +230,28 @@ public class Challenge {
 			}
 		}
 		if (items.isEmpty()) {
-			return new getAllResult(true, toTake, items);
+			return new ItemsResult(true, toTake, items);
 		}
-		return new getAllResult(false, toTake, items);
+		return new ItemsResult(false, toTake, items);
 	}
 	
-	public final class getBlockResult{
-		public final boolean res1;
-		public final HashMap<Material, Integer> res2;
+	public final class BlockResult{
+		public final boolean allBlocksPresent;
+		public final HashMap<Material, Integer> missingBlocks;
 		
-		public getBlockResult(boolean res1, HashMap<Material, Integer> res2) {
+		public BlockResult(boolean res1, HashMap<Material, Integer> res2) {
 
-			this.res1 = res1;
-			this.res2 = res2;
+			this.allBlocksPresent = res1;
+			this.missingBlocks = res2;
 		}
 	}
 	
-	private getBlockResult getBlocks(Location loc, List<Challenge> cs) {  
+	private BlockResult getBlocks(Location loc, List<Challenge> challenges) {  
 		HashMap<Material, Integer> blocks = new HashMap<Material, Integer>(requiredItems);
 		HashMap<Material, Integer> blocksPresent = new HashMap<Material, Integer>();
 		
 		for (Entry<Material, Integer> item : blocks.entrySet()) {
-			blocks.put(item.getKey(), (int)Math.round(item.getValue() * Math.pow(1.5, amountCompleted(cs))));
+			blocks.put(item.getKey(), (int)Math.round(item.getValue() * Math.pow(1.5, amountCompleted(challenges))));
 		}
 		
 		for (int x = -radius; x < radius; x++) {
@@ -271,22 +276,22 @@ public class Challenge {
 			else blocks.remove(pres.getKey());
 		}
 		
-		if (!blocks.isEmpty()) return new getBlockResult(false, blocks);
-		return new getBlockResult(true, blocks);
+		if (!blocks.isEmpty()) return new BlockResult(false, blocks);
+		return new BlockResult(true, blocks);
 	}
 	
-	public final class getEntityResult{
-		public final boolean res1;
-		public final HashMap<DodgyEntity, Integer> res2;
+	public final class EntityResult{
+		public final boolean allEntitiesPresent;
+		public final HashMap<DodgyEntity, Integer> missingEntities;
 		
-		public getEntityResult(boolean res1, HashMap<DodgyEntity, Integer> res2) {
+		public EntityResult(boolean res1, HashMap<DodgyEntity, Integer> res2) {
 
-			this.res1 = res1;
-			this.res2 = res2;
+			this.allEntitiesPresent = res1;
+			this.missingEntities = res2;
 		}
 	}
 	
-	private getEntityResult getEntities(Player player, List<Challenge> cs) {  
+	private EntityResult getEntities(Player player, List<Challenge> cs) {  
 		HashMap<DodgyEntity, Integer> entities = new HashMap<DodgyEntity, Integer>(requiredEntities);
 		
 		for (Entry<DodgyEntity, Integer> item : entities.entrySet()) {
@@ -306,149 +311,171 @@ public class Challenge {
 			}
 		}
 		
-		if (!entities.isEmpty()) return new getEntityResult(false, entities);
-		return new getEntityResult(true, entities);
+		if (!entities.isEmpty()) return new EntityResult(false, entities);
+		return new EntityResult(true, entities);
 	}
 	
-	public boolean canCompleteChallenge(Player player, IslandManager im) {
+	public Entry<Boolean, String> canComplete(Player player){
 		
-		if (im.getChallenges().contains(this) && !this.isRepeatable()) return false;
+		Entry<Boolean, String> falseEntry = new AbstractMap.SimpleEntry<Boolean, String>(false, "");
+		Entry<Boolean, String> trueEntry = new AbstractMap.SimpleEntry<Boolean, String>(true, "");
 		
-		if (type == Type.onPlayer) {
-			return getAll(player.getInventory(), im.getChallenges()).res1;
-		} else if (type == Type.onIsland) {
-			
-			return requiredEntities.isEmpty() ? getBlocks(player.getLocation(), im.getChallenges()).res1 : getBlocks(player.getLocation(), im.getChallenges()).res1 && getEntities(player, im.getChallenges()).res1;
-			
-		} else {
-			return im.getIsland().getLevel().getLevel() >= requiredLevel || im.getIsland().getIsland().getLevel().getLevel() >= requiredLevel;
+		
+		DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(player);
+		
+		if (island.getChallenges().contains(this) && !this.isRepeatable()) {
+			falseEntry.setValue(Messenger.formatString(Messages.CHALLENGE_NOTREPEATABLE.value()));
+			return falseEntry;
 		}
-	}
-	
-	public String whyNotComplete(Player player, IslandManager im) {
-		if (im.getChallenges().contains(this) && !this.isRepeatable())
-			return Config.MESSAGES.CHALLENGE_NOTREPEATABLE.value();
 		
-		if (type == Type.islandLevel) {
-			return Config.MESSAGES.CHALLENGE_MISSING_LEVEL.value()
-					.replace("$player$", player.getDisplayName())
-					.replace("$challenge$", displayName)
-					.replace("$level$", String.valueOf(requiredLevel))
-					.replace("$island_level$", String.valueOf(SkyBlockAPI.getIslandManager().getIsland(player).getLevel()))
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
-		} else if (type == Type.onIsland) {
+		String reason = new Stringer(Messages.CHALLENGE_MISSING_BASE)
+				.player(player)
+				.challenge(this)
+				.create();
+		
+		switch(type) {
+		case islandLevel:
 			
-			String reason = Config.MESSAGES.CHALLENGE_MISSING_BASE.value()
-					.replace("$player$", player.getDisplayName())
-					.replace("$challenge$", displayName)
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
+			Island fabledIsland = SkyBlockAPI.getIslandManager().getIslandByUUID(island.getIsland());
 			
-			for (Entry<Material, Integer> ent : getBlocks(player.getLocation(), im.getChallenges()).res2.entrySet()) {
-				reason = reason.concat(Config.MESSAGES.CHALLENGE_MISSING_ITEM.value()
-						.replace("$player$", player.getDisplayName())
-						.replace("$challenge$", displayName)
-						.replace("$amount$", String.valueOf(ent.getValue()))
-						.replace("$item$", ent.getKey().getKey().getKey().replaceAll("_", " "))
-						.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+			if (fabledIsland.getLevel().getLevel() >= requiredLevel
+					|| fabledIsland.getLevel().getLevel() >= requiredLevel) {
+				return trueEntry;
+				
+			} else {
+				falseEntry.setValue(new Stringer(Messages.CHALLENGE_MISSING_LEVEL)
+						.player(player)
+						.challenge(this)
+						.level(requiredLevel)
+						.island_level(fabledIsland.getLevel().getLevel())
+						.parse(player)
+						.create());
+				return falseEntry;
 			}
 			
-			if (!requiredEntities.isEmpty()) {
-				for (Entry<DodgyEntity, Integer> ent : getEntities(player, im.getChallenges()).res2.entrySet()) {
-					reason = reason.concat(Config.MESSAGES.CHALLENGE_MISSING_ITEM.value()
-							.replace("$player$", player.getDisplayName())
-							.replace("$challenge$", displayName)
-							.replace("$amount$", String.valueOf(ent.getValue()))
-							.replace("$item$", ent.getKey().getName())
-							.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
-				}
+		case onIsland:
+			
+			BlockResult br = getBlocks(player.getLocation(), island.getChallenges());
+			
+			EntityResult er = getEntities(player, island.getChallenges());
+			
+			if ((requiredEntities.isEmpty() || er.allEntitiesPresent)
+					&& (requiredItems.isEmpty() || br.allBlocksPresent)) {
+				return trueEntry;
 			}
 			
-			return reason;
-			
-		} else if (type == Type.onPlayer) {
-			String reason = Config.MESSAGES.CHALLENGE_MISSING_BASE.value()
-					.replace("$player$", player.getDisplayName())
-					.replace("$challenge$", displayName)
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
-			
-			for (Entry<Material, Integer> ent : getAll(player.getInventory(), im.getChallenges()).res3.entrySet()) {
-				reason = reason.concat(Config.MESSAGES.CHALLENGE_MISSING_ITEM.value().replace("$player$", player.getDisplayName())
-					.replace("$challenge$", displayName)
-					.replace("$amount$", String.valueOf(ent.getValue()))
-					.replace("$item$", ent.getKey().getKey().getKey().replaceAll("_", " "))
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString()));
+			for (Entry<Material, Integer> ent : br.missingBlocks.entrySet()) {
+				reason = reason.concat(new Stringer(Messages.CHALLENGE_MISSING_ITEM)
+						.player(player)
+						.challenge(this)
+						.amount(ent.getValue())
+						.item(new ItemStack(ent.getKey()))
+						
+						.create());
 			}
 			
-			return reason;
-		} else {
-			return "&7&oBecause you can bite my shiny metal ass!";
+			for (Entry<DodgyEntity, Integer> ent : er.missingEntities.entrySet()) {
+				reason = reason.concat(new Stringer(Messages.CHALLENGE_MISSING_ITEM)
+						.player(player)
+						.challenge(this)
+						.amount(ent.getValue())
+						.item(ent.getKey().getName())
+						
+						.create());
+			}
+			falseEntry.setValue(reason);
+			return falseEntry;
+			
+		case onPlayer:
+			
+			ItemsResult ir = getItemsInventory(player.getInventory(), island.getChallenges());
+			
+			if (ir.allItemsPresent) {
+				return trueEntry;
+			}
+			
+			for (Entry<Material, Integer> ent : ir.missingItemsAmount.entrySet()) {
+				reason = reason.concat(new Stringer(Messages.CHALLENGE_MISSING_ITEM)
+						.player(player)
+						.challenge(this)
+						.amount(ent.getValue())
+						.item(new ItemStack(ent.getKey()))
+						
+						.create());
+			}
+			falseEntry.setValue(reason);
+			return falseEntry;
+			
+		default:
+			
+			return new AbstractMap.SimpleEntry<Boolean, String>(false, "&7&oBecause you can bite my shiny metal ass!");
+		
 		}
+		
 	}
 	
 	public final class lockedResult {
-		public final boolean res1;
-		public final String res2;
+		public final boolean isLocked;
+		public final String lockReason;
 		public final boolean res3; //Locked Because of 
 		
 		public lockedResult(boolean res1, String res2, boolean res3) {
-			this.res1 = res1;
-			this.res2 = res2;
+			this.isLocked = res1;
+			this.lockReason = res2;
 			this.res3 = res3;
 		}
 	}
 	
-	public lockedResult getLocked(IslandManager island, OfflinePlayer oPlayer) {
+	public lockedResult getLocked(DodgeIsland island, OfflinePlayer oPlayer) {
 		
 		//RANK
-		if (island.getRank() < this.rank.rank()) {
-			String reason = (Config.OPTIONS.BROADCAST_FORMAT.asString() + Config.MESSAGES.CHALLENGE_LOCKED_RANK.value())
-					.replace("$player$", oPlayer.getName())
-					.replace("$rank$", rank.getDisplayName())
-					.replace("$c_challenge$", displayName)
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
-			
-			return new lockedResult(true, reason, false);
+		if (island.getRank().getId() < this.rank.getId()) {
+			return new lockedResult(true, Options.BROADCAST_FORMAT.asString() + new Stringer(Messages.CHALLENGE_LOCKED_RANK)
+					.player(oPlayer.getName())
+					.rank(rank)
+					.required_rank(RankManager.getManager().getPreviousRank(rank))
+					.challenge(this)
+					.create(), false);
 		}
 		
 		//CHALLENGE
-		List<Challenge> rC = new ArrayList<Challenge>();
-		for (String c : requiredChallenges) {
+		List<Challenge> requiredChallengesList = new ArrayList<Challenge>();
+		for (String challenge : requiredChallenges) {
 			
-			if (!island.getChallenges().contains(Challenge.getChallengeFromID(c))
-					&& Challenge.getChallengeFromID(c) != null) rC.add(Challenge.getChallengeFromID(c));
+			if (!island.getChallenges().contains(Challenge.getChallengeFromID(challenge))
+					&& Challenge.getChallengeFromID(challenge) != null) requiredChallengesList.add(Challenge.getChallengeFromID(challenge));
 			
 		}
 		
-		if (rC.size() == 1) { //SINGLE CHALLENGE
-			String reason = Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGE.value()
-					.replace("$player$", oPlayer.getName())
-					.replace("$challenge$", rC.get(0).getDisplayName())
-					.replace("$c_challenge$", displayName)
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
-			
-			return new lockedResult(true, reason, true);
+		if (requiredChallengesList.size() == 1) { //SINGLE CHALLENGE
+			return new lockedResult(true, new Stringer(Messages.CHALLENGE_LOCKED_SINGLE)
+					.player(oPlayer.getName())
+					.challenge(this)
+					.required_challenge(requiredChallengesList.get(0))
+					.create(), true);
 		
-		} else if (rC.size() > 1) { //MULTIPLE CHALLENGES
+		} else if (requiredChallengesList.size() > 1) { //MULTIPLE CHALLENGES
 			
-			String cs = "";
-			for (Challenge c : rC) {
-				if (c == rC.get(0)) {
-					cs = c.getDisplayName();
-				} else if (c == rC.get(rC.size() - 1)) {
-					cs = cs.concat("&r$f$ and " + c.getDisplayName());
+			String challenges = "";
+			for (Challenge challenge : requiredChallengesList) {
+				if (challenge == requiredChallengesList.get(0)) {
+					challenges = challenge.getDisplayName();
+				} else if (challenge == requiredChallengesList.get(requiredChallengesList.size() - 1)) {
+					challenges = challenges.concat("&r%f% and " + challenge.getDisplayName());
 				} else {
-					cs = cs.concat(", " + c.getDisplayName());
+					challenges = challenges.concat(", " + challenge.getDisplayName());
 				}
 			}
 			
-			String challenges = cs;
+			Stringer string = new Stringer(Messages.CHALLENGE_LOCKED_MULTIPLE)
+					.player(oPlayer.getName())
+					.challenge(this)
+					.required_challenges(challenges);
 			
-			String reason = Config.MESSAGES.CHALLENGE_LOCKED_CHALLENGES.value()
-					.replace("$player$", oPlayer.getName())
-					.replace("$challenges$", challenges)
-					.replace("$c_challenge$", displayName)
-					.replace("$f$", Config.OPTIONS.BROADCAST_FORMAT.asString());
-			return new lockedResult(true, reason, true);
+			if (oPlayer.isOnline()) string.parse(oPlayer.getPlayer());
+			else string.parse(oPlayer);
+			
+			return new lockedResult(true, string.create(), true);
 		}
 	
 		return new lockedResult(false, null, false);
@@ -456,57 +483,84 @@ public class Challenge {
 	
 	public void complete(Player player) {
 		
-		IslandManager im = me.goodandevil.skyblock.api.island.IslandManager.hasIsland(player) ? IslandManager.getByPlayer(player) : null;
+		DodgeIsland island = IslandManager.hasIsland(player) ? DodgeIslandManager.getManager().getByPlayer(player) : null;
+		
+		Entry<Boolean, String> canComplete = canComplete(player);
 		
 		if (type == Type.onPlayer) {
-			getAllResult result = getAll(player.getInventory(), im.getChallenges());
-			if (result.res1) {
-				im.checkRank();
+			
+			ItemStack[] result = getItemsInventory(player.getInventory(), island.getChallenges()).itemsToRemove;
+
+			if (canComplete.getKey()) {
 				
-				if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				player.getInventory().removeItem(result.res2.toArray(new ItemStack[result.res2.size()]));
-				Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this, player, SkyBlockAPI.getIslandManager().getIsland(player)));
+				island.checkRank();
+				
+				if (!Options.COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				player.getInventory().removeItem(result);
+				Bukkit.getPluginManager().callEvent(
+						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
 			} else {
-				if (!Config.OPTIONS.NO_COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				player.sendMessage(Messenger.formatString(whyNotComplete(player, im)));
+				
+				if (!Options.NO_COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				player.sendMessage(canComplete.getValue());
+				
 			}
 		} else if (type == Type.onIsland 
 				&& SkyBlockAPI.getIslandManager().getIslandPlayerAt(player).getOwnerUUID().equals(SkyBlockAPI.getIslandManager().getIsland(player).getOwnerUUID())) {
-			if (getBlocks(player.getLocation(), im.getChallenges()).res1) {
-				im.checkRank();
+			
+			if (canComplete.getKey()) {
 				
-				if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this, player, SkyBlockAPI.getIslandManager().getIsland(player)));
+				if (!Options.COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				Bukkit.getPluginManager().callEvent(
+						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
+				
 			} else {
-				if (!Config.OPTIONS.NO_COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				player.sendMessage(Messenger.formatString(whyNotComplete(player, im)));
+				
+				if (!Options.NO_COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				player.sendMessage(canComplete.getValue());
+				
 			}
+			
 		} else if (type == Type.islandLevel) {
-			if (canCompleteChallenge(player, im)) {
-				im.checkRank();
+			if (canComplete.getKey()) {
 				
-				if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this,player, SkyBlockAPI.getIslandManager().getIsland(player)));
+				if (!Options.COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				Bukkit.getPluginManager().callEvent(
+						new ChallengeCompleteEvent(this,player, DodgeIslandManager.getIslandUUID(player)));
+
 			} else {
-				if (!Config.OPTIONS.NO_COMPLETE_SOUND.asString().equals("null")) player.playSound(player.getLocation(), Config.OPTIONS.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-				player.sendMessage(Messenger.formatString(whyNotComplete(player, im)));
+				
+				if (!Options.NO_COMPLETE_SOUND.asString().equals("null"))
+					player.playSound(player.getLocation(), Options.NO_COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+				player.sendMessage(canComplete.getValue());
+				
 			}
 		}
 	}
 	
 	public void forceComplete(OfflinePlayer player) { 
-		if (!Config.OPTIONS.COMPLETE_SOUND.asString().equals("null") && player.isOnline()) player.getPlayer().playSound(player.getPlayer().getLocation(), Config.OPTIONS.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
-		Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this, player, SkyBlockAPI.getIslandManager().getIsland(player)));
+		if (!Options.COMPLETE_SOUND.asString().equals("null")
+				&& player.isOnline()) 
+			player.getPlayer().playSound(player.getPlayer().getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
+		
+		Bukkit.getPluginManager().callEvent(
+				new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player)));
 	}
 	
 	public void complete(Island island) {
-		Bukkit.getPluginManager().callEvent(new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island));
+		Bukkit.getPluginManager().callEvent(
+				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island.getIslandUUID()));
 	}
 	
-	public int amountCompleted(List<Challenge> cs) {
-		if (cs.isEmpty()) return 0;
+	public int amountCompleted(List<Challenge> challenges) {
+		if (challenges.isEmpty()) return 0;
 		int amount = 0;
-		for (Challenge c : cs) {
+		for (Challenge c : challenges) {
 			if (this.equals(c)) amount++;
 		}
 		return amount;
@@ -551,7 +605,7 @@ public class Challenge {
 		challenges.clear();
 		levelUpChallenges.clear();
 		
-		IslandManager.purge();
+		DodgeIslandManager.getManager().purge();
 	}
 	
 	public enum Type{

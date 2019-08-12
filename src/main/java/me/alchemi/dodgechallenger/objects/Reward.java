@@ -16,7 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.alchemi.al.Library;
-import me.alchemi.dodgechallenger.main;
+import me.alchemi.al.objects.handling.ItemFactory;
+import me.alchemi.dodgechallenger.Dodge;
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 import me.goodandevil.skyblock.api.island.IslandRole;
@@ -116,21 +117,21 @@ public class Reward {
 					Library.giveItemStack(item, player.getPlayer());
 				}
 			}
-			if (money > 0 && main.eco != null) {
-				main.eco.depositPlayer(player, money);
+			if (money > 0 && Dodge.eco != null) {
+				Dodge.eco.depositPlayer(player, money);
 			}
 			if (xp > 0) {
 				player.getPlayer().giveExp(xp);
 			}
 		} else {
 			
-			if (money > 0 && main.eco != null) {
-				main.eco.depositPlayer(player, money);
+			if (money > 0 && Dodge.eco != null) {
+				Dodge.eco.depositPlayer(player, money);
 			}
 			
-			if (main.getInstance().GIVE_QUEUE.contains(player.getName())) {
+			if (Dodge.getInstance().GIVE_QUEUE.contains(player.getName())) {
 				
-				ConfigurationSection sec = main.getInstance().GIVE_QUEUE.getConfigurationSection(player.getName());
+				ConfigurationSection sec = Dodge.getInstance().GIVE_QUEUE.getConfigurationSection(player.getName());
 				
 				if (xp > 0) {
 					int xp2 = sec.getInt("xp", 0);
@@ -142,10 +143,10 @@ public class Reward {
 					items2.addAll(items);
 					sec.set("items", items2);
 				}
-				main.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+				Dodge.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
 			} else {
 				
-				ConfigurationSection sec = main.getInstance().GIVE_QUEUE.createSection(player.getName());
+				ConfigurationSection sec = Dodge.getInstance().GIVE_QUEUE.createSection(player.getName());
 				
 				if (xp > 0) {
 					sec.set("xp", xp);
@@ -155,12 +156,12 @@ public class Reward {
 					sec.set("items", items);
 				}
 				
-				main.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
+				Dodge.getInstance().GIVE_QUEUE.createSection(player.getName(), sec.getValues(true));
 				
 			}
 			
 			try {
-				main.getInstance().GIVE_QUEUE.save();
+				Dodge.getInstance().GIVE_QUEUE.save();
 			} catch (IOException e) {}
 			
 		}

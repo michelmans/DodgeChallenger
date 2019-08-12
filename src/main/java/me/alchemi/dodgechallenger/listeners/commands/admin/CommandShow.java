@@ -12,7 +12,7 @@ public class CommandShow {
 	public static boolean perform(CommandSender sender, OfflinePlayer player) {
 		
 		if (player == null) {
-			sender.sendMessage(Messenger.formatString(Config.MESSAGES.COMMANDS_WRONG_FORMAT.value() + CommandAdmin.showUsage));
+			sender.sendMessage(Messenger.formatString(Config.Messages.COMMANDS_WRONGFORMAT.value() + CommandAdmin.showUsage));
 			return true;
 		}
 		

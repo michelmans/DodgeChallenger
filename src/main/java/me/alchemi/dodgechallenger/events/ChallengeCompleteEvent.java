@@ -1,14 +1,18 @@
 package me.alchemi.dodgechallenger.events;
 
+import java.util.UUID;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import me.alchemi.dodgechallenger.managers.IslandManager;
-import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
+import me.alchemi.dodgechallenger.objects.DodgeIsland;
+import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.Reward;
+import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 
 public class ChallengeCompleteEvent extends Event{
@@ -18,18 +22,18 @@ public class ChallengeCompleteEvent extends Event{
 	private final boolean repeat;
 	private final Challenge challenge;
 	private final OfflinePlayer player;
-	private final Island island;
+	private final UUID fabledIsland;
 	private final Reward reward;
-	private final IslandManager islandManager;
-	private final RankManager rankManager;
+	private final DodgeIsland island;
+	private final Rank rank;
 	
-	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, Island island) {
+	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, UUID island) {
 		this.challenge = challenge;
 		this.player = player;
-		this.island = island;
-		this.islandManager = player.isOnline() ? IslandManager.getByPlayer(player.getPlayer()) : IslandManager.getByIsland(island);
-		this.rankManager = islandManager.getRankManager();
-		this.repeat = islandManager.getChallenges().contains(challenge);
+		this.fabledIsland = island;
+		this.island = DodgeIslandManager.getManager().get(island);
+		this.rank = this.island.getRank();
+		this.repeat = this.island.getChallenges().contains(challenge);
 		this.reward = new Reward(challenge, repeat);
 	}
 	
@@ -46,12 +50,16 @@ public class ChallengeCompleteEvent extends Event{
 		return challenge;
 	}
 	
-	public Island getIsland() {
-		return island;
+	public UUID getFabledIslandUUID() {
+		return fabledIsland;
 	}
 	
-	public IslandManager getIslandManager() {
-		return islandManager;
+	public Island getFabledIsland() {
+		return SkyBlockAPI.getIslandManager().getIslandByUUID(fabledIsland);
+	}
+	
+	public DodgeIsland getIsland() {
+		return island;
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -70,8 +78,8 @@ public class ChallengeCompleteEvent extends Event{
 		return reward;
 	}
 	
-	public RankManager getRankManager() {
-		return rankManager;
+	public Rank getRank() {
+		return rank;
 	}
 
 	public boolean getRepeat() {

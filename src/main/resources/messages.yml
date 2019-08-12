@@ -1,57 +1,48 @@
 DodgeChallenger:
-  Tag: '&2&oChallenger &6>>&r' 
-  
-  Commands:
-    NoPermission: '&c&oYou don''t have permission to use &9$sender$&c.&r&c If you
-      believe this is an error, &nplease contact an administrator.'
-    WrongFormat: '&cPlease use: &9'
-    Unknown: '&cUnknown command. Use &9/as help &cfor more information.'
-    NoChallenge: '&cChallenge ''$challenge$'' doesn''t exist, please user another one.'
-    NoIsland: '&cYou have no island and therefore cannot make use of this command.'
-    
-    Complete: 'Challenge ''$challenge$'' has been completed for $player$.'
-    Rank: 'All challenges for $rank$&r$f$ have been completed for $player$.'
-    Reset: 'The challenge ''$challenge$'' has been reset for $player$.'
-    ResetAll: 'All $player$''s challenges have been reset.'
-    
-  
-  Challenge:
-    BroadcastCompleted: '$player$&r$f$ has completed the $challenge$&r$f$ challenge for his/hers island!'
-    Message: 'You completed $challenge$&r$f$'
-    
-    Lore:
-      Requires: '&e&oTo complete this challenge you need:'
-      Item: '    - &b$amount$x &7$item$&r'
-      onPlayer: '&f&oItems will be traded for the reward.'
-      onIsland: '&f&oThe items must be within $amount$ blocks.'
-      Reward:
-        Base: '&bYou will be richly &6rewarded&r&b with:'
-        Text: '&2$text$'
-    
-    CanComplete: '&aClick to complete this challenge!'
-    CannotComplete: '&4You cannot complete this challenge.'
-    Completed: '&cYou already completed this challenge &l&f$amount$ times&r&c.'
-    NotRepeatable: '&cThis challenge cannot be repeated.'
-    
-    Locked:
-      Rank: '&oYou need to unlock rank $rank$&r$f$ first.'
-      Challenge: '&oYou need to complete the $challenge$&r$f$ first.'
-      Challenges: '&oYou need to complete $challenges$&r$f$ first.'
-      Locked: '&4&lLOCKED CHALLENGE'
-      IsLocked: '&4&lThis challenge is locked.'
-      
-    Missing:
-      Level: '&cYou are not on level &b$level$&c.'
-      Base: '&cYou are missing: '
-      Item: '&b$amount$&cx &e$item$&r, '
-  
-  Rank:
-    BroadcastRankup: '$owner$''s&r$f$ island has ranked up to $rank$&r$f$!'
-    Message: 'You ranked up to $rank$&r$f$!'
-    Tag: '&b[$rank$&r&b]&r '
-  
-  GUI:
-    GUIName: '&2&oChallenges'
-    NextPage: '&2&lNext page'
-    PrevPage: '&a&lPrevious page'
-     
+   Tag: '&2&oChallenger &6>>&r'
+   Commands:
+      NoPermission: '&c&oYou don''t have permission to use &9%sender%&c.&r&c If you believe this is an error, &nplease contact an administrator.'
+      WrongFormat: '&cPlease use: &9'
+      Unknown: '&cUnknown command. Use &9/challenge help &cfor more information.'
+      NoChallenge: '&cChallenge ''%challenge%'' doesn''t exist, please user another one.'
+      NoIsland: '&cYou have no island and therefore cannot make use of this command.'
+   Challenge:
+      BroadcastCompleted: '%f%%player%&r%f% has completed the %challenge%&r%f% challenge for his/hers island!'
+      Message: '%f%You completed %challenge%&r%f%'
+      Lore:
+         Requires: '&e&oTo complete this challenge you need:'
+         Item: '    - &b%amount%x &7%item%&r'
+         onPlayer: '&f&oItems will be traded for the reward.'
+         onIsland: '&f&oThe items must be within %amount% blocks.'
+         Reward:
+            Base: '&bYou will be richly &6rewarded&r&b with:'
+            Text: '&2%text%'
+      CanComplete: '&aClick to complete this challenge!'
+      CannotComplete: '&4You cannot complete this challenge.'
+      Completed: '&cYou already completed this challenge &l&f%amount% times&r&c.'
+      NotRepeatable: '&cThis challenge cannot be repeated.'
+      Locked:
+         Rank: '&oYou need to unlock rank %required_rank%&r%f% first.'
+         Single: '&oYou need to complete the %required_challenge%&r%f% first.'
+         Multiple: '&oYou need to complete %required_challenges%&r%f% first.'
+         Amount: 'You need to complete %amount% challenges in the previous rank.'
+         Name: '&4&lLOCKED CHALLENGE'
+         Lore: '&4&lThis challenge is locked.'
+      Missing:
+         Level: '&cYou are not on level &b%level%&c.'
+         Base: '&cYou are missing: '
+         Item: '&b%amount%&cx &e%item%&r, '
+   Rank:
+      BroadcastRankup: '%f%%owner%''s&r%f% island has ranked up to %rank%&r%f%!'
+      Message: 'You ranked up to %rank%&r%f%!'
+      Tag: '&b[%rank%&r&b]&r '
+   GUI:
+      GUIName: '&2&oChallenges'
+      NextPage: '&2&lNext page'
+      PrevPage: '&a&lPrevious page'
+   Admin:
+      Complete:
+         Challenge: '%f%Challenge ''%challenge%''%f% has been completed for %player%.'
+         Rank: '%f%All challenges for %rank%&r%f% have been completed for %player%.'
+      Reset: '%f%The challenge ''%challenge%''%f% has been reset for %player%.'
+      ResetAll: '%f%All %player%''s%f% challenges have been reset.'

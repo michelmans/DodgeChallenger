@@ -41,9 +41,6 @@ completeSound: ENTITY_FIREWORK_ROCKET_BLAST_FAR
 # Whether or not to clear player inventory on island creation/restart.
 clearPlayerInventory: true
 
-# Whether or not to show a players rank.
-showRank: true
-
 Spawn:
   WitherSkeleton: 5
   Blaze: 10

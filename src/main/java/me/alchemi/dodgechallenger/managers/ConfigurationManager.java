@@ -6,41 +6,51 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import me.alchemi.al.configurations.SexyConfiguration;
 import me.alchemi.al.objects.handling.SexyRunnable;
-import me.alchemi.dodgechallenger.main;
+import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
+import me.alchemi.dodgechallenger.objects.DodgeIsland;
+import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 
-public class DataManager extends DatabaseManager{
+public class ConfigurationManager implements IDataManager{
 
 	private List<SexyRunnable> query = new ArrayList<SexyRunnable>();
 	
-	private Map<Island, SexyConfiguration> loadedConfs = new HashMap<Island, SexyConfiguration>();
+	private Map<UUID, SexyConfiguration> loadedConfs = new HashMap<UUID, SexyConfiguration>();
 	private final File database;
 	
-	public DataManager() {
-		this.database = new File(main.getInstance().getDataFolder(), "islands");
+	public ConfigurationManager() {
+		this.database = new File(Dodge.getInstance().getDataFolder(), "islands");
 	}
 	
 	public void loadIsland(Island island) {
-		SexyConfiguration c = SexyConfiguration.loadConfiguration(new File(this.database, islandToId(island) + ".yml"));
-		loadedConfs.put(island,  c);
+		File islandFile = new File(this.database, island.getIslandUUID().toString() + ".yml");
+		
+		if (!islandFile.exists()) islandFile = new File(this.database, IDataManager.islandToId(island) + ".yml");
+		
+		loadedConfs.put(island.getIslandUUID(), SexyConfiguration.loadConfiguration(islandFile));
+	}
+	
+	public void loadIsland(UUID islandUUID) {
+		File islandFile = new File(database, islandUUID.toString() + ".yml");
+		loadedConfs.put(islandUUID, SexyConfiguration.loadConfiguration(islandFile));		
 	}
 	
 	@Override
-	public void newIsland(Island island) {
+	public void newIsland(UUID island) {
 		
-		
-		SexyConfiguration c = new SexyConfiguration(new File(this.database, islandToId(island) + ".yml"));
-		c.set("owner", island.getOwnerUUID().toString());
+		SexyConfiguration c = SexyConfiguration.loadConfiguration(new File(this.database, island.toString() + ".yml"));
+		c.set("owner", island.toString());
 		c.set("rank", 0);
 		c.set("completed", new ArrayList<String>());
 		
 		loadedConfs.put(island, c);
 		
-		new IslandManager(island);
+		new DodgeIsland(island);
 		
 		try {
 			c.save();
@@ -48,7 +58,7 @@ public class DataManager extends DatabaseManager{
 	}
 	
 	@Override
-	public void removeIsland(Island island) {
+	public void removeIsland(UUID island) {
 		
 		if (loadedConfs.get(island) != null) loadedConfs.get(island).getFile().delete();
 		loadedConfs.remove(island);
@@ -56,17 +66,17 @@ public class DataManager extends DatabaseManager{
 	}
 	
 	@Override
-	public int getRank(Island island) {
+	public int getRank(UUID island) {
 		return loadedConfs.containsKey(island) ? loadedConfs.get(island).getInt("rank", 0) : 0;
 	}
 	
 	@Override
-	public List<String> getCCompleted(Island island) {
+	public List<String> getCCompleted(UUID island) {
 		return loadedConfs.containsKey(island) ? loadedConfs.get(island).getStringList("completed") : new ArrayList<String>();
 	}
 	
 	@Override
-	public void completeChallenge(Island island, Challenge chall) {
+	public void completeChallenge(UUID island, Challenge chall) {
 		
 		if (!loadedConfs.containsKey(island)) return;
 		
@@ -88,7 +98,7 @@ public class DataManager extends DatabaseManager{
 	}
 	
 	@Override
-	public void setChallenges(Island island, List<Challenge> challenges) {
+	public void setChallenges(UUID island, List<Challenge> challenges) {
 		if (!loadedConfs.containsKey(island)) return;
 		
 		SexyConfiguration config = loadedConfs.get(island);
@@ -116,7 +126,7 @@ public class DataManager extends DatabaseManager{
 	
 	
 	@Override
-	public void setRank(Island island, int newRank) {
+	public void setRank(UUID island, int newRank) {
 		
 		if (!loadedConfs.containsKey(island)) return;
 		
@@ -155,11 +165,11 @@ public class DataManager extends DatabaseManager{
 	}
 	
 	@Override
-	public void saveIsland(IslandManager island) {
+	public void saveIsland(DodgeIsland island) {
 		island.checkRank();
 		SexyConfiguration c = loadedConfs.get(island.getIsland());
-		c.set("owner", island.getIsland().getOwnerUUID().toString());
-		c.set("rank", island.getRank());
+		c.set("owner", SkyBlockAPI.getIslandManager().getIslandByUUID(island.getIsland()).getOwnerUUID().toString());
+		c.set("rank", island.getRank().getId());
 		
 		List<String> cc = new ArrayList<String>();
 		for (Challenge ch : island.getChallenges()) cc.add(ch.toString());

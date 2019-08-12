@@ -1,24 +1,28 @@
 package me.alchemi.dodgechallenger.events;
 
+import java.util.UUID;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import me.alchemi.dodgechallenger.managers.IslandManager;
-import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
+import me.alchemi.dodgechallenger.objects.DodgeIsland;
+import me.alchemi.dodgechallenger.objects.Rank;
+import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 
 public class RankupEvent extends Event{
 
 	private static final HandlerList HANDLERS = new HandlerList();
 	
-	private final Island island;
-	private final IslandManager islandManager;
-	private final RankManager rankManager;
+	private final UUID fabledIsland;
+	private final DodgeIsland island;
+	private final Rank rank;
 	
-	public RankupEvent(Island island) {
-		this.island = island;
-		this.islandManager = IslandManager.getByIsland(island);
-		this.rankManager = RankManager.getRank(islandManager.getRank());
+	public RankupEvent(UUID island) {
+		this.fabledIsland = island;
+		this.island = DodgeIslandManager.getManager().get(island);
+		this.rank = this.island.getRank();
 	}
 	
 	@Override
@@ -30,16 +34,20 @@ public class RankupEvent extends Event{
 		return HANDLERS;
 	}
 
-	public Island getIsland() {
+	public UUID getFabledIslandUUID() {
+		return fabledIsland;
+	}
+	
+	public Island getFabledIsland() {
+		return SkyBlockAPI.getIslandManager().getIslandByUUID(fabledIsland);
+	}
+	
+	public DodgeIsland getIsland() {
 		return island;
 	}
 	
-	public IslandManager getIslandManager() {
-		return islandManager;
-	}
-	
-	public RankManager getRankManager() {
-		return rankManager;
+	public Rank getRank() {
+		return rank;
 	}
 	
 }
