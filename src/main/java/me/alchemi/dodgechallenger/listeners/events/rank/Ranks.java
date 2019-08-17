@@ -19,8 +19,8 @@ public class Ranks implements Listener {
 		if (Config.Options.BROADCAST_RANKUP.asBoolean()) 
 			
 			Dodge.getInstance().getMessenger().broadcast(new Stringer(Messages.RANK_BROADCASTRANKUP)
-					.player(Bukkit.getOfflinePlayer(e.getFabledIsland().getOwnerUUID()).getName())
 					.rank(e.getRank())
+					.owner(Bukkit.getOfflinePlayer(e.getFabledIsland().getOwnerUUID()))
 					.parse(Bukkit.getOfflinePlayer(e.getFabledIsland().getOwnerUUID())));
 		
 		Dodge.dataManager.setRank(e.getFabledIslandUUID(), e.getRank().getId());

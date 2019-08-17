@@ -7,7 +7,7 @@ DodgeChallenger:
       NoChallenge: '&cChallenge ''%challenge%'' doesn''t exist, please user another one.'
       NoIsland: '&cYou have no island and therefore cannot make use of this command.'
    Challenge:
-      BroadcastCompleted: '%f%%player%&r%f% has completed the %challenge%&r%f% challenge for his/hers island!'
+      BroadcastCompleted: '%f%%player%&r%f% has completed the %challenge%&r%f% challenge for their island!'
       Message: '%f%You completed %challenge%&r%f%'
       Lore:
          Requires: '&e&oTo complete this challenge you need:'

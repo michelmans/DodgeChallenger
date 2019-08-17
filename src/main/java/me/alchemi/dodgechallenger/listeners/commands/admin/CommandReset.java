@@ -63,6 +63,7 @@ public class CommandReset {
 			
 			Rank oRank = island.getRank();
 			island.clearChallenges();
+			island.checkRank();
 			Bukkit.getPluginManager().callEvent(new DeRankEvent(island.getIsland(), oRank));
 			return true;
 			

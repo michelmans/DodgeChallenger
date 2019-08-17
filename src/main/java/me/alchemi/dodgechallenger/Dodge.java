@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -59,6 +61,14 @@ public class Dodge extends PluginBase {
 	
 	@Override
 	public void onEnable() {
+		
+		for (String s : getDescription().getDepend()) {
+			if (Bukkit.getPluginManager().getPlugin(s) == null 
+					|| !Bukkit.getPluginManager().isPluginEnabled(s)) {
+				Bukkit.getLogger().log(Level.SEVERE, ChatColor.translateAlternateColorCodes('&', "&4&lDependency %depend% not found, disabling plugin...".replace("%depend%", s)));
+				getServer().getPluginManager().disablePlugin(this);
+			}
+		}
 		
 		instance = this;
 		
