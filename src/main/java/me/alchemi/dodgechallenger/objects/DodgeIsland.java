@@ -195,4 +195,8 @@ public class DodgeIsland {
 		DodgeIslandManager.getManager().removeIsland(this.island);
 	}
 	
+	@Override
+	public String toString() {
+		return "DodgeIsland{Owner:" + Bukkit.getOfflinePlayer(getFabledIsland().getOwnerUUID()).getName() + ", IslandUUID:" + island.toString() + ", Challenges:" + challenges.toString() + "}";
+	}
 }
