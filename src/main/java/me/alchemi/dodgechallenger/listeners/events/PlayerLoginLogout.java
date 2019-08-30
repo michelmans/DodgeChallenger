@@ -10,7 +10,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import me.alchemi.al.objects.meta.PersistentMeta;
+import me.alchemi.dodgechallenger.Config.DataBase;
 import me.alchemi.dodgechallenger.Dodge;
+import me.alchemi.dodgechallenger.managers.ConfigurationManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
 import me.alchemi.dodgechallenger.meta.TaskIntMeta;
@@ -57,8 +59,13 @@ public class PlayerLoginLogout implements Listener {
 		}
 		
 		if (Bukkit.getOnlinePlayers().size() <= 1) {
-			Dodge.getInstance().getMessenger().print("Running data queries: " + Dodge.dataManager.querySize());
-			Dodge.dataManager.runQuery();
+			
+			if (!DataBase.ENABLED.asBoolean()) {
+			
+				Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
+				((ConfigurationManager)Dodge.dataManager).runQuery();
+				
+			}
 		}
 	}
 

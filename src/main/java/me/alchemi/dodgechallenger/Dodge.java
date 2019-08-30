@@ -11,9 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -24,6 +23,7 @@ import me.alchemi.al.configurations.Messenger;
 import me.alchemi.al.configurations.SexyConfiguration;
 import me.alchemi.al.objects.base.PluginBase;
 import me.alchemi.al.objects.handling.ItemFactory;
+import me.alchemi.dodgechallenger.Config.DataBase;
 import me.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
 import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.listeners.events.CreatureSpawn;
@@ -34,9 +34,11 @@ import me.alchemi.dodgechallenger.listeners.events.rank.ChallengeComplete;
 import me.alchemi.dodgechallenger.listeners.events.rank.Ranks;
 import me.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
 import me.alchemi.dodgechallenger.managers.ConfigurationManager;
+import me.alchemi.dodgechallenger.managers.DatabaseManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.IDataManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.objects.Container;
 import me.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -59,6 +61,10 @@ public class Dodge extends PluginBase {
 	
 	public Config conf;
 	
+	static {
+		ConfigurationSerialization.registerClass(Container.class);
+	}
+	
 	@Override
 	public void onEnable() {
 		
@@ -80,8 +86,13 @@ public class Dodge extends PluginBase {
 		new RankManager();
 		new DodgeIslandManager();
 		
-		dataManager = new ConfigurationManager();
-		messenger.print("Using yml database.");
+		if (!getConfig().getBoolean("MySQL.enabled", true)) {
+			dataManager = new ConfigurationManager();
+			messenger.print("Using yml database.");
+		} else {
+			dataManager = new DatabaseManager();
+			messenger.print("Using MySQL database.");
+		}
 		
 		try {
 			conf = new Config(this);
@@ -120,20 +131,19 @@ public class Dodge extends PluginBase {
 		
 		registerRecipes();
 		
-		messenger.print("Initialization complete.");
-		
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(player, ""));
-		}
-		
-		
+		messenger.print("Initialization complete.");		
 	}
 	
 	@Override
-	public void onDisable() {		
-		Dodge.getInstance().getMessenger().print("Running data queries: " + dataManager.querySize());
-		dataManager.runQuery();
+	public void onDisable() {
+		
+		if (!DataBase.ENABLED.asBoolean()) {
+			
+			Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
+			((ConfigurationManager)Dodge.dataManager).runQuery();
+			
+		}
+		
 	}
 	
 	private void registerCommands() {

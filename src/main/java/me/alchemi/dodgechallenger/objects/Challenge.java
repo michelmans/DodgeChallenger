@@ -32,7 +32,7 @@ import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 import me.goodandevil.skyblock.api.island.IslandManager;
 
-public class Challenge {
+public class Challenge implements StringSerializable {
 
 	private static HashMap<String, Challenge> challenges = new HashMap<String, Challenge>();
 	private static List<Challenge> levelUpChallenges = new ArrayList<Challenge>();
@@ -134,7 +134,7 @@ public class Challenge {
 	
 	@Override
 	public String toString() {
-		return name;
+		return "Challenge{" + name + "}";
 	}
 	
 	public String getDisplayName() {
@@ -212,7 +212,7 @@ public class Challenge {
 		}
 	}
 	
-	private ItemsResult getItemsInventory(PlayerInventory inv, List<Challenge> cs) {
+	private ItemsResult getItemsInventory(PlayerInventory inv, Container<Challenge> cs) {
 		HashMap<Material, Integer> items = new HashMap<Material, Integer>(requiredItems);
 		List<ItemStack> toTake = new ArrayList<ItemStack>();
 		 
@@ -246,7 +246,7 @@ public class Challenge {
 		}
 	}
 	
-	private BlockResult getBlocks(Location loc, List<Challenge> challenges) {  
+	private BlockResult getBlocks(Location loc, Container<Challenge> challenges) {  
 		HashMap<Material, Integer> blocks = new HashMap<Material, Integer>(requiredItems);
 		HashMap<Material, Integer> blocksPresent = new HashMap<Material, Integer>();
 		
@@ -291,7 +291,7 @@ public class Challenge {
 		}
 	}
 	
-	private EntityResult getEntities(Player player, List<Challenge> cs) {  
+	private EntityResult getEntities(Player player, Container<Challenge> cs) {  
 		HashMap<DodgyEntity, Integer> entities = new HashMap<DodgyEntity, Integer>(requiredEntities);
 		
 		for (Entry<DodgyEntity, Integer> item : entities.entrySet()) {
@@ -557,13 +557,8 @@ public class Challenge {
 				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island.getIslandUUID(), null));
 	}
 	
-	public int amountCompleted(List<Challenge> challenges) {
-		if (challenges.isEmpty()) return 0;
-		int amount = 0;
-		for (Challenge c : challenges) {
-			if (this.equals(c)) amount++;
-		}
-		return amount;
+	public int amountCompleted(Container<Challenge> challenges) {
+		return challenges.size();
 	}
 
 	/**
@@ -615,6 +610,15 @@ public class Challenge {
 		private Type(String name) {
 			this.name = name;
 		}
+	}
+	
+	@Override
+	public String serialize_string() {
+		return Challenge.class.getName() + "{" + this.name + "}";
+	}
+	
+	public static Challenge deserialize_string(String deserialized) {
+		return getChallengeFromID(deserialized);
 	}
 
 }

@@ -1,321 +1,186 @@
 package me.alchemi.dodgechallenger.managers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
-import me.alchemi.dodgechallenger.Config;
+import me.alchemi.al.database.Column;
+import me.alchemi.al.database.ColumnModifier;
+import me.alchemi.al.database.DataType;
+import me.alchemi.al.database.Table;
+import me.alchemi.al.database.mysql.MySQLDatabase;
+import me.alchemi.al.objects.Callback;
+import me.alchemi.dodgechallenger.Config.DataBase;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
+import me.alchemi.dodgechallenger.objects.Container;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 
-public class DatabaseManager implements IDataManager{
-
-	private List<BukkitRunnable> query = new ArrayList<BukkitRunnable>();
+public class DatabaseManager implements IDataManager {
 	
-	private Connection conn;
-	private String host, database, username, password;
-	private int port;
+	private MySQLDatabase database;
+	
+	private Table table;
+	
+	private Column islandUuid = new Column("island-uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL);
+	private Column islandRank = new Column("island-rank", DataType.TINYINT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
+	private Column islandChallenges = new Column("island-challenges", DataType.LONGTEXT);
 	
 	public DatabaseManager() {
-		host = Config.DataBase.HOST.asString();
-		port = Config.DataBase.PORT.asInt();
-		database = Config.DataBase.DATABASE.asString();
-		username = Config.DataBase.USERNAME.asString();
-		password = Config.DataBase.PASSWORD.asString();
 		
-		if (Config.DataBase.ENABLED.asBoolean()) {
-			BukkitRunnable r = new BukkitRunnable() {
-				
-				@Override
-				public void run() {
-	
-					try {
-						
-						openConnection();
-						
-						if (!checkDBExist()) createDB();
-						if (!checkTableExist()) createTable();
-						
-					} catch (ClassNotFoundException | SQLException e) {
-						e.printStackTrace();
-						Config.DataBase.ENABLED.set(false);
-					}
-					
-				}
-			};
-			r.runTaskAsynchronously(Dodge.getInstance());
-		}
-	}
-	
-	private boolean checkDBExist() throws SQLException {
-		ResultSet result = conn.getMetaData().getCatalogs();
+		database = new MySQLDatabase(Dodge.getInstance(), DataBase.HOST.asString() + ":" + DataBase.PORT.asInt(), DataBase.DATABASE.asString(), DataBase.USERNAME.asString(), DataBase.PASSWORD.asString());
 		
-		while (result.next()) {
-			if (result.getString(1).equals(database)) {
-				return true;
-			}
+		if (!MySQLDatabase.isDriverAvailable()) {
+			DataBase.ENABLED.set(false);
+			Dodge.dataManager = new ConfigurationManager();
+			Dodge.getInstance().getMessenger().print("MySQL database not reachable, switching to yml database.");
 		}
-		return false;
-	}
-	
-	private boolean checkTableExist() throws SQLException {
-		ResultSet result = conn.createStatement().executeQuery("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='data' AND TABLE_SCHEMA='"+database+"';");
-		return result.next();
-	}
-	
-	private void createDB() throws SQLException {
-		Dodge.getInstance().getMessenger().print("Database " + database + " doesn't exist, creating...");
-		String sqlCreate = "CREATE DATABASE " + database + ";";
-		Statement stmt = conn.createStatement();
-		stmt.execute(sqlCreate);
-	}
-	
-	private void createTable() throws SQLException {
-		Dodge.getInstance().getMessenger().print("Table doesn't exist, creating...");
-	    String sqlCreate = "CREATE TABLE " + database + ".data (island TEXT NOT NULL,\r\n"
-	    		+ "grade TINYINT(255) UNSIGNED NOT NULL,\r\n"
-	    		+ "challenges LONGTEXT);";
-
-	    Statement stmt = conn.createStatement();
-	    stmt.executeUpdate(sqlCreate);
-	}
-	
-	private void openConnection() throws SQLException, ClassNotFoundException {
-		if (conn != null && !conn.isClosed()) return;
 		
-		synchronized (this) {
-			if (conn != null && !conn.isClosed()) return;
-			
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://" + this.host+ ":" + this.port + "/?useSSL=false", this.username, this.password);
-		}
+		islandChallenges.setDefValue(1);
+		table = new Table("dodge_islands", islandUuid);
+		table.addColumn(islandRank);
+		table.addColumn(islandChallenges);
+		
+		database.createTable(table);
+		
 	}
 	
 	@Override
 	public void newIsland(UUID island) {
 		new DodgeIsland(island);
-		addIsland(island, 0, new ArrayList<Challenge>());
+		addIsland(island, 0, new Container<Challenge>());
 	}
 
-	private void addIsland(UUID island, int rank, List<Challenge> challenges) {
-		BukkitRunnable r = new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				
-				try {
-					Statement statement = conn.createStatement();
-					
-					if (challenges.size() > 0) {
-						String exe = "INSERT INTO " + database + ".data (ISLAND, grade, challenges) VALUES ('%island%', '%rank%'%challenges%');";
-						
-						String is = island.toString();
-						String challs = ", '";
-						for (Challenge c : challenges) {
-							if (c.equals(challenges.get(0))) challs = challs.concat(c.toString());
-							else challs = challs.concat("," + c.toString());
-						}
-						
-						exe = exe.replace("%island%", is);
-						exe = exe.replace("%rank%", String.valueOf(rank));
-						exe = exe.replace("%challenges%", challs);
-						
-						statement.executeUpdate(exe);
-						return;
-					}
-					
-					String exe = "INSERT INTO " + database + ".data (ISLAND, grade) VALUES ('%island%', '%rank%');";
-					
-					String is = island.toString();
-					exe = exe.replace("%island%", is);
-					exe = exe.replace("%rank%", String.valueOf(rank));
-					
-					statement.executeUpdate(exe);
-					
-				} catch (SQLException e) {e.printStackTrace();}
-				
-			}
-		};
-		query.add(r);
+	private void addIsland(UUID island, int rank, Container<Challenge> challenges) {
+		Map<Column, Object> islandSettings = new HashMap<Column, Object>();
+		islandSettings.put(islandUuid, island);
+		islandSettings.put(islandRank, rank);
+		islandSettings.put(islandChallenges, challenges.toString());
+		database.insertValues(table, islandSettings);
 	}
 	
 	@Override
 	public void removeIsland(UUID island) {
-		BukkitRunnable r = new BukkitRunnable() {
+		database.removeRow(table, new HashMap<Column, Object>(){
+			{
+				put(islandUuid, island);
+			}
+		});
+	}
+
+	@Override
+	public void getRankAsync(UUID island, Callback<Integer> callback) {
+		database.getValueAsync(table, islandRank, islandUuid, island, new Callback<ResultSet>() {
 			
 			@Override
-			public void run() {
-				
+			public void call(ResultSet callObject) {
+
 				try {
-					String sqlDrop = "DELETE FROM database.data WHERE island='isname';";
-					sqlDrop = sqlDrop.replaceAll("database", database);
-					sqlDrop = sqlDrop.replaceAll("isname", island.toString());
-					Dodge.getInstance().getMessenger().print(sqlDrop);
-					conn.createStatement().executeUpdate(sqlDrop);
-				} catch (SQLException e) {}
+					if (!callObject.isClosed() 
+							&& callObject.first()) callback.call(callObject.getInt(islandRank.getName()));
+				} catch (SQLException e) {
+					e.printStackTrace();
+					callback.call(0);
+					
+				}
 				
 			}
-		};
-		r.runTaskAsynchronously(Dodge.getInstance());
-	}
-
-	@Override
-	public void runQuery() {
-		if (query == null || query.isEmpty()) return;
-		
-		for (BukkitRunnable r : query) {
-			r.run();
-		}
+			
+		});
 	}
 	
-	@Override
-	public int querySize() {
-		if (query == null) return 0;
-		return query.size();
-	}
-
 	@Override
 	public int getRank(UUID island) {
-		int rank = 0;
-		try {	
-			openConnection();
+		try {
+			ResultSet result = database.getValue(table, islandRank, islandUuid, island);
 			
-			String sqlGet = "SELECT * FROM %database%.data WHERE island=%is%;";
-			sqlGet = sqlGet.replaceAll("%database%", database);
-			sqlGet = sqlGet.replaceAll("%is%", island.toString());
+			if (result.next()) return result.getInt(islandRank.getName());
 			
-			ResultSet results = conn.createStatement().executeQuery(sqlGet);
-			
-			if (results.next()) {
-				rank = results.getInt("grade");
-			}
-		} catch(SQLException | ClassNotFoundException e) {}
-		
-		return rank;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	@Override
-	public List<String> getCCompleted(UUID island) {
-		String output = "";
-		List<String> list = new ArrayList<String>();
-		try {	
-			String sqlGet = "SELECT * FROM %database%.data WHERE island='%is%';";
-			sqlGet = sqlGet.replaceAll("%database%", database);
-			sqlGet = sqlGet.replaceAll("%is%", island.toString());
-			
-			ResultSet results = conn.createStatement().executeQuery(sqlGet);
-			if (results.next()) {
-				output = results.getString("challenges");
-			}
-			
-		} catch(SQLException e) {e.printStackTrace();}
+	public void getCompletedChallengesAsync(UUID island, Callback<Container<Challenge>> callback) {
 		
-		if (output.contains(",")) {
-			for (String s : output.split(",")) {
-				list.add(s);
+		database.getValueAsync(table, islandChallenges, islandUuid, island, new Callback<ResultSet>() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public void call(ResultSet callObject) {
+				
+				try {
+					
+					if (callObject.next() && callObject.getString(islandChallenges.getName()) != null) callback.call((Container<Challenge>)Container.deserialize_string(callObject.getString(islandChallenges.getName())));
+					else if (callObject.getString(islandChallenges.getName()) == null) callback.call(new Container<Challenge>());
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
 			}
-		} else if (output.equals("")) {
-			return null;
-		} else {
-			list.add(output);
+			
+		});
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Container<Challenge> getCompletedChallenges(UUID island) {
+		
+		try {
+			ResultSet result = database.getValue(table, islandChallenges, islandUuid, island);
+			
+			if (result.next()) return (Container<Challenge>)Container.deserialize_string(result.getString(islandChallenges.getName()));
+			else return new Container<Challenge>();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new Container<Challenge>();
 		}
 		
-		return list.size() > 0 ? list : null;
 	}
 	
 	@Override
 	public void completeChallenge(UUID island, Challenge chall) {
 		
-		BukkitRunnable r = new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				
-				try {
-					String sqlComplete = "UPDATE %database%.data SET challenges='%challenges%' WHERE island='%is%'";
-					sqlComplete = sqlComplete.replaceAll("%database%", database);
-					sqlComplete = sqlComplete.replaceAll("%is%", island.toString());
-					
-					String challs = "";
-					List<Challenge> challenges = DodgeIslandManager.getManager().get(island).getChallenges();
-					for (Challenge c : challenges) {
-						if (c.equals(challenges.get(0))) challs = c.toString();
-						else challs = challs.concat("," + c.toString());
-					}
-					sqlComplete = sqlComplete.replaceAll("%challenges%", challs);
-					
-					conn.createStatement().executeUpdate(sqlComplete);
-				} catch (SQLException e) {e.printStackTrace();}
-				
-			}
-		};
+		Container<Challenge> challenges = getCompletedChallenges(island);
+		challenges.add(chall);
 		
-		query.add(r);
+		setChallenges(island, challenges);
+		
 	}
 	
 	@Override
-	public void setChallenges(UUID island, List<Challenge> challenges) {
+	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		
-		BukkitRunnable r = new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				
-				try {
-					String sqlComplete = "UPDATE %database%.data SET challenges='%challenges%' WHERE island='%is%'";
-					sqlComplete = sqlComplete.replaceAll("%database%", database);
-					sqlComplete = sqlComplete.replaceAll("%is%", island.toString());
-					
-					String challs = "";
-					for (Challenge c : challenges) {
-						if (c.equals(challenges.get(0))) challs = c.toString();
-						else challs = challs.concat("," + c.toString());
-					}
-					sqlComplete = sqlComplete.replaceAll("%challenges%", challs);
-					
-					conn.createStatement().executeUpdate(sqlComplete);
-				} catch (SQLException e) {e.printStackTrace();}
-				
+		database.updateValue(table, islandChallenges, challenges, new HashMap<Column, Object>(){
+			{
+				put(islandUuid, island);
 			}
-		};
-		
-		query.add(r);
+		});
 		
 	}
 	
 	@Override
 	public void setRank(UUID island, int newRank) {
-		BukkitRunnable r = new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				
-				try {
-					String sqlComplete = "UPDATE %database%.data SET grade=%rank% WHERE island='%is%'";
-					sqlComplete = sqlComplete.replaceAll("%database%", database);
-					sqlComplete = sqlComplete.replaceAll("%is%", island.toString());
-					sqlComplete = sqlComplete.replaceAll("%rank%", String.valueOf(newRank));
-					
-					conn.createStatement().executeUpdate(sqlComplete);
-					
-				} catch (SQLException e) {e.printStackTrace();}
-				
-			}
-		};
 		
-		query.add(r);
+		database.updateValue(table, islandRank, newRank, new HashMap<Column, Object>(){
+			{
+				put(islandUuid, island);
+			}
+		});
+		
 	}
 	
 	@Override
-	public void saveIsland(DodgeIsland island) {
-		
+	public void saveIsland(DodgeIsland island) {}
+	
+	public MySQLDatabase getDatabase() {
+		return database;
 	}
 }

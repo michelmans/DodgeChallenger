@@ -20,7 +20,7 @@ import me.goodandevil.skyblock.api.island.Island;
 public class DodgeIsland {
 	
 	private final UUID island;
-	private ArrayList<Challenge> challenges = new ArrayList<Challenge>();
+	private Container<Challenge> challenges = new Container<Challenge>();
 	private Rank rank;
 	
 	public DodgeIsland(UUID island) {
@@ -31,12 +31,7 @@ public class DodgeIsland {
 			((ConfigurationManager) Dodge.dataManager).loadIsland(island);
 		}
 		
-		List<String> cc = Dodge.dataManager.getCCompleted(island);
-		if (cc != null && !cc.isEmpty()) {
-			for (String s : cc) {
-				challenges.add(Challenge.getChallengeFromID(s));
-			}
-		}
+		challenges = Dodge.dataManager.getCompletedChallenges(island);
 		
 		rank = RankManager.getManager().getRank(Dodge.dataManager.getRank(island));
 		DodgeIslandManager.getManager().registerIsland(this);
@@ -51,12 +46,7 @@ public class DodgeIsland {
 			((ConfigurationManager) Dodge.dataManager).loadIsland(island);
 		}
 		
-		List<String> cc = Dodge.dataManager.getCCompleted(island);
-		if (cc != null && !cc.isEmpty()) {
-			for (String s : cc) {
-				challenges.add(Challenge.getChallengeFromID(s));
-			}
-		}
+		challenges = Dodge.dataManager.getCompletedChallenges(island);
 		
 		rank = RankManager.getManager().getRank(Dodge.dataManager.getRank(island));
 		if (offline) DodgeIslandManager.getManager().registerIsland(this);
@@ -71,7 +61,7 @@ public class DodgeIsland {
 					? RankManager.getManager().getNextRank(rank).getRequires() : new ArrayList<Challenge>();
 			
 			if (!challenges.containsAll(requiredChallenges)) continue;
-					
+			
 			int num = 0;
 			
 			for (Challenge c : rank.getChallenges()) {
@@ -142,7 +132,7 @@ public class DodgeIsland {
 		/**
 	 * @return the challenges
 	 */
-	public ArrayList<Challenge> getChallenges() {
+	public Container<Challenge> getChallenges() {
 		return challenges;
 	}
 	

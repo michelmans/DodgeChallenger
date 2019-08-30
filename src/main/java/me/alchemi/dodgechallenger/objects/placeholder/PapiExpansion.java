@@ -1,8 +1,5 @@
 package me.alchemi.dodgechallenger.objects.placeholder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -65,11 +62,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			DodgeIsland island = getIslandManagerFromPlayer(p);
 			if (island == null) return "0";
 			
-			List<Challenge> cs = new ArrayList<Challenge>();
-			for (Challenge c : island.getChallenges()) {
-				if (!cs.contains(c)) cs.add(c); 
-			}
-			return String.valueOf(cs.size());
+			return String.valueOf(island.getChallenges().size());
 			
 		} else if (id.matches("(challenge_completed_)\\w+")) {
 			String c = id.replace("challenge_completed_", "");
@@ -111,11 +104,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
 			if (island == null) return "0";
 			
-			List<Challenge> cs = new ArrayList<Challenge>();
-			for (Challenge c : island.getChallenges()) {
-				if (!cs.contains(c)) cs.add(c); 
-			}
-			return String.valueOf(cs.size());
+			return String.valueOf(island.getChallenges().size());
 			
 		} else if (id.matches("(challenge_completed_)\\w+")) {
 			String c = id.replace("challenge_completed_", "");

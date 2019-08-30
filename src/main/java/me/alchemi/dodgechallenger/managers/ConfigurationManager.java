@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.scheduler.BukkitRunnable;
+
 import me.alchemi.al.configurations.SexyConfiguration;
+import me.alchemi.al.objects.Callback;
 import me.alchemi.al.objects.handling.SexyRunnable;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
+import me.alchemi.dodgechallenger.objects.Container;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
@@ -30,8 +34,6 @@ public class ConfigurationManager implements IDataManager{
 	public void loadIsland(Island island) {
 		File islandFile = new File(this.database, island.getIslandUUID().toString() + ".yml");
 		
-		if (!islandFile.exists()) islandFile = new File(this.database, IDataManager.islandToId(island) + ".yml");
-		
 		loadedConfs.put(island.getIslandUUID(), SexyConfiguration.loadConfiguration(islandFile));
 	}
 	
@@ -46,7 +48,7 @@ public class ConfigurationManager implements IDataManager{
 		SexyConfiguration c = SexyConfiguration.loadConfiguration(new File(this.database, island.toString() + ".yml"));
 		c.set("owner", island.toString());
 		c.set("rank", 0);
-		c.set("completed", new ArrayList<String>());
+		c.set("completed", new Container<Challenge>());
 		
 		loadedConfs.put(island, c);
 		
@@ -70,9 +72,10 @@ public class ConfigurationManager implements IDataManager{
 		return loadedConfs.containsKey(island) ? loadedConfs.get(island).getInt("rank", 0) : 0;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> getCCompleted(UUID island) {
-		return loadedConfs.containsKey(island) ? loadedConfs.get(island).getStringList("completed") : new ArrayList<String>();
+	public Container<Challenge> getCompletedChallenges(UUID island) {
+		return loadedConfs.containsKey(island) ? (Container<Challenge>) loadedConfs.get(island).get("completed") : new Container<Challenge>();
 	}
 	
 	@Override
@@ -98,19 +101,14 @@ public class ConfigurationManager implements IDataManager{
 	}
 	
 	@Override
-	public void setChallenges(UUID island, List<Challenge> challenges) {
+	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		if (!loadedConfs.containsKey(island)) return;
 		
 		SexyConfiguration config = loadedConfs.get(island);
 		
-		List<String> cc = new ArrayList<String>();
-		for (Challenge c : challenges) {
-			if (c == null) continue;
-			cc.add(c.toString());
-		}
 		config.set("owner", config.get("owner"));
 		config.set("rank", config.get("rank"));
-		config.set("completed", cc);
+		config.set("completed", challenges);
 		loadedConfs.put(island, config);
 		
 		query.add(new SexyRunnable() {
@@ -148,12 +146,10 @@ public class ConfigurationManager implements IDataManager{
 		
 	}
 	
-	@Override
 	public int querySize() {
 		return query == null ? 0 : query.size();
 	}
 	
-	@Override
 	public void runQuery() {
 		
 		if (query == null || query.isEmpty()) return;
@@ -170,15 +166,39 @@ public class ConfigurationManager implements IDataManager{
 		SexyConfiguration c = loadedConfs.get(island.getIsland());
 		c.set("owner", SkyBlockAPI.getIslandManager().getIslandByUUID(island.getIsland()).getOwnerUUID().toString());
 		c.set("rank", island.getRank().getId());
-		
-		List<String> cc = new ArrayList<String>();
-		for (Challenge ch : island.getChallenges()) cc.add(ch.toString());
-		
-		c.set("completed", cc);
+		c.set("completed", island.getChallenges());
 		try {
 			c.save();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void getRankAsync(UUID island, Callback<Integer> callback) {
+		new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				
+				callback.call(getRank(island));
+				
+			}
+		}.runTaskAsynchronously(Dodge.getInstance());
+	}
+
+	@Override
+	public void getCompletedChallengesAsync(UUID island, Callback<Container<Challenge>> callback) {
+		
+		new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				
+				callback.call(getCompletedChallenges(island));
+				
+			}
+		}.runTaskAsynchronously(Dodge.getInstance());
+		
 	}
 }
