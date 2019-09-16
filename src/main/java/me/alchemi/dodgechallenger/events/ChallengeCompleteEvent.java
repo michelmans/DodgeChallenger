@@ -34,8 +34,6 @@ public class ChallengeCompleteEvent extends Event{
 		this.player = player;
 		this.fabledIsland = island;
 		this.island = DodgeIslandManager.getManager().get(island);
-		System.out.println(this.island);
-		System.out.println(island);
 		this.rank = this.island.getRank();
 		this.repeat = this.island.getChallenges().contains(challenge);
 		this.reward = new Reward(challenge, repeat);

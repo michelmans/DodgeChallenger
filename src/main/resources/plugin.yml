@@ -17,16 +17,6 @@ commands:
       - c
       description: View challenges
       permission: dodgec.challenges.view
-   chadmin:
-      usage: /chadmin
-      aliases:
-      - ca
-      - cha
-      - challengeadmin
-      - dodgeadmin
-      - da
-      description: Admins base command
-      permission: dodgec.admin
 permissions:
    dodgec.challenges.view:
       description: Permission to view current challenges

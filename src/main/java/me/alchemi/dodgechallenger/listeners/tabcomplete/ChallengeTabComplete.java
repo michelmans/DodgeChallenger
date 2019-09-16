@@ -13,7 +13,7 @@ import me.alchemi.al.objects.base.TabCompleteBase;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
 
-public class AdminTabComplete extends TabCompleteBase {
+public class ChallengeTabComplete extends TabCompleteBase {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -24,23 +24,25 @@ public class AdminTabComplete extends TabCompleteBase {
 			return Arrays.asList("");
 		
 		if (args.length == 1) {
+			if (sender.hasPermission("dodgec.admin")) list.add("admin");
+		} else if (args.length == 2) {
 			
 			if (sender.hasPermission("dodgec.reload")) list.add("reload");
 			if (sender.hasPermission("dodgec.default")) list.add("defaults");
-			
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				list.add(p.getName());
-			}
-				
-		} else if (args.length == 2) {
-			
 			list.add("complete");
 			list.add("rank");
 			list.add("reset");
 			list.add("resetall");
 			list.add("show");
+				
+		} else if (args.length == 3) {
 			
-		} else if (args.length > 2) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				list.add(p.getName());
+			}
+			
+		} else if (args.length > 3) {
+			System.out.println(Arrays.toString(args));
 			if (args[1].equals("complete")) {
 				list.addAll(Challenge.getChallenges());
 				
@@ -49,7 +51,6 @@ public class AdminTabComplete extends TabCompleteBase {
 				
 			} else if (args[1].equals("reset")) {
 				list.addAll(Challenge.getChallenges());
-				
 			}
 		}
 

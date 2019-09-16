@@ -26,14 +26,13 @@ import me.alchemi.al.objects.base.PluginBase;
 import me.alchemi.al.objects.handling.ItemFactory;
 import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
-import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.listeners.events.CreatureSpawn;
 import me.alchemi.dodgechallenger.listeners.events.PlayerLoginLogout;
 import me.alchemi.dodgechallenger.listeners.events.island.IslandCreateDelete;
 import me.alchemi.dodgechallenger.listeners.events.island.IslandRename;
 import me.alchemi.dodgechallenger.listeners.events.rank.ChallengeComplete;
 import me.alchemi.dodgechallenger.listeners.events.rank.Ranks;
-import me.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
+import me.alchemi.dodgechallenger.listeners.tabcomplete.ChallengeTabComplete;
 import me.alchemi.dodgechallenger.managers.ConfigurationManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.IDataManager;
@@ -152,9 +151,8 @@ public class Dodge extends PluginBase {
 	
 	private void registerCommands() {
 		getCommand("challenges").setExecutor(new CommandChallenge());
-		getCommand("chadmin").setExecutor(new CommandAdmin());
 		
-		getCommand("chadmin").setTabCompleter(new AdminTabComplete());
+		getCommand("challenges").setTabCompleter(new ChallengeTabComplete());
 	}
 	
 	private void registerEvents() {
@@ -205,7 +203,7 @@ public class Dodge extends PluginBase {
 				MaterialWrapper.BRICK_SLAB, MaterialWrapper.COBBLESTONE_SLAB, MaterialWrapper.DARK_OAK_SLAB,
 				MaterialWrapper.DARK_PRISMARINE_SLAB, MaterialWrapper.JUNGLE_SLAB, MaterialWrapper.NETHER_BRICK_SLAB,
 				MaterialWrapper.OAK_SLAB, MaterialWrapper.PRISMARINE_BRICK_SLAB, MaterialWrapper.PRISMARINE_SLAB,
-				MaterialWrapper.SPRUCE_SLAB, MaterialWrapper.STONE_SLAB};
+				MaterialWrapper.SPRUCE_SLAB};
 
 		ItemFactory[] blocks = new ItemFactory[] {new ItemFactory(MaterialWrapper.ACACIA_PLANKS),
 				new ItemFactory(MaterialWrapper.BIRCH_PLANKS),
@@ -218,8 +216,7 @@ public class Dodge extends PluginBase {
 				new ItemFactory(MaterialWrapper.OAK_PLANKS),
 				new ItemFactory(MaterialWrapper.PRISMARINE_BRICKS),
 				new ItemFactory(MaterialWrapper.PRISMARINE),
-				new ItemFactory(MaterialWrapper.SPRUCE_PLANKS),
-				new ItemFactory(MaterialWrapper.SMOOTH_STONE)};
+				new ItemFactory(MaterialWrapper.SPRUCE_PLANKS)};
 
 		for (int i = 0; i < slabs.length; i++) {
 

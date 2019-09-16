@@ -560,7 +560,7 @@ public class Challenge implements StringSerializable {
 	}
 	
 	public int amountCompleted(Container<Challenge> challenges) {
-		return challenges.size();
+		return challenges.contains(this) ? challenges.getAmount(this) : 0;
 	}
 
 	/**
