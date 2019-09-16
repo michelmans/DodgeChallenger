@@ -138,10 +138,7 @@ public class MySQLManager implements IDataManager {
 			ResultSet result = database.getValue(table, islandChallenges, islandUuid, island.toString());
 			if (result == null) return new Container<Challenge>(Challenge.class);
 			
-			if (result.next()) {
-				System.out.println(result.getString(islandChallenges.getName()));
-				return (Container<Challenge>) Container.deserialize_string(result.getString(islandChallenges.getName()));
-			}
+			if (result.next()) return (Container<Challenge>) Container.deserialize_string(result.getString(islandChallenges.getName()));
 			else return new Container<Challenge>(Challenge.class);
 			
 		} catch (SQLException e) {

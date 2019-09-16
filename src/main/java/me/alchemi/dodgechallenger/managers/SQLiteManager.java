@@ -136,6 +136,7 @@ public class SQLiteManager implements IDataManager {
 		
 		try {
 			ResultSet result = database.getValue(table, islandChallenges, islandUuid, island.toString());
+			if (result == null) return new Container<Challenge>(Challenge.class);
 			
 			if (result.next()) return (Container<Challenge>)Container.deserialize_string(result.getString(islandChallenges.getName()));
 			else return new Container<Challenge>(Challenge.class);
