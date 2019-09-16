@@ -2,24 +2,18 @@ package me.alchemi.dodgechallenger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.alchemi.al.configurations.SexyConfiguration;
@@ -27,9 +21,7 @@ import me.alchemi.al.objects.base.ConfigBase;
 import me.alchemi.al.objects.base.PluginBase;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
-import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
-import me.goodandevil.skyblock.api.island.IslandManager;
 
 public class Config extends ConfigBase {
 	
@@ -39,8 +31,8 @@ public class Config extends ConfigBase {
 	
 	public static enum ConfigEnum implements IConfigEnum{
 		
-		CONFIG(new File(Dodge.getInstance().getDataFolder(), "config.yml"), 6),
-		MESSAGES(new File(Dodge.getInstance().getDataFolder(), "messages.yml"), 10),
+		CONFIG(new File(Dodge.getInstance().getDataFolder(), "config.yml"), 7),
+		MESSAGES(new File(Dodge.getInstance().getDataFolder(), "messages.yml"), 11),
 		CHALLENGES(new File(Dodge.getInstance().getDataFolder(), "challenges.yml"), 7);
 		
 		final File file;
@@ -100,6 +92,8 @@ public class Config extends ConfigBase {
 		RANK_BROADCASTRANKUP("DodgeChallenger.Rank.BroadcastRankup"),
 		RANK_MESSAGE("DodgeChallenger.Rank.Message"),
 		RANK_TAG("DodgeChallenger.Rank.Tag"),
+		GUI_NOISLAND("DodgeChallenger.GUI.NoIsland"),
+		GUI_NOISLANDOTHER("DodgeChallenger.GUI.NoIslandOther"),
 		GUINAME("DodgeChallenger.GUIName"),
 		GUI_NEXTPAGE("DodgeChallenger.GUI.NextPage"),
 		GUI_PREVPAGE("DodgeChallenger.GUI.PrevPage"),
@@ -257,19 +251,19 @@ public class Config extends ConfigBase {
 		}
 	}
 	
-	public static enum DataBase implements IConfig {
+	public static enum Data implements IConfig {
 		
-		ENABLED("MySQL.enabled"),
-		HOST("MySQL.host"),
-		PORT("MySQL.port"),
-		DATABASE("MySQL.database"),
-		USERNAME("MySQL.username"),
-		PASSWORD("MySQL.password");
+		STORAGE("Data.storage"),
+		HOST("Data.host"),
+		PORT("Data.port"),
+		DATABASE("Data.database"),
+		USERNAME("Data.username"),
+		PASSWORD("Data.password");
 
 		String key;
 		Object value;
 		
-		private DataBase(String key) {
+		private Data(String key) {
 			this.key = key;
 			get();
 		}
@@ -368,37 +362,11 @@ public class Config extends ConfigBase {
 		DodgeIslandManager.getManager().purge();
 		
 		ConfigurationSection section = ConfigEnum.CHALLENGES.getConfig().getConfigurationSection("ranks");
+		
 		for (String path : section.getValues(false).keySet()) {
-			new Rank(section.getConfigurationSection(path));
-		}
-		
-		DataBase.ENABLED.set(false);
-		
-		for (File islandFile : new File(Dodge.getInstance().getDataFolder(), "islands").listFiles(new FilenameFilter() {
 			
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.matches("(\\d+-\\d+-\\d+\\.yml)");
-			}
-		})) {
+			RankManager.getManager().registerRank(new Rank(section.getConfigurationSection(path)));
 			
-			try {
-				Dodge.getInstance().getMessenger().print("Attempting to rename " + islandFile.getName());
-				OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(YamlConfiguration.loadConfiguration(islandFile).getString("owner")));
-				UUID id = DodgeIslandManager.getIslandUUID(player);
-				islandFile.renameTo(new File(islandFile.getParentFile(), id.toString() + ".yml"));
-			} catch(IllegalAccessError e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (IslandManager.hasIsland(player) && DodgeIslandManager.getManager().getByPlayer(player) == null) {
-				
-				new DodgeIsland(DodgeIslandManager.getIslandUUID(player));
-				
-			}
 		}
 	}
 	
@@ -411,7 +379,7 @@ public class Config extends ConfigBase {
 	protected Set<IConfig> getEnums() {
 		return new HashSet<ConfigBase.IConfig>() {
 			{
-				addAll(Arrays.asList(DataBase.values()));
+				addAll(Arrays.asList(Data.values()));
 				addAll(Arrays.asList(Options.values()));
 			}
 		};

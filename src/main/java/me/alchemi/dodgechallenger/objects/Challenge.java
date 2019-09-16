@@ -22,6 +22,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 import me.alchemi.al.api.MaterialWrapper;
 import me.alchemi.al.configurations.Messenger;
+import me.alchemi.al.objects.Container;
+import me.alchemi.al.objects.StringSerializable;
 import me.alchemi.dodgechallenger.Config.Messages;
 import me.alchemi.dodgechallenger.Config.Options;
 import me.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
@@ -618,7 +620,16 @@ public class Challenge implements StringSerializable {
 	}
 	
 	public static Challenge deserialize_string(String deserialized) {
-		return getChallengeFromID(deserialized);
+		return getChallengeFromID(deserialized.replace(Challenge.class.getName() + "{", "").replace("}", ""));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Challenge) {
+			Challenge c = (Challenge) obj;
+			return c.name.equals(name);
+		}
+		return false;
 	}
 
 }

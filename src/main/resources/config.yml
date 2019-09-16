@@ -50,8 +50,14 @@ Spawn:
 nextPageMaterial: REDSTONE_TORCH
 prevPageMaterial: LEVER
 
-MySQL:
-    enabled: true
+Data:
+
+    # Which storage system to use.
+    # This can be either MYSQL, SQLITE or YML.
+    # Default: MYSQL
+    storage: MYSQL
+    
+    # Settings for MySQL.
     host: localhost
     port: 3306
     database: skyblock_challenges

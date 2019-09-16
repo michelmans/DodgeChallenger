@@ -24,16 +24,14 @@ public class DodgeIslandManager {
 	
 	private static DodgeIslandManager manager;
 	
-	public DodgeIslandManager() {
-		manager = this;
-	}
+	private DodgeIslandManager() {}
 	
 	public HashMap<UUID, DodgeIsland> getIslands() {
 		return islands;
 	}
 	
 	public static DodgeIslandManager getManager() {
-		if (manager == null) new DodgeIslandManager();
+		if (manager == null) DodgeIslandManager.enable();
 		return manager;
 	}
 	
@@ -102,6 +100,10 @@ public class DodgeIslandManager {
 		}
 		throw new IllegalAccessError(player.getName() + " has no Island.");
 		
+	}
+
+	public static void enable() {
+		manager = new DodgeIslandManager();		
 	}
 	
 }

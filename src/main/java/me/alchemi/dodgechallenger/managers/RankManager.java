@@ -13,10 +13,8 @@ public class RankManager {
 	private List<Rank> ranks = new ArrayList<Rank>();
 	
 	private static RankManager manager;
-	
-	public RankManager() {
-		manager = this;
-	}
+
+	private RankManager() {}
 	
 	public void registerRank(Rank rank) {
 		if (!ranks.contains(rank)) ranks.add(rank);
@@ -69,8 +67,11 @@ public class RankManager {
 	}
 
 	public static RankManager getManager() {
-		if (manager == null) manager = new RankManager();
 		return manager;
+	}
+
+	public static void enable() {
+		manager = new RankManager();
 	}
 	
 }

@@ -37,6 +37,8 @@ DodgeChallenger:
       Message: 'You ranked up to %rank%&r%f%!'
       Tag: '&b[%rank%&r&b]&r '
    GUI:
+      NoIsland: '&cYou don''t appear to have an island.'
+      NoIslandOther: '&c%player% doesn''t have an island.'
       GUIName: '&2&oChallenges'
       NextPage: '&2&lNext page'
       PrevPage: '&a&lPrevious page'

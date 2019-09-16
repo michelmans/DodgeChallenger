@@ -21,9 +21,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import me.alchemi.al.api.MaterialWrapper;
 import me.alchemi.al.configurations.Messenger;
 import me.alchemi.al.configurations.SexyConfiguration;
+import me.alchemi.al.objects.Container;
 import me.alchemi.al.objects.base.PluginBase;
 import me.alchemi.al.objects.handling.ItemFactory;
-import me.alchemi.dodgechallenger.Config.DataBase;
+import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.listeners.commands.CommandChallenge;
 import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.listeners.events.CreatureSpawn;
@@ -34,11 +35,11 @@ import me.alchemi.dodgechallenger.listeners.events.rank.ChallengeComplete;
 import me.alchemi.dodgechallenger.listeners.events.rank.Ranks;
 import me.alchemi.dodgechallenger.listeners.tabcomplete.AdminTabComplete;
 import me.alchemi.dodgechallenger.managers.ConfigurationManager;
-import me.alchemi.dodgechallenger.managers.DatabaseManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.IDataManager;
+import me.alchemi.dodgechallenger.managers.MySQLManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
-import me.alchemi.dodgechallenger.objects.Container;
+import me.alchemi.dodgechallenger.objects.StorageSystem;
 import me.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -80,19 +81,11 @@ public class Dodge extends PluginBase {
 		
 		GIVE_QUEUE = SexyConfiguration.loadConfiguration(new File(getDataFolder(), "give_queue.yml"));
 		
+		RankManager.enable();
+		DodgeIslandManager.enable();
+		
 		setMessenger(new Messenger(this));
 		messenger.print("Enabling DodgeChallenger");
-		
-		new RankManager();
-		new DodgeIslandManager();
-		
-		if (!getConfig().getBoolean("MySQL.enabled", true)) {
-			dataManager = new ConfigurationManager();
-			messenger.print("Using yml database.");
-		} else {
-			dataManager = new DatabaseManager();
-			messenger.print("Using MySQL database.");
-		}
 		
 		try {
 			conf = new Config(this);
@@ -104,6 +97,13 @@ public class Dodge extends PluginBase {
 			Messenger.printStatic("Configs enabling errored, disabling plugin.", "[DodgeChallenger]");
 		}
 		
+		if (StorageSystem.valueOf(Config.Data.STORAGE.asString()) == StorageSystem.YML) {
+			dataManager = new ConfigurationManager();
+			messenger.print("Using yml database.");
+		} else {
+			dataManager = new MySQLManager();
+			messenger.print("Using MySQL database.");
+		}
 		messenger.print("Database Initiliazed.");
 		
 		if (!setupEconomy()) {
@@ -137,10 +137,14 @@ public class Dodge extends PluginBase {
 	@Override
 	public void onDisable() {
 		
-		if (!DataBase.ENABLED.asBoolean()) {
+		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
 			
 			Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
 			((ConfigurationManager)Dodge.dataManager).runQuery();
+			
+		} else if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.MYSQL) {
+			
+			((MySQLManager)Dodge.dataManager).getDatabase().onDisable();
 			
 		}
 		

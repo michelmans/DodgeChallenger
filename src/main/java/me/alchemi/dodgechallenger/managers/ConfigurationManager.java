@@ -12,10 +12,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.alchemi.al.configurations.SexyConfiguration;
 import me.alchemi.al.objects.Callback;
+import me.alchemi.al.objects.Container;
 import me.alchemi.al.objects.handling.SexyRunnable;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
-import me.alchemi.dodgechallenger.objects.Container;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
@@ -48,7 +48,7 @@ public class ConfigurationManager implements IDataManager{
 		SexyConfiguration c = SexyConfiguration.loadConfiguration(new File(this.database, island.toString() + ".yml"));
 		c.set("owner", island.toString());
 		c.set("rank", 0);
-		c.set("completed", new Container<Challenge>());
+		c.set("completed", new Container<Challenge>(Challenge.class));
 		
 		loadedConfs.put(island, c);
 		
@@ -75,7 +75,7 @@ public class ConfigurationManager implements IDataManager{
 	@SuppressWarnings("unchecked")
 	@Override
 	public Container<Challenge> getCompletedChallenges(UUID island) {
-		return loadedConfs.containsKey(island) ? (Container<Challenge>) loadedConfs.get(island).get("completed") : new Container<Challenge>();
+		return loadedConfs.containsKey(island) ? (Container<Challenge>) loadedConfs.get(island).get("completed") : new Container<Challenge>(Challenge.class);
 	}
 	
 	@Override

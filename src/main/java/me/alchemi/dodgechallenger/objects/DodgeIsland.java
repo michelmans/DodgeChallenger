@@ -6,8 +6,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
+import me.alchemi.al.objects.Container;
 import me.alchemi.dodgechallenger.Config;
-import me.alchemi.dodgechallenger.Config.DataBase;
+import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.events.DeRankEvent;
 import me.alchemi.dodgechallenger.events.RankupEvent;
@@ -20,14 +21,14 @@ import me.goodandevil.skyblock.api.island.Island;
 public class DodgeIsland {
 	
 	private final UUID island;
-	private Container<Challenge> challenges = new Container<Challenge>();
+	private Container<Challenge> challenges = new Container<Challenge>(Challenge.class);
 	private Rank rank;
 	
 	public DodgeIsland(UUID island) {
 		
 		this.island = island;
 		
-		if (!DataBase.ENABLED.asBoolean()) {
+		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
 			((ConfigurationManager) Dodge.dataManager).loadIsland(island);
 		}
 		
@@ -42,14 +43,14 @@ public class DodgeIsland {
 		
 		this.island = island;
 		
-		if (!DataBase.ENABLED.asBoolean()) {
+		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
 			((ConfigurationManager) Dodge.dataManager).loadIsland(island);
 		}
 		
 		challenges = Dodge.dataManager.getCompletedChallenges(island);
 		
 		rank = RankManager.getManager().getRank(Dodge.dataManager.getRank(island));
-		if (offline) DodgeIslandManager.getManager().registerIsland(this);
+		if (!offline) DodgeIslandManager.getManager().registerIsland(this);
 		
 	}
 	
@@ -187,6 +188,8 @@ public class DodgeIsland {
 	
 	@Override
 	public String toString() {
-		return "DodgeIsland{Owner:" + Bukkit.getOfflinePlayer(getFabledIsland().getOwnerUUID()).getName() + ", IslandUUID:" + island.toString() + ", Challenges:" + challenges.toString() + "}";
+		return "DodgeIsland{Owner:" + Bukkit.getOfflinePlayer(getFabledIsland().getOwnerUUID()).getName()
+				+ ", IslandUUID:" + island.toString() 
+				+ ", Challenges:" + challenges.toString() + "}";
 	}
 }

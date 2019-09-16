@@ -45,11 +45,15 @@ public class ChallengeGui extends GUIBase {
 		
 		island = DodgeIslandManager.getManager().getByPlayer(player);
 		
+		if (island == null) {
+			Dodge.getInstance().getMessenger().sendMessage(new Stringer(Messages.GUI_NOISLAND), player);
+			return;
+		}
+		
 		setContents();		
 		setCommands();
-		
+				
 		openGUI();
-		
 	}
 	
 	public ChallengeGui(OfflinePlayer player, CommandSender sender) {
@@ -59,10 +63,16 @@ public class ChallengeGui extends GUIBase {
 		if (player.isOnline()) island = DodgeIslandManager.getManager().getByPlayer(player.getPlayer());
 		else island = IslandManager.hasIsland(player) ? new DodgeIsland(DodgeIslandManager.getIslandUUID(player)) : null;
 		
+		if (island == null) {
+			Dodge.getInstance().getMessenger().sendMessage(new Stringer(Messages.GUI_NOISLANDOTHER)
+					.player(player.getName())
+					.parse(player), sender);
+			return;
+		}
+		
 		setContents();
 		
 		openGUI();
-		
 	}
 	
 	public void buildRank(Rank rank, int i) {
@@ -256,8 +266,6 @@ public class ChallengeGui extends GUIBase {
 	
 	@Override
 	public void setContents() {
-		
-		if (island == null) return;
 		
 		int i = 0;
 		

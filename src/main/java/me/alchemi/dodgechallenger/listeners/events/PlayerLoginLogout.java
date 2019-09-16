@@ -10,13 +10,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import me.alchemi.al.objects.meta.PersistentMeta;
-import me.alchemi.dodgechallenger.Config.DataBase;
+import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.managers.ConfigurationManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
 import me.alchemi.dodgechallenger.meta.TaskIntMeta;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
+import me.alchemi.dodgechallenger.objects.StorageSystem;
 import me.goodandevil.skyblock.api.island.IslandManager;
 
 public class PlayerLoginLogout implements Listener {
@@ -45,6 +46,8 @@ public class PlayerLoginLogout implements Listener {
 				
 			}
 			
+			e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
+			
 		}
 	}
 	
@@ -60,7 +63,7 @@ public class PlayerLoginLogout implements Listener {
 		
 		if (Bukkit.getOnlinePlayers().size() <= 1) {
 			
-			if (!DataBase.ENABLED.asBoolean()) {
+			if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
 			
 				Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
 				((ConfigurationManager)Dodge.dataManager).runQuery();
