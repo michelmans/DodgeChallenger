@@ -38,6 +38,7 @@ import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.IDataManager;
 import me.alchemi.dodgechallenger.managers.MySQLManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.managers.SQLiteManager;
 import me.alchemi.dodgechallenger.objects.StorageSystem;
 import me.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 import net.milkbowl.vault.chat.Chat;
@@ -97,11 +98,14 @@ public class Dodge extends PluginBase {
 		}
 		
 		if (StorageSystem.valueOf(Config.Data.STORAGE.asString()) == StorageSystem.YML) {
-			dataManager = new ConfigurationManager();
 			messenger.print("Using yml database.");
+			dataManager = new ConfigurationManager();
+		} else if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.SQLITE) {
+			messenger.print("Using SQLite database.");
+			dataManager = new SQLiteManager();
 		} else {
-			dataManager = new MySQLManager();
 			messenger.print("Using MySQL database.");
+			dataManager = new MySQLManager();
 		}
 		messenger.print("Database Initiliazed.");
 		

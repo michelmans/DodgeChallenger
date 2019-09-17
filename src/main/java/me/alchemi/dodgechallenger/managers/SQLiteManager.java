@@ -1,5 +1,7 @@
 package me.alchemi.dodgechallenger.managers;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import me.alchemi.al.database.Column;
 import me.alchemi.al.database.ColumnModifier;
 import me.alchemi.al.database.DataType;
 import me.alchemi.al.database.Table;
-import me.alchemi.al.database.mysql.MySQLDatabase;
+import me.alchemi.al.database.sqlite.SQLiteDatabase;
 import me.alchemi.al.objects.Callback;
 import me.alchemi.al.objects.Container;
 import me.alchemi.dodgechallenger.Config.Data;
@@ -21,7 +23,7 @@ import me.alchemi.dodgechallenger.objects.StorageSystem;
 
 public class SQLiteManager implements IDataManager {
 	
-	private MySQLDatabase database;
+	private SQLiteDatabase database;
 	
 	private Table table;
 	
@@ -32,11 +34,13 @@ public class SQLiteManager implements IDataManager {
 	public SQLiteManager() {
 		
 		try {
-			database = MySQLDatabase.newConnection(Dodge.getInstance(), Data.HOST.asString() + ":" + Data.PORT.asInt(), Data.DATABASE.asString(), Data.USERNAME.asString(), Data.PASSWORD.asString());
-		} catch (SQLException e) {
+			File dbFile = new File(Dodge.getInstance().getDataFolder(), "islands.db");
+			if (!dbFile.exists()) dbFile.createNewFile();
+			database = SQLiteDatabase.newConnection(Dodge.getInstance(), dbFile);
+		} catch (SQLException | IOException e) {
 			Data.STORAGE.set(StorageSystem.YML);
 			Dodge.dataManager = new ConfigurationManager();
-			Dodge.getInstance().getMessenger().print("MySQL database not reachable, switching to yml database.");
+			Dodge.getInstance().getMessenger().print("SQLite database not reachable, switching to yml database.");
 			e.printStackTrace();
 			return;
 		}
@@ -183,7 +187,7 @@ public class SQLiteManager implements IDataManager {
 	@Override
 	public void saveIsland(DodgeIsland island) {}
 	
-	public MySQLDatabase getDatabase() {
+	public SQLiteDatabase getDatabase() {
 		return database;
 	}
 }
