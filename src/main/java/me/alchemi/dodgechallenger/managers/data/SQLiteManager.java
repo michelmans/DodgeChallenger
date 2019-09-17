@@ -1,4 +1,4 @@
-package me.alchemi.dodgechallenger.managers;
+package me.alchemi.dodgechallenger.managers.data;
 
 import java.io.File;
 import java.io.IOException;
@@ -186,6 +186,9 @@ public class SQLiteManager implements IDataManager {
 	
 	@Override
 	public void saveIsland(DodgeIsland island) {}
+	
+	@Override
+	public void onDisable() {}
 	
 	public SQLiteDatabase getDatabase() {
 		return database;

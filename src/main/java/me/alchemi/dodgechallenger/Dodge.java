@@ -33,12 +33,12 @@ import me.alchemi.dodgechallenger.listeners.events.island.IslandRename;
 import me.alchemi.dodgechallenger.listeners.events.rank.ChallengeComplete;
 import me.alchemi.dodgechallenger.listeners.events.rank.Ranks;
 import me.alchemi.dodgechallenger.listeners.tabcomplete.ChallengeTabComplete;
-import me.alchemi.dodgechallenger.managers.ConfigurationManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
-import me.alchemi.dodgechallenger.managers.IDataManager;
-import me.alchemi.dodgechallenger.managers.MySQLManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
-import me.alchemi.dodgechallenger.managers.SQLiteManager;
+import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
+import me.alchemi.dodgechallenger.managers.data.IDataManager;
+import me.alchemi.dodgechallenger.managers.data.MySQLManager;
+import me.alchemi.dodgechallenger.managers.data.SQLiteManager;
 import me.alchemi.dodgechallenger.objects.StorageSystem;
 import me.alchemi.dodgechallenger.objects.placeholder.PapiExpansion;
 import net.milkbowl.vault.chat.Chat;
@@ -85,7 +85,7 @@ public class Dodge extends PluginBase {
 		DodgeIslandManager.enable();
 		
 		setMessenger(new Messenger(this));
-		messenger.print("Enabling DodgeChallenger");
+		messenger.print("&4Fueling auto...");
 		
 		try {
 			conf = new Config(this);
@@ -134,22 +134,14 @@ public class Dodge extends PluginBase {
 		
 		registerRecipes();
 		
-		messenger.print("Initialization complete.");		
+		messenger.print("&4Auto fueled and ready to go!");		
 	}
 	
 	@Override
 	public void onDisable() {
 		
-		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
-			
-			Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
-			((ConfigurationManager)Dodge.dataManager).runQuery();
-			
-		} else if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.MYSQL) {
-			
-			((MySQLManager)Dodge.dataManager).getDatabase().onDisable();
-			
-		}
+		dataManager.onDisable();
+		messenger.print("&4Out of gasoline... Auto stopped.");
 		
 	}
 	

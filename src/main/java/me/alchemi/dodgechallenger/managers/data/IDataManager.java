@@ -1,4 +1,4 @@
-package me.alchemi.dodgechallenger.managers;
+package me.alchemi.dodgechallenger.managers.data;
 
 import java.util.UUID;
 
@@ -28,5 +28,7 @@ public interface IDataManager {
 	public Container<Challenge> getCompletedChallenges(UUID island);
 
 	public void getCompletedChallengesAsync(UUID island, Callback<Container<Challenge>> callback);
+	
+	public void onDisable();
 	
 }

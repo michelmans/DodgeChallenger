@@ -1,4 +1,4 @@
-package me.alchemi.dodgechallenger.managers;
+package me.alchemi.dodgechallenger.managers.data;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -182,6 +182,11 @@ public class MySQLManager implements IDataManager {
 	
 	@Override
 	public void saveIsland(DodgeIsland island) {}
+	
+	@Override
+	public void onDisable() {
+		database.onDisable();		
+	}
 	
 	public MySQLDatabase getDatabase() {
 		return database;

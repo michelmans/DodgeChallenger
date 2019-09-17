@@ -12,9 +12,9 @@ import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.events.DeRankEvent;
 import me.alchemi.dodgechallenger.events.RankupEvent;
-import me.alchemi.dodgechallenger.managers.ConfigurationManager;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
+import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
 import me.goodandevil.skyblock.api.SkyBlockAPI;
 import me.goodandevil.skyblock.api.island.Island;
 

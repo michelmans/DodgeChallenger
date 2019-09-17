@@ -1,4 +1,4 @@
-package me.alchemi.dodgechallenger.managers;
+package me.alchemi.dodgechallenger.managers.data;
 
 import java.io.File;
 import java.io.IOException;
@@ -150,7 +150,8 @@ public class ConfigurationManager implements IDataManager{
 		return query == null ? 0 : query.size();
 	}
 	
-	public void runQuery() {
+	@Override
+	public void onDisable() {
 		
 		if (query == null || query.isEmpty()) return;
 		
