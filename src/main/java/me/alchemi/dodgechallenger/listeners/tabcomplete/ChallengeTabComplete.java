@@ -42,7 +42,6 @@ public class ChallengeTabComplete extends TabCompleteBase {
 			}
 			
 		} else if (args.length > 3) {
-			System.out.println(Arrays.toString(args));
 			if (args[1].equals("complete")) {
 				list.addAll(Challenge.getChallenges());
 				
