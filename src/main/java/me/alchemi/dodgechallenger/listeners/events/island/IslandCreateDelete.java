@@ -12,7 +12,6 @@ import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
-import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.goodandevil.skyblock.api.event.island.IslandCreateEvent;
 import me.goodandevil.skyblock.api.event.island.IslandDeleteEvent;
 import me.goodandevil.skyblock.api.island.IslandRole;
@@ -21,8 +20,9 @@ public class IslandCreateDelete implements Listener {
 
 	@EventHandler
 	public static void islandCreate(IslandCreateEvent e) {
-		Dodge.dataManager.newIsland(e.getIsland().getIslandUUID());
-		e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(new DodgeIsland(e.getIsland().getIslandUUID())));
+		e.getPlayer().setMetadata(IslandMeta.class.getName(), 
+				new IslandMeta(
+						Dodge.dataManager.newIsland(e.getIsland().getIslandUUID())));
 	}
 	
 	@EventHandler

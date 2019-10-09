@@ -29,11 +29,11 @@ public class ChallengeCompleteEvent extends Event{
 	private final Rank rank;
 	private final ItemStack[] toTake;
 	
-	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, UUID island, ItemStack[] toTake) {
+	public ChallengeCompleteEvent(Challenge challenge, OfflinePlayer player, ItemStack[] toTake) {
 		this.challenge = challenge;
 		this.player = player;
-		this.fabledIsland = island;
-		this.island = DodgeIslandManager.getManager().get(island);
+		this.island = DodgeIslandManager.getManager().getByPlayer(player);
+		this.fabledIsland = island.getIsland();
 		this.rank = this.island.getRank();
 		this.repeat = this.island.getChallenges().contains(challenge);
 		this.reward = new Reward(challenge, repeat);

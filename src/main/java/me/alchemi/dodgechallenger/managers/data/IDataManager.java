@@ -9,11 +9,9 @@ import me.alchemi.dodgechallenger.objects.DodgeIsland;
 
 public interface IDataManager {
 
-	public void newIsland(UUID island);
+	public DodgeIsland newIsland(UUID island);
 	
 	public void removeIsland(UUID island);
-	
-	public void completeChallenge(UUID island, Challenge challenge);
 	
 	public void setChallenges(UUID island, Container<Challenge> challenges);
 	

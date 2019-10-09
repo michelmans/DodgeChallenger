@@ -25,8 +25,8 @@ public class MySQLManager implements IDataManager {
 	
 	private Table table;
 	
-	private Column islandUuid = new Column("island_uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL);
-	private Column islandRank = new Column("island_rank", DataType.TINYINT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
+	private Column islandUuid = new Column("island_uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL, ColumnModifier.UNIQUE);
+	private Column islandRank = new Column("island_rank", DataType.INT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
 	private Column islandChallenges = new Column("island_challenges", DataType.LONGTEXT);
 	
 	public MySQLManager() {
@@ -42,17 +42,16 @@ public class MySQLManager implements IDataManager {
 		}
 		
 		islandRank.setDefValue(1);
-		table = new Table("dodge_islands", islandUuid);
-		table.addColumn(islandRank);
-		table.addColumn(islandChallenges);
-		
+		islandUuid.setValueLimit(38);
+		table = new Table("dodge_islands", islandUuid, islandRank, islandChallenges);
 		database.createTable(table);
 	}
 	
 	@Override
-	public void newIsland(UUID island) {
-		new DodgeIsland(island);
+	public DodgeIsland newIsland(UUID island) {
+		DodgeIsland di = new DodgeIsland(island);
 		addIsland(island, 0, new Container<Challenge>(Challenge.class));
+		return di;
 	}
 
 	private void addIsland(UUID island, int rank, Container<Challenge> challenges) {
@@ -149,16 +148,6 @@ public class MySQLManager implements IDataManager {
 	}
 	
 	@Override
-	public void completeChallenge(UUID island, Challenge chall) {
-		
-		Container<Challenge> challenges = getCompletedChallenges(island);
-		challenges.add(chall);
-		
-		setChallenges(island, challenges);
-		
-	}
-	
-	@Override
 	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		
 		database.updateValue(table, islandChallenges, challenges.serialize_string(), new HashMap<Column, Object>(){
@@ -181,7 +170,11 @@ public class MySQLManager implements IDataManager {
 	}
 	
 	@Override
-	public void saveIsland(DodgeIsland island) {}
+	public void saveIsland(DodgeIsland island) {
+		
+		addIsland(island.getIsland(), island.getRank().getId(), island.getChallenges());
+		
+	}
 	
 	@Override
 	public void onDisable() {

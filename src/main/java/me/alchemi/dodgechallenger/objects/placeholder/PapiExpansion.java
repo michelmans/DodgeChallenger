@@ -10,7 +10,6 @@ import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.goodandevil.skyblock.api.island.IslandManager;
 import net.md_5.bungee.api.ChatColor;
 
 public class PapiExpansion extends PlaceholderExpansion{
@@ -125,8 +124,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 	}
 	
 	private static DodgeIsland getIslandManagerFromOfflinePlayer(OfflinePlayer player) {
-		if (!IslandManager.hasIsland(player)) return null;
-		return new DodgeIsland(DodgeIslandManager.getIslandUUID(player));
+		return DodgeIslandManager.getManager().getByPlayer(player);
 	}
 	
 }

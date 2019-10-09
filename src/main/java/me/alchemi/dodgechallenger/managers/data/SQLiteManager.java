@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import me.alchemi.al.database.Column;
 import me.alchemi.al.database.ColumnModifier;
+import me.alchemi.al.database.DataQueue;
 import me.alchemi.al.database.DataType;
 import me.alchemi.al.database.Table;
 import me.alchemi.al.database.sqlite.SQLiteDatabase;
@@ -27,8 +28,8 @@ public class SQLiteManager implements IDataManager {
 	
 	private Table table;
 	
-	private Column islandUuid = new Column("island_uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL);
-	private Column islandRank = new Column("island_rank", DataType.TINYINT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
+	private Column islandUuid = new Column("island_uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL, ColumnModifier.UNIQUE);
+	private Column islandRank = new Column("island_rank", DataType.INT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
 	private Column islandChallenges = new Column("island_challenges", DataType.LONGTEXT);
 	
 	public SQLiteManager() {
@@ -54,9 +55,10 @@ public class SQLiteManager implements IDataManager {
 	}
 	
 	@Override
-	public void newIsland(UUID island) {
-		new DodgeIsland(island);
+	public DodgeIsland newIsland(UUID island) {
+		DodgeIsland di = new DodgeIsland(island);
 		addIsland(island, 0, new Container<Challenge>(Challenge.class));
+		return di;
 	}
 
 	private void addIsland(UUID island, int rank, Container<Challenge> challenges) {
@@ -153,16 +155,6 @@ public class SQLiteManager implements IDataManager {
 	}
 	
 	@Override
-	public void completeChallenge(UUID island, Challenge chall) {
-		
-		Container<Challenge> challenges = getCompletedChallenges(island);
-		challenges.add(chall);
-		
-		setChallenges(island, challenges);
-		
-	}
-	
-	@Override
 	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		
 		database.updateValue(table, islandChallenges, challenges.serialize_string(), new HashMap<Column, Object>(){
@@ -171,11 +163,13 @@ public class SQLiteManager implements IDataManager {
 			}
 		});
 		
+		System.out.println(DataQueue.getQueue().getTasks());
+		
 	}
 	
 	@Override
 	public void setRank(UUID island, int newRank) {
-		
+		System.out.println(islandRank.testObject(newRank));
 		database.updateValue(table, islandRank, newRank, new HashMap<Column, Object>(){
 			{
 				put(islandUuid, island.toString());
@@ -185,7 +179,11 @@ public class SQLiteManager implements IDataManager {
 	}
 	
 	@Override
-	public void saveIsland(DodgeIsland island) {}
+	public void saveIsland(DodgeIsland island) {
+		
+		addIsland(island.getIsland(), island.getRank().getId(), island.getChallenges());
+		
+	}
 	
 	@Override
 	public void onDisable() {}

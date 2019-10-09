@@ -13,13 +13,14 @@ import me.alchemi.dodgechallenger.Dodge;
 
 public class CommandAdmin {
 
-	public static final String completeUsage = "&9/c admin <player> complete <challenge>";
-	public static final String rankUsage = "&9/c admin <player> rank <rank>";
-	public static final String resetUsage = "&9/c admin <player> reset <challenge>";
-	public static final String resetAllUsage = "&9/c admin <player> resetall";
-	public static final String showUsage = "&9/c admin <player> show";
+	public static final String completeUsage = "&9/c admin complete <player> <challenge>";
+	public static final String rankUsage = "&9/c admin rank <player> <rank>";
+	public static final String resetUsage = "&9/c admin reset <player> <challenge>";
+	public static final String resetAllUsage = "&9/c admin resetall <player>";
+	public static final String showUsage = "&9/c admin show <player>";
 	public static final String reloadUsage = "&9/c admin reload";
 	public static final String defaultUsage = "&9/c admin defaults";
+	public static final String debugUsage = "&9/c admin debug <player>";
 	
 	public static final String completeDesc = "&aComplete a player's challenge.";
 	public static final String rankDesc = "&aComplete all challenges for the player in a rank.";
@@ -28,19 +29,20 @@ public class CommandAdmin {
 	public static final String showDesc = "&aShow the challenges pages of a player.";
 	public static final String reloadDesc = "&aReload all configs.";
 	public static final String defaultDesc = "&aReset all configs to default.";
+	public static final String debugDesc = "&aDebug a player's island.";
 	
 	public static final String help = "&6==========&9Admin Commands&6==========\n"
-									+ completeUsage + "\n    " + completeDesc + "\n"
-									+ rankUsage + "\n    " + rankDesc + "\n"
-									+ resetUsage + "\n    " + resetDesc + "\n"
-									+ resetAllUsage + "\n    " + resetAllDesc + "\n"
-									+ showUsage + "\n    " + showDesc + "\n"
-									+ reloadUsage + "\n    " + reloadDesc + "\n"
-									+ defaultUsage + "\n    " + defaultDesc + "\n"
+									+ completeUsage + ">    " + completeDesc + "\n"
+									+ rankUsage + ">    " + rankDesc + "\n"
+									+ resetUsage + ">    " + resetDesc + "\n"
+									+ resetAllUsage + ">    " + resetAllDesc + "\n"
+									+ showUsage + ">    " + showDesc + "\n"
+									+ reloadUsage + ">    " + reloadDesc + "\n"
+									+ defaultUsage + ">    " + defaultDesc + "\n"
+									+ debugUsage + ">    " + debugDesc + "\n"
 									+ "&6=================================";
 	
 	public static void onCommand(CommandSender sender, Command command, String label, String[] args) {
-		
 		if (sender.hasPermission("dodgec.admin") || !(sender instanceof Player) || sender.isOp()) {
 			if (args.length < 2) {
 				sender.sendMessage(Messenger.formatString(help));
@@ -53,6 +55,8 @@ public class CommandAdmin {
 				} else if (args[1].equals("defaults")) {
 					Dodge.getInstance().conf.revertDefault();
 					return;
+				} else if (args[1].equals("debug") && sender instanceof Player) {
+					CommandDebug.perform(sender, (Player) sender);
 				}
 				
 				sender.sendMessage(Messenger.formatString(help));
@@ -71,6 +75,8 @@ public class CommandAdmin {
 					CommandReset.perform(sender, player, Arrays.copyOfRange(args, 3, args.length), true);
 				} else if (args[1].equals("show")) {
 					CommandShow.perform(sender, player);
+				} else if (args[1].equals("debug")) {
+					CommandDebug.perform(sender, player);
 				} else {
 					sender.sendMessage(Messenger.formatString(help));
 					return;

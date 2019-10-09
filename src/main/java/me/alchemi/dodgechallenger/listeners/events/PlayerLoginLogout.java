@@ -1,7 +1,5 @@
 package me.alchemi.dodgechallenger.listeners.events;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,43 +14,49 @@ import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
 import me.alchemi.dodgechallenger.meta.TaskIntMeta;
-import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.StorageSystem;
-import me.goodandevil.skyblock.api.island.IslandManager;
 
 public class PlayerLoginLogout implements Listener {
 	
 	@EventHandler
-	public static void playerLogin(PlayerJoinEvent e) {
+	public void playerLogin(PlayerJoinEvent e) {
 		for (ShapelessRecipe r : Dodge.getInstance().recipes) {
 			
 			e.getPlayer().discoverRecipe(r.getKey());
 			
 		}
 		
-		if (IslandManager.hasIsland(e.getPlayer())) {
-
-			DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(e.getPlayer());
+//		if (IslandManager.hasIsland(e.getPlayer())) {
+//
+//			DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(e.getPlayer());
+//			
+//			if (island == null) {
+//				
+//				UUID id = DodgeIslandManager.getIslandUUID(e.getPlayer());
+//				
+//				island = DodgeIslandManager.getManager().get(id);
+//				
+//				if (island == null) island = new DodgeIsland(id);
+//				
+//				e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
+//				
+//			}
+//			
+//			e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
+//			
+//		}
+		if (DodgeIslandManager.getManager().hasIsland(e.getPlayer())) {
 			
-			if (island == null) {
-				
-				UUID id = DodgeIslandManager.getIslandUUID(e.getPlayer());
-				
-				island = DodgeIslandManager.getManager().get(id);
-				
-				if (island == null) island = new DodgeIsland(id);
-				
-				e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
-				
-			}
-			
-			e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
+			System.out.println("PlayerLoginLogout.playerLogin()");
+			e.getPlayer().setMetadata(IslandMeta.class.getName(), 
+					new IslandMeta(DodgeIslandManager.getManager().getByPlayer(e.getPlayer())));
+			System.out.println(PersistentMeta.getMeta(e.getPlayer(), IslandMeta.class));
 			
 		}
 	}
 	
 	@EventHandler
-	public static void playerLogout(PlayerQuitEvent e) {
+	public void playerLogout(PlayerQuitEvent e) {
 		
 		if (PersistentMeta.hasMeta(e.getPlayer(), TaskIntMeta.class)) 
 			Bukkit.getScheduler().cancelTask(PersistentMeta.getMeta(e.getPlayer(), TaskIntMeta.class).asInt());
@@ -66,7 +70,7 @@ public class PlayerLoginLogout implements Listener {
 			if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {
 			
 				Dodge.getInstance().getMessenger().print("Running data queries: " + ((ConfigurationManager)Dodge.dataManager).querySize());
-				((ConfigurationManager)Dodge.dataManager).runQuery();
+				Dodge.dataManager.onDisable();
 				
 			}
 		}

@@ -12,7 +12,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -46,7 +48,7 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Dodge extends PluginBase {
 
-	public static Dodge instance;
+	private static Dodge instance;
 	
 	public static Economy eco;
 	public static Chat chat;
@@ -61,6 +63,8 @@ public class Dodge extends PluginBase {
 	public SexyConfiguration GIVE_QUEUE;
 	
 	public Config conf;
+	
+	private PlayerLoginLogout pll;
 	
 	static {
 		ConfigurationSerialization.registerClass(Container.class);
@@ -135,6 +139,10 @@ public class Dodge extends PluginBase {
 		registerRecipes();
 		
 		messenger.print("&4Auto fueled and ready to go!");		
+		
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			pll.playerLogin(new PlayerJoinEvent(p, ""));
+		}
 	}
 	
 	@Override
@@ -153,7 +161,7 @@ public class Dodge extends PluginBase {
 	
 	private void registerEvents() {
 		for (Listener listen : Arrays.asList(new IslandCreateDelete(), new Ranks(),
-				new CreatureSpawn(), new PlayerLoginLogout(), new ChallengeComplete(), new IslandRename())) {
+				new CreatureSpawn(), pll = new PlayerLoginLogout(), new ChallengeComplete(), new IslandRename())) {
 			Bukkit.getPluginManager().registerEvents(listen, this);
 		}
 	}

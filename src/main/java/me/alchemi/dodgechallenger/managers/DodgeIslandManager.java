@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import me.alchemi.al.objects.meta.PersistentMeta;
@@ -51,9 +50,49 @@ public class DodgeIslandManager {
 		return get(island.getIslandUUID());
 	}
 
-	public DodgeIsland getByPlayer(Player player) {
-		return PersistentMeta.hasMeta(player, IslandMeta.class) ? 
-				get(PersistentMeta.getMeta(player, IslandMeta.class).asString()) : null;
+	public boolean hasIsland(OfflinePlayer player) {
+		
+		if (IslandManager.hasIsland(player)) {
+			if (player.isOnline() && PersistentMeta.hasMeta(player.getPlayer(), IslandMeta.class)) {
+				return true;
+			} else {
+				try {
+					
+					UUID id = getIslandUUID(player);
+					return get(id) != null;
+					
+				} catch (IllegalAccessError e) {
+					
+					return false;
+					
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public DodgeIsland getByPlayer(OfflinePlayer player) throws IllegalAccessError {
+		if (IslandManager.hasIsland(player)) {
+			DodgeIsland is;
+			
+			if (player.isOnline() && PersistentMeta.hasMeta(player.getPlayer(), IslandMeta.class)) {
+				is = get(PersistentMeta.getMeta(player.getPlayer(), IslandMeta.class).asString());
+				if (is != null) {
+					return is;
+				}
+			}
+			
+			UUID id = DodgeIslandManager.getIslandUUID(player);
+			is = DodgeIslandManager.getManager().get(id);
+			
+			if (is != null) return is;
+			
+			is = new DodgeIsland(id);
+			
+			return is;
+		}
+		throw new IllegalAccessError("Could not get DodgeIsland for " + player.getName());
 	}
 
 	public void purge() {
@@ -68,16 +107,14 @@ public class DodgeIslandManager {
 		if (islands.containsKey(uuid)) islands.remove(uuid);
 	}
 	
-	public boolean hasIsland(Player player) {
-		return getByPlayer(player) != null;
-	}
-	
 	public static UUID getIslandUUID(OfflinePlayer player) {
 		
 		if (IslandManager.hasIsland(player)) {
 			
 			if (player.isOnline()) {
+				
 				return SkyBlockAPI.getIslandManager().getIsland(player).getIslandUUID();
+				
 			} else {
 				
 				Plugin skyblock = Bukkit.getPluginManager().getPlugin("FabledSkyBlock");

@@ -25,7 +25,7 @@ public class DodgeIsland {
 	private Rank rank;
 	
 	public DodgeIsland(UUID island) {
-		
+		System.out.println(island);
 		this.island = island;
 		
 		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {

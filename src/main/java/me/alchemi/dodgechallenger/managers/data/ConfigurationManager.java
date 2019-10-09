@@ -43,7 +43,7 @@ public class ConfigurationManager implements IDataManager{
 	}
 	
 	@Override
-	public void newIsland(UUID island) {
+	public DodgeIsland newIsland(UUID island) {
 		
 		SexyConfiguration c = SexyConfiguration.loadConfiguration(new File(this.database, island.toString() + ".yml"));
 		c.set("owner", island.toString());
@@ -52,11 +52,12 @@ public class ConfigurationManager implements IDataManager{
 		
 		loadedConfs.put(island, c);
 		
-		new DodgeIsland(island);
+		DodgeIsland di = new DodgeIsland(island);
 		
 		try {
 			c.save();
 		} catch (IOException e1) {}
+		return di;
 	}
 	
 	@Override
@@ -77,29 +78,7 @@ public class ConfigurationManager implements IDataManager{
 	public Container<Challenge> getCompletedChallenges(UUID island) {
 		return loadedConfs.containsKey(island) ? (Container<Challenge>) loadedConfs.get(island).get("completed") : new Container<Challenge>(Challenge.class);
 	}
-	
-	@Override
-	public void completeChallenge(UUID island, Challenge chall) {
-		
-		if (!loadedConfs.containsKey(island)) return;
-		
-		SexyConfiguration c = loadedConfs.get(island);
-		
-		List<String> cc = c.getStringList("completed");
-		cc.add(chall.toString());		
-		c.set("owner", c.getString("owner"));
-		c.set("rank", c.get("rank"));
-		c.set("completed", cc);
-		loadedConfs.put(island, c);
-		
-		try {
-			c.save();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
+
 	@Override
 	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		if (!loadedConfs.containsKey(island)) return;

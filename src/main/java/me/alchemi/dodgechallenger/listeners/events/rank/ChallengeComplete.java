@@ -13,13 +13,17 @@ import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
 public class ChallengeComplete implements Listener {
 
 	@EventHandler
-	public static void onChallengeComplete(ChallengeCompleteEvent e) {
+	public void onChallengeComplete(ChallengeCompleteEvent e) {
 		e.getReward().give(e.getPlayer());
 		
 		DodgeIsland island = e.getIsland();
 		island.addChallenge(e.getChallenge());
 		
-		Dodge.dataManager.completeChallenge(e.getFabledIslandUUID(), e.getChallenge());
+		System.out.println(e.getFabledIslandUUID());
+		System.out.println(e.getFabledIsland().getIslandUUID());
+		System.out.println(e.getIsland().getIsland());
+		
+		Dodge.dataManager.setChallenges(island.getIsland(), island.getChallenges());
 		
 		if (e.getPlayer().isOnline()) {
 			if (e.getToTake() != null) e.getOnlinePlayer().getInventory().removeItem(e.getToTake());

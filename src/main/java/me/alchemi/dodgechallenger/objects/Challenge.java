@@ -500,7 +500,7 @@ public class Challenge implements StringSerializable {
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), result));
+						new ChallengeCompleteEvent(this, player, result));
 				
 			} else {
 				
@@ -517,7 +517,7 @@ public class Challenge implements StringSerializable {
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), null));
+						new ChallengeCompleteEvent(this, player, null));
 				
 			} else {
 				
@@ -533,7 +533,7 @@ public class Challenge implements StringSerializable {
 				if (!Options.COMPLETE_SOUND.asString().equals("null"))
 					player.playSound(player.getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 				Bukkit.getPluginManager().callEvent(
-						new ChallengeCompleteEvent(this,player, DodgeIslandManager.getIslandUUID(player), null));
+						new ChallengeCompleteEvent(this,player, null));
 
 			} else {
 				
@@ -551,12 +551,12 @@ public class Challenge implements StringSerializable {
 			player.getPlayer().playSound(player.getPlayer().getLocation(), Options.COMPLETE_SOUND.asSound(), 1.0F, 1.0F);
 		
 		Bukkit.getPluginManager().callEvent(
-				new ChallengeCompleteEvent(this, player, DodgeIslandManager.getIslandUUID(player), null));
+				new ChallengeCompleteEvent(this, player, null));
 	}
 	
 	public void complete(Island island) {
 		Bukkit.getPluginManager().callEvent(
-				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), island.getIslandUUID(), null));
+				new ChallengeCompleteEvent(this, Bukkit.getPlayer(island.getOwnerUUID()), null));
 	}
 	
 	public int amountCompleted(Container<Challenge> challenges) {
