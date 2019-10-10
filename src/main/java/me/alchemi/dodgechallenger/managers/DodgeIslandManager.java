@@ -13,9 +13,9 @@ import org.bukkit.plugin.Plugin;
 import me.alchemi.al.objects.meta.PersistentMeta;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
-import me.goodandevil.skyblock.api.island.IslandManager;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+import com.songoda.skyblock.api.island.IslandManager;
 
 public class DodgeIslandManager {
 

@@ -11,10 +11,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import me.alchemi.dodgechallenger.Config;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
-import me.goodandevil.skyblock.api.island.IslandEnvironment;
-import me.goodandevil.skyblock.api.island.IslandWorld;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+import com.songoda.skyblock.api.island.IslandEnvironment;
+import com.songoda.skyblock.api.island.IslandWorld;
 
 public class CreatureSpawn implements Listener {
 

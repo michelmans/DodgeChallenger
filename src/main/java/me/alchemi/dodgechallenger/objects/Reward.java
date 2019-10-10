@@ -18,9 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import me.alchemi.al.Library;
 import me.alchemi.al.objects.handling.ItemFactory;
 import me.alchemi.dodgechallenger.Dodge;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
-import me.goodandevil.skyblock.api.island.IslandRole;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+import com.songoda.skyblock.api.island.IslandRole;
 
 public class Reward {
 

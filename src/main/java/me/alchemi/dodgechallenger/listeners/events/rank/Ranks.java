@@ -10,7 +10,7 @@ import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.events.DeRankEvent;
 import me.alchemi.dodgechallenger.events.RankupEvent;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.SkyBlockAPI;
 
 public class Ranks implements Listener {
 

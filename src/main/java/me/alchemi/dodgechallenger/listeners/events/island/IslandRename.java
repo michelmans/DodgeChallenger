@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
-import me.goodandevil.skyblock.api.event.island.IslandOwnershipTransferEvent;
+import com.songoda.skyblock.api.event.island.IslandOwnershipTransferEvent;
 
 public class IslandRename implements Listener {
 

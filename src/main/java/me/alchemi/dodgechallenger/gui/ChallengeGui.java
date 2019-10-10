@@ -31,7 +31,7 @@ import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.DodgyEntity;
 import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import me.goodandevil.skyblock.api.island.IslandManager;
+import com.songoda.skyblock.api.island.IslandManager;
 
 public class ChallengeGui extends GUIBase {
 	

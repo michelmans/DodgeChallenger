@@ -30,9 +30,9 @@ import me.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
-import me.goodandevil.skyblock.api.island.IslandManager;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+import com.songoda.skyblock.api.island.IslandManager;
 
 public class Challenge implements StringSerializable {
 

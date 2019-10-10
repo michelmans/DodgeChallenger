@@ -13,7 +13,7 @@ import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.SkyBlockAPI;
 
 public class CommandReset {
 

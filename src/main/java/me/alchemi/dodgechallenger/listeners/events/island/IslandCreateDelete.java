@@ -12,9 +12,9 @@ import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
-import me.goodandevil.skyblock.api.event.island.IslandCreateEvent;
-import me.goodandevil.skyblock.api.event.island.IslandDeleteEvent;
-import me.goodandevil.skyblock.api.island.IslandRole;
+import com.songoda.skyblock.api.event.island.IslandCreateEvent;
+import com.songoda.skyblock.api.event.island.IslandDeleteEvent;
+import com.songoda.skyblock.api.island.IslandRole;
 
 public class IslandCreateDelete implements Listener {
 

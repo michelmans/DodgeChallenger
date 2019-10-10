@@ -25,7 +25,7 @@ public class MySQLManager implements IDataManager {
 	
 	private Table table;
 	
-	private Column islandUuid = new Column("island_uuid", DataType.TINYTEXT, ColumnModifier.NOT_NULL, ColumnModifier.UNIQUE);
+	private Column islandUuid = new Column("island_uuid", DataType.VARCHAR, ColumnModifier.NOT_NULL, ColumnModifier.UNIQUE);
 	private Column islandRank = new Column("island_rank", DataType.INT, ColumnModifier.NOT_NULL, ColumnModifier.DEFAULT);
 	private Column islandChallenges = new Column("island_challenges", DataType.LONGTEXT);
 	

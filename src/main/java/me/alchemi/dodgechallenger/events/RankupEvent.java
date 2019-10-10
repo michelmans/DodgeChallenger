@@ -8,8 +8,8 @@ import org.bukkit.event.HandlerList;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
 
 public class RankupEvent extends Event{
 

@@ -17,8 +17,8 @@ import me.alchemi.al.objects.handling.SexyRunnable;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
 
 public class ConfigurationManager implements IDataManager{
 

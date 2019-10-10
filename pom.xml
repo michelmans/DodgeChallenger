@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.alchemi</groupId>
   <artifactId>DodgeChallenger</artifactId>
-  <version>2.2.11</version>
+  <version>3.0.0</version>
   <name>DodgeChallenger</name>
   <build>
     <finalName>${project.name}</finalName>
@@ -43,8 +43,12 @@
       <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
     <repository>
-      <id>songoda</id>
-      <url>http://repo.songoda.com/artifactory/private/</url>
+      <id>minecraft</id>
+      <url>https://libraries.minecraft.net/</url>
+    </repository>
+    <repository>
+      <id>jitpack</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   
@@ -71,9 +75,9 @@
     </dependency>
     
     <dependency>
-      <groupId>com.songoda</groupId>
+      <groupId>com.songoda.skyblock</groupId>
       <artifactId>FabledSkyBlock</artifactId>
-      <version>Build-78</version>
+      <version>2.0.3</version>
       <scope>provided</scope>
     </dependency>
     

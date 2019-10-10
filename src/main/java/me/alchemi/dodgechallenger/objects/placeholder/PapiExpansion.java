@@ -39,7 +39,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 
 		if (id.equals("rank")) {
 			try {
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return String.valueOf(island.getRank().getId()); 
 			} catch (IllegalAccessError e) {
 				return "0";
@@ -47,7 +47,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			
 		} else if (id.equals("stringed_rank")) {
 			try {
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return Messenger.formatString(island.getRank().getDisplayName());
 			} catch(IllegalAccessError e) {
 				return Messenger.formatString(RankManager.getManager().getFirst().getDisplayName());
@@ -55,7 +55,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			
 		} else if (id.equals("stringed_rank_no_format")) {
 			try {
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return ChatColor.stripColor(island.getRank().getDisplayName());
 			} catch (IllegalAccessError e) {
 				return ChatColor.stripColor(RankManager.getManager().getFirst().getDisplayName());
@@ -63,7 +63,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			
 		} else if (id.equals("prefix")) {
 			try {
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return island.getRank().getPrefix().trim();
 			} catch (IllegalAccessError e) {
 				return RankManager.getManager().getFirst().getPrefix().trim();
@@ -71,7 +71,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			
 		} else if (id.equals("amount_challenges_completed")) {
 			try{
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return String.valueOf(island.getChallenges().size());
 			} catch (IllegalAccessError e) {
 				return "0";
@@ -82,7 +82,7 @@ public class PapiExpansion extends PlaceholderExpansion{
 			if (Challenge.getChallengeFromID(c) == null) return "false";
 			
 			try {
-				DodgeIsland island = getIslandManagerFromPlayer(p);
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
 				return String.valueOf(island.getChallenges().contains(Challenge.getChallengeFromID(c)));
 			} catch (IllegalAccessError e) {
 				return "false";
@@ -97,51 +97,58 @@ public class PapiExpansion extends PlaceholderExpansion{
 	public String onRequest(OfflinePlayer p, String id) {
 		
 		if (id.equals("rank")) {
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return "0";
-			return String.valueOf(island.getRank().getId());
+			try {
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return String.valueOf(island.getRank().getId()); 
+			} catch (IllegalAccessError e) {
+				return "0";
+			}
 			
 		} else if (id.equals("stringed_rank")) {
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return Messenger.formatString(RankManager.getManager().getFirst().getDisplayName());
-			return Messenger.formatString(island.getRank().getDisplayName());
+			try {
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return Messenger.formatString(island.getRank().getDisplayName());
+			} catch(IllegalAccessError e) {
+				return Messenger.formatString(RankManager.getManager().getFirst().getDisplayName());
+			}
 			
 		} else if (id.equals("stringed_rank_no_format")) {
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return ChatColor.stripColor(RankManager.getManager().getFirst().getDisplayName());
-			return ChatColor.stripColor(island.getRank().getDisplayName());
+			try {
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return ChatColor.stripColor(island.getRank().getDisplayName());
+			} catch (IllegalAccessError e) {
+				return ChatColor.stripColor(RankManager.getManager().getFirst().getDisplayName());
+			}
 			
 		} else if (id.equals("prefix")) {
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return RankManager.getManager().getFirst().getPrefix();
-			return island.getRank().getPrefix();
+			try {
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return island.getRank().getPrefix().trim();
+			} catch (IllegalAccessError e) {
+				return RankManager.getManager().getFirst().getPrefix().trim();
+			}
 			
 		} else if (id.equals("amount_challenges_completed")) {
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return "0";
-			
-			return String.valueOf(island.getChallenges().size());
+			try{
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return String.valueOf(island.getChallenges().size());
+			} catch (IllegalAccessError e) {
+				return "0";
+			}
 			
 		} else if (id.matches("(challenge_completed_)\\w+")) {
 			String c = id.replace("challenge_completed_", "");
 			if (Challenge.getChallengeFromID(c) == null) return "false";
 			
-			DodgeIsland island = getIslandManagerFromOfflinePlayer(p);
-			if (island == null) return "false";
-			return String.valueOf(island.getChallenges().contains(Challenge.getChallengeFromID(c)));
+			try {
+				DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(p);
+				return String.valueOf(island.getChallenges().contains(Challenge.getChallengeFromID(c)));
+			} catch (IllegalAccessError e) {
+				return "false";
+			}
 			
 		}
 		
 		return null;
 	}
-
-	private static DodgeIsland getIslandManagerFromPlayer(Player player) {
-		return DodgeIslandManager.getManager().getByPlayer(player);
-		
-	}
-	
-	private static DodgeIsland getIslandManagerFromOfflinePlayer(OfflinePlayer player) {
-		return DodgeIslandManager.getManager().getByPlayer(player);
-	}
-	
 }

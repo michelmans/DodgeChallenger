@@ -13,8 +13,8 @@ import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.Reward;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
 
 public class ChallengeCompleteEvent extends Event{
 

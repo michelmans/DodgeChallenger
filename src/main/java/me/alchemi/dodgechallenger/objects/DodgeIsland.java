@@ -15,8 +15,8 @@ import me.alchemi.dodgechallenger.events.RankupEvent;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
-import me.goodandevil.skyblock.api.SkyBlockAPI;
-import me.goodandevil.skyblock.api.island.Island;
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
 
 public class DodgeIsland {
 	

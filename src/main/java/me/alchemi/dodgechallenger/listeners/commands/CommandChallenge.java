@@ -12,7 +12,7 @@ import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.gui.ChallengeGui;
 import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import me.goodandevil.skyblock.api.island.IslandManager;
+import com.songoda.skyblock.api.island.IslandManager;
 
 public class CommandChallenge implements CommandExecutor {
 
