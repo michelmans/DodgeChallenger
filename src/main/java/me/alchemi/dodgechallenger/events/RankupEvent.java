@@ -5,11 +5,12 @@ import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
-import com.songoda.skyblock.api.SkyBlockAPI;
-import com.songoda.skyblock.api.island.Island;
 
 public class RankupEvent extends Event{
 

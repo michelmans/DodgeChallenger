@@ -10,12 +10,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import me.alchemi.al.objects.meta.PersistentMeta;
-import me.alchemi.dodgechallenger.meta.IslandMeta;
-import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import com.songoda.skyblock.api.SkyBlockAPI;
 import com.songoda.skyblock.api.island.Island;
 import com.songoda.skyblock.api.island.IslandManager;
+
+import me.alchemi.al.objects.meta.PersistentMeta;
+import me.alchemi.dodgechallenger.meta.IslandMeta;
+import me.alchemi.dodgechallenger.objects.DodgeIsland;
 
 public class DodgeIslandManager {
 
@@ -85,14 +86,15 @@ public class DodgeIslandManager {
 			
 			UUID id = DodgeIslandManager.getIslandUUID(player);
 			is = DodgeIslandManager.getManager().get(id);
-			
+
 			if (is != null) return is;
 			
 			is = new DodgeIsland(id);
 			
 			return is;
 		}
-		throw new IllegalAccessError("Could not get DodgeIsland for " + player.getName());
+		
+		throw new IllegalAccessError("Could not get DodgeIsland for " + player.getName() + " with uuid: " + player.getUniqueId());
 	}
 
 	public void purge() {

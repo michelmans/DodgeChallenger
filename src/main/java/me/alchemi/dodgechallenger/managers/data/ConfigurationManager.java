@@ -10,6 +10,9 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+
 import me.alchemi.al.configurations.SexyConfiguration;
 import me.alchemi.al.objects.Callback;
 import me.alchemi.al.objects.Container;
@@ -17,8 +20,6 @@ import me.alchemi.al.objects.handling.SexyRunnable;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
-import com.songoda.skyblock.api.SkyBlockAPI;
-import com.songoda.skyblock.api.island.Island;
 
 public class ConfigurationManager implements IDataManager{
 

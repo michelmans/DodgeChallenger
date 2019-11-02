@@ -25,32 +25,10 @@ public class PlayerLoginLogout implements Listener {
 			e.getPlayer().discoverRecipe(r.getKey());
 			
 		}
-		
-//		if (IslandManager.hasIsland(e.getPlayer())) {
-//
-//			DodgeIsland island = DodgeIslandManager.getManager().getByPlayer(e.getPlayer());
-//			
-//			if (island == null) {
-//				
-//				UUID id = DodgeIslandManager.getIslandUUID(e.getPlayer());
-//				
-//				island = DodgeIslandManager.getManager().get(id);
-//				
-//				if (island == null) island = new DodgeIsland(id);
-//				
-//				e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
-//				
-//			}
-//			
-//			e.getPlayer().setMetadata(IslandMeta.class.getName(), new IslandMeta(island));
-//			
-//		}
 		if (DodgeIslandManager.getManager().hasIsland(e.getPlayer())) {
 			
-			System.out.println("PlayerLoginLogout.playerLogin()");
 			e.getPlayer().setMetadata(IslandMeta.class.getName(), 
 					new IslandMeta(DodgeIslandManager.getManager().getByPlayer(e.getPlayer())));
-			System.out.println(PersistentMeta.getMeta(e.getPlayer(), IslandMeta.class));
 			
 		}
 	}

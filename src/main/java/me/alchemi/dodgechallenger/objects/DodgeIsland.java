@@ -6,6 +6,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+
 import me.alchemi.al.objects.Container;
 import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Config.Data;
@@ -15,8 +18,6 @@ import me.alchemi.dodgechallenger.events.RankupEvent;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
-import com.songoda.skyblock.api.SkyBlockAPI;
-import com.songoda.skyblock.api.island.Island;
 
 public class DodgeIsland {
 	
@@ -25,7 +26,6 @@ public class DodgeIsland {
 	private Rank rank;
 	
 	public DodgeIsland(UUID island) {
-		System.out.println(island);
 		this.island = island;
 		
 		if (StorageSystem.valueOf(Data.STORAGE.asString()) == StorageSystem.YML) {

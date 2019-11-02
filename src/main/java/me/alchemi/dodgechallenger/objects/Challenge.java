@@ -20,6 +20,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+import com.songoda.skyblock.api.island.Island;
+import com.songoda.skyblock.api.island.IslandManager;
+
 import me.alchemi.al.api.MaterialWrapper;
 import me.alchemi.al.configurations.Messenger;
 import me.alchemi.al.objects.Container;
@@ -30,9 +34,6 @@ import me.alchemi.dodgechallenger.events.ChallengeCompleteEvent;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.RankManager;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import com.songoda.skyblock.api.SkyBlockAPI;
-import com.songoda.skyblock.api.island.Island;
-import com.songoda.skyblock.api.island.IslandManager;
 
 public class Challenge implements StringSerializable {
 

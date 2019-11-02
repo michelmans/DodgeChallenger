@@ -163,13 +163,10 @@ public class SQLiteManager implements IDataManager {
 			}
 		});
 		
-		System.out.println(DataQueue.getQueue().getTasks());
-		
 	}
 	
 	@Override
 	public void setRank(UUID island, int newRank) {
-		System.out.println(islandRank.testObject(newRank));
 		database.updateValue(table, islandRank, newRank, new HashMap<Column, Object>(){
 			{
 				put(islandUuid, island.toString());

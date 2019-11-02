@@ -5,6 +5,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.songoda.skyblock.api.island.IslandManager;
+
 import me.alchemi.al.configurations.Messenger;
 import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Config.Messages;
@@ -12,7 +14,6 @@ import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.gui.ChallengeGui;
 import me.alchemi.dodgechallenger.listeners.commands.admin.CommandAdmin;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import com.songoda.skyblock.api.island.IslandManager;
 
 public class CommandChallenge implements CommandExecutor {
 

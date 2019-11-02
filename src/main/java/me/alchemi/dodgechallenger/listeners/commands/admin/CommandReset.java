@@ -4,16 +4,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+
 import me.alchemi.al.configurations.Messenger;
-import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.Config.Messages;
+import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.events.DeRankEvent;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.objects.Challenge;
 import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import com.songoda.skyblock.api.SkyBlockAPI;
 
 public class CommandReset {
 

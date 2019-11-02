@@ -13,6 +13,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.songoda.skyblock.api.island.IslandManager;
+
 import me.alchemi.al.configurations.Messenger;
 import me.alchemi.al.objects.GUI.GUIBase;
 import me.alchemi.al.objects.GUI.GUIListener;
@@ -31,7 +33,6 @@ import me.alchemi.dodgechallenger.objects.DodgeIsland;
 import me.alchemi.dodgechallenger.objects.DodgyEntity;
 import me.alchemi.dodgechallenger.objects.Rank;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import com.songoda.skyblock.api.island.IslandManager;
 
 public class ChallengeGui extends GUIBase {
 	

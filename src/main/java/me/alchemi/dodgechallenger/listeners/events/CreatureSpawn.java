@@ -6,20 +6,23 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
-import me.alchemi.dodgechallenger.Config;
 import com.songoda.skyblock.api.SkyBlockAPI;
 import com.songoda.skyblock.api.island.Island;
 import com.songoda.skyblock.api.island.IslandEnvironment;
 import com.songoda.skyblock.api.island.IslandWorld;
 
+import me.alchemi.dodgechallenger.Config;
+
 public class CreatureSpawn implements Listener {
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onEntitySpawn(CreatureSpawnEvent e) {
+		if (e.isCancelled()) return;
 		
 		if (e.getEntityType().equals(EntityType.PIG_ZOMBIE)) {
 			Random rand = new Random();

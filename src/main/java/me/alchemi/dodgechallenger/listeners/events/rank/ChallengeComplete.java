@@ -19,10 +19,6 @@ public class ChallengeComplete implements Listener {
 		DodgeIsland island = e.getIsland();
 		island.addChallenge(e.getChallenge());
 		
-		System.out.println(e.getFabledIslandUUID());
-		System.out.println(e.getFabledIsland().getIslandUUID());
-		System.out.println(e.getIsland().getIsland());
-		
 		Dodge.dataManager.setChallenges(island.getIsland(), island.getChallenges());
 		
 		if (e.getPlayer().isOnline()) {

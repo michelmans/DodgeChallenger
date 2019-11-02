@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
-	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
-	<classpathentry excluding="**/*.java" including="*.yml" kind="src" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/org/spigotmc/spigot-api/1.14.4-R0.1-SNAPSHOT/spigot-api-1.14.4-R0.1-SNAPSHOT.jar" sourcepath="M2_REPO/org/spigotmc/spigot-api/1.14.4-R0.1-SNAPSHOT/spigot-api-1.14.4-R0.1-SNAPSHOT-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/21.0/guava-21.0.jar" sourcepath="M2_REPO/com/google/guava/guava/21.0/guava-21.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar" sourcepath="M2_REPO/com/google/code/gson/gson/2.8.0/gson-2.8.0-sources.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/spigotmc/spigot-api/1.14.4-R0.1-SNAPSHOT/spigot-api-1.14.4-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/21.0/guava-21.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/md-5/bungeecord-chat/1.13-SNAPSHOT/bungeecord-chat-1.13-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar" sourcepath="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/milkbowl/vault/VaultAPI/1.7/VaultAPI-1.7.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT.jar" sourcepath="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" sourcepath="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/4.10/junit-4.10.jar" sourcepath="M2_REPO/junit/junit/4.10/junit-4.10-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.6/commons-io-2.6.jar" sourcepath="M2_REPO/commons-io/commons-io/2.6/commons-io-2.6-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/bukkit/bukkit/1.13.1-R0.1-SNAPSHOT/bukkit-1.13.1-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.10/junit-4.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
+	<classpathentry kind="src" path="/AlchemicLibrary"/>
+	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.6/commons-io-2.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/wesjd/anvilgui/1.2.2-SNAPSHOT/anvilgui-1.2.2-SNAPSHOT.jar"/>
 	<classpathentry kind="src" path="/AlchemicLibrary-api"/>
-	<classpathentry kind="var" path="M2_REPO/com/songoda/skyblock/FabledSkyblock/2.0.3/FabledSkyblock-2.0.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/mojang/authlib/1.5.3/authlib-1.5.3.jar" sourcepath="M2_REPO/com/mojang/authlib/1.5.3/authlib-1.5.3-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar" sourcepath="M2_REPO/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar" sourcepath="M2_REPO/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/be/maximvdw/placeholderapi/2.5.1/placeholderapi-2.5.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/songoda/skyblock/FabledSkyBlock/2.0.3/FabledSkyblock-2.0.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/mojang/authlib/1.5.3/authlib-1.5.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/me/clip/placeholderapi/2.10.4/placeholderapi-2.10.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/milkbowl/vault/1.7.1/vault-1.7.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/tnemc/Reserve/0.1.3.0/Reserve-0.1.3.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/me/robin/leaderheads/1.0/leaderheads-1.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/songoda/epicspawners/6-pre4/epicspawners-6-pre4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/songoda/epicanchors/1.2.5/epicanchors-1.2.5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/songoda/ultimatestacker/1.3.1/ultimatestacker-1.3.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/github/OmerBenGera/WildStackerAPI/b15/WildStackerAPI-b15.jar" sourcepath="M2_REPO/com/github/OmerBenGera/WildStackerAPI/b15/WildStackerAPI-b15-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/github/OmerBenGera/WildStackerAPI/b15/WildStackerAPI-b15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sk89q/worldedit/7.0.0/worldedit-7.0.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar" sourcepath="M2_REPO/org/jetbrains/annotations/17.0.0/annotations-17.0.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4.jar" sourcepath="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/drtshock/PlayerVaultsX/4.1.1/PlayerVaultsX-4.1.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AlchemicLibrary"/>
+	<classpathentry kind="var" path="M2_REPO/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/me/lucko/luckperms/luckperms-api/4.4/luckperms-api-4.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/drtshock/PlayerVaultsX/4.1.4/PlayerVaultsX-4.1.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

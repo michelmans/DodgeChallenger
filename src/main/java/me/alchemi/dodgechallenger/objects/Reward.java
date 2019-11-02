@@ -15,12 +15,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.alchemi.al.Library;
-import me.alchemi.al.objects.handling.ItemFactory;
-import me.alchemi.dodgechallenger.Dodge;
 import com.songoda.skyblock.api.SkyBlockAPI;
 import com.songoda.skyblock.api.island.Island;
 import com.songoda.skyblock.api.island.IslandRole;
+
+import me.alchemi.al.Library;
+import me.alchemi.al.objects.handling.ItemFactory;
+import me.alchemi.dodgechallenger.Dodge;
 
 public class Reward {
 

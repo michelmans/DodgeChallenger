@@ -57,9 +57,11 @@ public class CommandAdmin {
 					return;
 				} else if (args[1].equals("debug") && sender instanceof Player) {
 					CommandDebug.perform(sender, (Player) sender);
+					return;
 				}
 				
 				sender.sendMessage(Messenger.formatString(help));
+				
 				return;
 				
 			} else if (args.length >= 3) {

@@ -7,14 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.drtshock.playervaults.vaultmanagement.VaultManager;
+import com.songoda.skyblock.api.event.island.IslandCreateEvent;
+import com.songoda.skyblock.api.event.island.IslandDeleteEvent;
+import com.songoda.skyblock.api.island.IslandRole;
 
 import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.meta.IslandMeta;
-import com.songoda.skyblock.api.event.island.IslandCreateEvent;
-import com.songoda.skyblock.api.event.island.IslandDeleteEvent;
-import com.songoda.skyblock.api.island.IslandRole;
 
 public class IslandCreateDelete implements Listener {
 

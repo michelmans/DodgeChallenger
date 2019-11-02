@@ -4,13 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import com.songoda.skyblock.api.SkyBlockAPI;
+
 import me.alchemi.dodgechallenger.Config;
 import me.alchemi.dodgechallenger.Config.Messages;
 import me.alchemi.dodgechallenger.Dodge;
 import me.alchemi.dodgechallenger.events.DeRankEvent;
 import me.alchemi.dodgechallenger.events.RankupEvent;
 import me.alchemi.dodgechallenger.objects.placeholder.Stringer;
-import com.songoda.skyblock.api.SkyBlockAPI;
 
 public class Ranks implements Listener {
 
