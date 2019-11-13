@@ -1,20 +1,13 @@
 DodgeChallenger:
    Tag: '&2&oChallenger &6>>&r'
    Commands:
-      NoPermission: >-
-         &c&oYou don't have permission to use &9%sender%&c.&r&c If you 
-         believe this is an error, &nplease contact an administrator.
+      NoPermission: '&c&oYou don''t have permission to use &9%sender%&c.&r&c If you believe this is an error, &nplease contact an administrator.'
       WrongFormat: '&cPlease use: &9'
-      Unknown: >-
-         &cUnknown command. Use &9/challenge help &cfor more information.
-      NoChallenge: >-
-         &cChallenge '%challenge%' doesn't exist, please user another one.
-      NoIsland: >-
-         &cYou have no island and therefore cannot make use of this command.
+      Unknown: '&cUnknown command. Use &9/challenge help &cfor more information.'
+      NoChallenge: '&cChallenge ''%challenge%'' doesn''t exist, please user another one.'
+      NoIsland: '&cYou have no island and therefore cannot make use of this command.'
    Challenge:
-      BroadcastCompleted: >-
-         %f%%player%&r%f% has completed the %challenge%&r%f% challenge for 
-         their island!
+      BroadcastCompleted: '%f%%player%&r%f% has completed the %challenge%&r%f% challenge for their island!'
       Message: '%f%You completed %challenge%&r%f%'
       Lore:
          Requires: '&e&oTo complete this challenge you need:'
@@ -26,16 +19,13 @@ DodgeChallenger:
             Text: '&2%text%'
       CanComplete: '&aClick to complete this challenge!'
       CannotComplete: '&4You cannot complete this challenge.'
-      Completed: >-
-         &cYou already completed this challenge &l&f%amount% times&r&c.
+      Completed: '&cYou already completed this challenge &l&f%amount% times&r&c.'
       NotRepeatable: '&cThis challenge cannot be repeated.'
       Locked:
          Rank: '&oYou need to unlock rank %required_rank%&r%f% first.'
-         Single: >-
-            &oYou need to complete the %required_challenge%&r%f% first.
+         Single: '&oYou need to complete the %required_challenge%&r%f% first.'
          Multiple: '&oYou need to complete %required_challenges%&r%f% first.'
-         Amount: >-
-            You need to complete %amount% challenges in the previous rank.
+         Amount: 'You need to complete %amount% challenges in the previous rank.'
          Name: '&4&lLOCKED CHALLENGE'
          Lore: '&4&lThis challenge is locked.'
       Missing:
@@ -43,8 +33,7 @@ DodgeChallenger:
          Base: '&cYou are missing: '
          Item: '&b%amount%&cx &e%item%&r, '
    Rank:
-      BroadcastRankup: >-
-         %f%%owner%'s&r%f% island has ranked up to %rank%&r%f%!
+      BroadcastRankup: '%f%%owner%''s&r%f% island has ranked up to %rank%&r%f%!'
       Message: 'You ranked up to %rank%&r%f%!'
       Tag: '&b[%rank%&r&b]&r '
    GUI:
@@ -55,11 +44,7 @@ DodgeChallenger:
       PrevPage: '&a&lPrevious page'
    Admin:
       Complete:
-         Challenge: >-
-            %f%Challenge '%challenge%'%f% has been completed for %player%.
-         Rank: >-
-            %f%All challenges for %rank%&r%f% have been completed for 
-            %player%.
-      Reset: >-
-         %f%The challenge '%challenge%'%f% has been reset for %player%.
+         Challenge: '%f%Challenge ''%challenge%''%f% has been completed for %player%.'
+         Rank: '%f%All challenges for %rank%&r%f% have been completed for %player%.'
+      Reset: '%f%The challenge ''%challenge%''%f% has been reset for %player%.'
       ResetAll: '%f%All %player%''s%f% challenges have been reset.'

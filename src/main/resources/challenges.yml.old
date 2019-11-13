@@ -120,9 +120,7 @@ ranks:
         - CACTUS:64
         displayItem: CACTUS
         reward:
-          text: >-
-            8 sand, 20% chance to get a bone, |10% chance on a wooden hoe, 20 
-            %currency% and 20 xp
+          text: '8 sand, 20% chance to get a bone, |10% chance on a wooden hoe, 20 %currency% and 20 xp'
           items:
           - SAND:8
           - '{p=0.2}BONE:1'
@@ -144,17 +142,14 @@ ranks:
         - PUMPKIN:64
         displayItem: PUMPKIN        
         reward:
-          text: >-
-            8 dirt, 30% chance to get a jack 'o lantern, 20 %currency% and 20 
-            xp
+          text: '8 dirt, 30% chance to get a jack ''o lantern, 20 %currency% and 20 xp'
           items:
           - DIRT:8
           - '{p=0.3}JACK_O_LANTERN:1'
           currency: 20
           xp: 20
         repeatReward:
-          text: >-
-            4 dirt, 5% chance on a jack 'o lantern, 10 %currency% and 10 xp
+          text: '4 dirt, 5% chance on a jack ''o lantern, 10 %currency% and 10 xp' 
           items:
           - DIRT:4
           - '{p=0.05}JACK_O_LANTERN:1'
@@ -638,8 +633,7 @@ ranks:
           currency: 50
           xp: 50
         repeatReward:
-          text: >-
-            2 lapis, 5 prismarine, kelp and a chance at prismarine crystals
+          text: 2 lapis, 5 prismarine, kelp and a chance at prismarine crystals
           items:
           - INK_SAC:2
           - PRISMARINE:5
@@ -1178,14 +1172,7 @@ ranks:
           items:
           - END_PORTAL_FRAME:3
           - DIAMOND:3
-          - BOW: >-
-            1{Enchantments: >-
-              [{id: >-
-                "minecraft: >-
-                  infinity",lvl: >-
-                    1},{id: >-
-                      "minecraft: >-
-                        unbreaking",lvl:3},{id:"minecraft:power",lvl:5}]}
+          - BOW:1{Enchantments:[{id:"minecraft:infinity",lvl:1},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:power",lvl:5}]}
           currency: 1000
           xp: 500
       poseidonshalls:
@@ -1246,21 +1233,7 @@ ranks:
         reward:
           items:
           - END_PORTAL_FRAME:3
-          - DIAMOND_SWORD: >-
-            1{Enchantments: >-
-              [{id: >-
-                "minecraft: >-
-                  sharpness",lvl: >-
-                    5},{id: >-
-                      "minecraft: >-
-                        unbreaking",lvl: >-
-                          3},{id: >-
-                            "minecraft: >-
-                              fire_aspect",lvl: >-
-                                1}],display: >-
-                                  {Name: >-
-                                    &dAerondight,Lore: >-
-                                      ["Given by the &a&oLady of the Lake"]}}
+          - DIAMOND_SWORD:1{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fire_aspect",lvl:1}],display:{Name:&dAerondight,Lore:["Given by the &a&oLady of the Lake"]}}
           text: some end-portal-pieces and a nice sword
           currency: 4000
           xp: 1000
@@ -1283,15 +1256,7 @@ ranks:
           text: 5 dia and some nice boots
           items:
           - DIAMOND:5
-          - DIAMOND_BOOTS: >-
-            1{Enchantments: >-
-              [{id: >-
-                "minecraft: >-
-                  feather_falling",lvl: >-
-                    4},{id: >-
-                      "minecraft: >-
-                        protection",lvl: >-
-                          4},{id:"minecraft:blast_protection",lvl:4}]}
+          - DIAMOND_BOOTS:1{Enchantments:[{id:"minecraft:feather_falling",lvl:4},{id:"minecraft:protection",lvl:4},{id:"minecraft:blast_protection",lvl:4}]}
           currency: 4000
           xp: 1000
 
@@ -1322,9 +1287,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Fish_and_chips &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Fish_and_chips &2Click the link for more info'
         repeatReward:
           text: 30% chance on 1 disk, 1 emerald
           items:
@@ -1333,9 +1296,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Fish_and_chips &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Fish_and_chips &2Click the link for more info'
       smorrebrod:
         name: '&eSmørrebrød'
         description: Create the famous Danish smørrebrød.
@@ -1357,9 +1318,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Danish_cuisine &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Danish_cuisine &2Click the link for more info'
         repeatReward:
           text: 1 emerald
           items:
@@ -1367,9 +1326,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Danish_cuisine &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Danish_cuisine &2Click the link for more info'
       hutspot:
         name: '&eHutspot'
         description: Create the famous Dutch hutspot.
@@ -1388,8 +1345,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Hutspot &2Click the link for more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Hutspot &2Click the link for more info'
         repeatReward:
           text: 30% chance on 1 disk, 1 emerald
           items:
@@ -1398,8 +1354,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Hutspot &2Click the link for more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Hutspot &2Click the link for more info'
       apfelstrudel:
         name: '&eApfelstrudele'
         description: Create the famous German apfelstrudel.
@@ -1420,9 +1375,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Apple_strudel &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Apple_strudel &2Click the link for more info'
         repeatReward:
           text: 1 bucket, 30% chance on 1 disk, 1 emerald
           items:
@@ -1432,9 +1385,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Apple_strudel &2Click the link for more 
-            info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Apple_strudel &2Click the link for more info'
       brownies:
         name: '&eBrownies'
         description: Create the famous American brownies.
@@ -1456,9 +1407,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Chocolate_brownie &2Click the link for 
-            more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Chocolate_brownie &2Click the link for more info'
         repeatReward:
           text: 1 bucket, 30% chance on 1 disk, 1 emerald
           items:
@@ -1468,9 +1417,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Chocolate_brownie &2Click the link for 
-            more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Chocolate_brownie &2Click the link for more info'
       pastafunghi:
         name: '&ePasta Funghi'
         description: Create the famous Italian Pasta Funghi.
@@ -1491,8 +1438,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Pasta &2Click the link for more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Pasta &2Click the link for more info'
         repeatReward:
           text: 30% chance on 1 disk, 1 emerald
           items:
@@ -1501,8 +1447,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Pasta &2Click the link for more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Pasta &2Click the link for more info'
       chocolate:
         name: '&eBelgian chocolate'
         description: Create the famous belgian chocolate.
@@ -1522,9 +1467,7 @@ ranks:
           currency: 60
           xp: 60
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Belgian_chocolate &2Click the link for 
-            more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Belgian_chocolate &2Click the link for more info'
         repeatReward:
           text: 1 bucket, 30% chance on 1 disk, 1 emerald
           items:
@@ -1534,9 +1477,7 @@ ranks:
           currency: 30
           xp: 30
           commands:
-          - 'msg {player} &9https: >-
-            //en.wikipedia.org/wiki/Belgian_chocolate &2Click the link for 
-            more info
+          - 'msg {player} &9https://en.wikipedia.org/wiki/Belgian_chocolate &2Click the link for more info'
       baker:
         name: '&ePâtisserie'
         description: Bake cakes, pumpkin pies, and cookies.

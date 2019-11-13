@@ -1,5 +1,4 @@
-# If true, first time challenge completions are broadcast to the whole 
-#server.
+# If true, first time challenge completions are broadcast to the whole server.
 broadcastCompletion: true
 
 # If true, island rankups are broadcast to the whole server.
@@ -8,14 +7,11 @@ broadcastRankup: false
 # The formatting of the broadcast text.
 broadcastFormat: '&b'
 
-# If true, challenges in higher level ranks require challenges in lower level 
-#ranks to be completed.
+# If true, challenges in higher level ranks require challenges in lower level ranks to be completed.
 requirePreviousRank: true
 
-# The number of tasks per rank that can be left uncompleted to advance to the 
-#next rank. For example, if you have 4 easy challenges
-# with a rankLeeway of 1, a player would only need to complete 3 to advance 
-#to the next rank.
+# The number of tasks per rank that can be left uncompleted to advance to the next rank. For example, if you have 4 easy challenges
+# with a rankLeeway of 1, a player would only need to complete 3 to advance to the next rank.
 # A rankLeeway of 0 would require them all.
 rankLeeway: 2
 
