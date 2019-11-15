@@ -10,9 +10,9 @@ import org.bukkit.inventory.ShapelessRecipe;
 import me.alchemi.al.objects.meta.PersistentMeta;
 import me.alchemi.dodgechallenger.Config.Data;
 import me.alchemi.dodgechallenger.Dodge;
+import me.alchemi.dodgechallenger.listeners.commands.admin.CommandDebug;
 import me.alchemi.dodgechallenger.managers.DodgeIslandManager;
 import me.alchemi.dodgechallenger.managers.data.ConfigurationManager;
-import me.alchemi.dodgechallenger.meta.IslandMeta;
 import me.alchemi.dodgechallenger.meta.TaskIntMeta;
 import me.alchemi.dodgechallenger.objects.StorageSystem;
 
@@ -25,12 +25,13 @@ public class PlayerLoginLogout implements Listener {
 			e.getPlayer().discoverRecipe(r.getKey());
 			
 		}
-		if (DodgeIslandManager.getManager().hasIsland(e.getPlayer())) {
-			
-			e.getPlayer().setMetadata(IslandMeta.class.getName(), 
-					new IslandMeta(DodgeIslandManager.getManager().getByPlayer(e.getPlayer())));
-			
-		}
+//		if (DodgeIslandManager.getManager().hasIsland(e.getPlayer())) {
+//			
+//			e.getPlayer().setMetadata(IslandMeta.class.getName(), 
+//					new IslandMeta(DodgeIslandManager.getManager().getByPlayer(e.getPlayer())));
+//			
+//		}
+		CommandDebug.perform(Bukkit.getConsoleSender(), e.getPlayer());
 	}
 	
 	@EventHandler
