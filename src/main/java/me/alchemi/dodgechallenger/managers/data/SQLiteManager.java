@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import me.alchemi.al.database.Column;
 import me.alchemi.al.database.ColumnModifier;
-import me.alchemi.al.database.DataQueue;
 import me.alchemi.al.database.DataType;
 import me.alchemi.al.database.Table;
 import me.alchemi.al.database.sqlite.SQLiteDatabase;
