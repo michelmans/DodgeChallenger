@@ -64,11 +64,7 @@ public class MySQLManager implements IDataManager {
 	
 	@Override
 	public void removeIsland(UUID island) {
-		database.removeRow(table, new HashMap<Column, Object>(){
-			{
-				put(islandUuid, island.toString());
-			}
-		});
+		database.removeRow(table, islandUuid, island.toString());
 	}
 
 	@Override
@@ -150,30 +146,34 @@ public class MySQLManager implements IDataManager {
 	@Override
 	public void setChallenges(UUID island, Container<Challenge> challenges) {
 		
-		database.updateValue(table, islandChallenges, challenges.serialize_string(), new HashMap<Column, Object>(){
-			{
-				put(islandUuid, island.toString());
-			}
-		});
+		database.updateValue(table, islandChallenges, challenges.serialize_string(), islandUuid, island.toString());
 		
 	}
 	
 	@Override
 	public void setRank(UUID island, int newRank) {
 		
-		database.updateValue(table, islandRank, newRank, new HashMap<Column, Object>(){
-			{
-				put(islandUuid, island.toString());
-			}
-		});
+		database.updateValue(table, islandRank, newRank, islandUuid, island.toString());
 		
 	}
 	
 	@Override
 	public void saveIsland(DodgeIsland island) {
 		
-		addIsland(island.getIsland(), island.getRank().getId(), island.getChallenges());
-		
+		try {
+			if (database.getValue(table, islandRank, islandUuid, island.getIsland().toString()).first()) {
+				database.updateValues(table, new HashMap<Column, Object>(){
+					{
+						put(islandChallenges, island.getChallenges());
+						put(islandRank, island.getRank().getId());
+					}
+				}, islandUuid, island.getIsland().toString());
+			} else {
+				addIsland(island.getIsland(), island.getRank().getId(), island.getChallenges());
+			}
+		} catch (SQLException e) {
+			addIsland(island.getIsland(), island.getRank().getId(), island.getChallenges());
+		}
 	}
 	
 	@Override
